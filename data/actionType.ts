@@ -1,0 +1,4 @@
+export const ActionType = {
+  GETSITELISTASYNC: "GETSITELISTASYNC",
+  SETSITELIST: "SETSITELIST",
+};
