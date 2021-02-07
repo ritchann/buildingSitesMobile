@@ -1,15 +1,7 @@
 import React, { useMemo } from "react";
 import { Provider } from "react-redux";
 import { store } from "./core/store";
-import {
-  LoginScreen,
-  RegistrationStepOneScreen,
-  RegistrationStepTwoScreen,
-  RegistrationStepThreeScreen,
-  ProfileScreen,
-  StatisticsScreen,
-  MainScreen,
-} from "./sreens";
+import { ProfileScreen, StatisticsScreen, MainScreen } from "./sreens";
 import { NavigationContainer } from "@react-navigation/native";
 import {
   createDrawerNavigator,
@@ -51,10 +43,34 @@ function Main(props: any) {
   );
 }
 
-function Notifications() {
+function Statistics(props: any) {
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Notifications Screen</Text>
+    <View style={{ flex: 1, height: "100%" }}>
+      <View
+        style={{
+          height: "10%",
+          justifyContent: "flex-end",
+          backgroundColor: "white",
+        }}
+      >
+        <TouchableOpacity
+          style={{ marginLeft: 40 }}
+          onPress={() => props.navigation.openDrawer()}
+        >
+          <Image
+            source={{
+              uri:
+                "https://banner2.cleanpng.com/20180513/otq/kisspng-hamburger-button-computer-icons-menu-tab-5af896fdbf7b90.7623544115262410217843.jpg",
+            }}
+            style={{
+              opacity: 0.7,
+              width: 22,
+              height: 22,
+            }}
+          />
+        </TouchableOpacity>
+      </View>
+      <StatisticsScreen />
     </View>
   );
 }
@@ -156,7 +172,7 @@ function MyDrawer() {
           ),
         }}
         name="Статистика"
-        component={Notifications}
+        component={Statistics}
       />
     </Drawer.Navigator>
   );

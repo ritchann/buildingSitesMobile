@@ -8,12 +8,27 @@ interface Props {
     title: string;
     address: string;
     iconName: string;
+    id: number;
   };
+  selectedItem: number;
 }
 
-export const ListItem: React.FC<Props> = ({ onPress, data }) => {
+export const ListItem: React.FC<Props> = ({ onPress, data, selectedItem }) => {
   return (
-    <TouchableOpacity onPress={onPress} style={styles.containerItem}>
+    <TouchableOpacity
+      onPress={onPress}
+      style={{
+        width: "100%",
+        backgroundColor: "#f6f6f6",
+        height: 90,
+        borderRadius: 20,
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: 12,
+        borderColor: selectedItem === data.id ? "#F9D24A" : "#f6f6f6",
+        borderWidth: 0.7,
+      }}
+    >
       <View style={styles.containerIcon}>
         <Icon color="#171717" type="font-awesome-5" name={data.iconName} />
       </View>
@@ -26,14 +41,6 @@ export const ListItem: React.FC<Props> = ({ onPress, data }) => {
 };
 
 const styles = StyleSheet.create({
-  containerItem: {
-    width: "100%",
-    backgroundColor: "#f6f6f6",
-    height: 90,
-    borderRadius: 20,
-    flexDirection: "row",
-    alignItems: "center",
-  },
   containerIcon: {
     flexDirection: "row",
     justifyContent: "center",
@@ -59,8 +66,8 @@ const styles = StyleSheet.create({
   },
   address: {
     color: "#979797",
-    fontWeight:'normal',
-    lineHeight:16,
-    fontSize:12
+    fontWeight: "normal",
+    lineHeight: 16,
+    fontSize: 12,
   },
 });

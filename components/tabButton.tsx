@@ -5,14 +5,15 @@ interface Props {
   onPress: () => void;
   title: JSX.Element;
   active: boolean;
+  widthTab:number
 }
 
-export const TabButton: React.FC<Props> = ({ onPress, title, active }) => {
+export const TabButton: React.FC<Props> = ({ onPress, title, active , widthTab}) => {
   return (
     <TouchableOpacity
       onPress={onPress}
       style={{
-        width: 120,
+        width: widthTab,
         backgroundColor: active ? "#F9D24A" : "white",
         height: 25,
         borderRadius: 20,

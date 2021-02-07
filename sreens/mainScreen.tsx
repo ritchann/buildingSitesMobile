@@ -1,42 +1,14 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Text, Image, VirtualizedList } from "react-native";
+import { View, StyleSheet, Text, FlatList } from "react-native";
 import { Icon } from "react-native-elements";
-import {
-  Button,
-  TextField,
-  SearchField,
-  TabButton,
-  ListItem,
-} from "../components";
-const data: {
-  title: string;
-  address: string;
-  iconName: string;
-}[] = [
-  {
-    title: "СТРОИТЕЛЬНАЯ ПЛОЩАДКА",
-    address: "Москва, улица Новая, дом 123",
-    iconName: "tools",
-  },
-  {
-    title: "СТРОИТЕЛЬНАЯ ПЛОЩАДКА",
-    address: "Москва, улица Новая, дом 123",
-    iconName: "tools",
-  },
-  {
-    title: "СТРОИТЕЛЬНАЯ ПЛОЩАДКА",
-    address: "Москва, улица Новая, дом 123",
-    iconName: "tools",
-  },
-  {
-    title: "СТРОИТЕЛЬНАЯ ПЛОЩАДКА",
-    address: "Москва, улица Новая, дом 123",
-    iconName: "tools",
-  },
-];
+import { SearchField, TabButton, ListItem } from "../components";
+import { data } from "./data";
+
 export const MainScreen = () => {
   const [test, setTest] = useState("test");
   const [tab, setTab] = useState(true);
+  const [selectedItem, setSelectedItem] = useState(1);
+  
   return (
     <View style={styles.container}>
       <View style={styles.containerTop}>
@@ -52,6 +24,7 @@ export const MainScreen = () => {
           }}
         >
           <TabButton
+          widthTab={120}
             active={tab}
             title={
               <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -72,6 +45,7 @@ export const MainScreen = () => {
             onPress={() => setTab(true)}
           />
           <TabButton
+                   widthTab={120}
             active={!tab}
             title={
               <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -93,29 +67,20 @@ export const MainScreen = () => {
           />
         </View>
       </View>
-      {/* <View style={styles.containerBottom}>
-        <VirtualizedList
+      <View style={styles.containerBottom}>
+        <FlatList
+          showsVerticalScrollIndicator={false}
           data={data}
-          initialNumToRender={4}
           renderItem={({ item }) => (
             <ListItem
-              data={{
-                title: "СТРОИТЕЛЬНАЯ ПЛОЩАДКА",
-                address: "Москва, улица Новая, дом 123",
-                iconName: "tools",
-              }}
-              onPress={() => {}}
+              selectedItem={selectedItem}
+              onPress={() => setSelectedItem(item.id)}
+              data={item}
             />
           )}
-          keyExtractor={(item: {
-            title: string;
-            address: string;
-            iconName: string;
-          }) => item.title}
-          getItemCount={() => 10}
-          getItem={(data, index) => data[index]}
+          keyExtractor={(item) => item.id.toString()}
         />
-      </View> */}
+      </View>
     </View>
   );
 };
@@ -144,6 +109,6 @@ const styles = StyleSheet.create({
   },
   containerBottom: {
     width: "90%",
-    height: "70%",
+    height: "75%",
   },
 });
