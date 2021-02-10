@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Provider } from "react-redux";
 import { store } from "./core/store";
-import { ProfileScreen, StatisticsScreen, MainScreen } from "./sreens";
+import { ProfileScreen, StatisticsScreen, MainScreen, LoginScreen } from "./sreens";
 import { NavigationContainer } from "@react-navigation/native";
 import {
   createDrawerNavigator,
@@ -10,6 +10,15 @@ import {
 } from "@react-navigation/drawer";
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { Icon } from "react-native-elements";
+
+
+function Profile(props: any) {
+  return (
+    <View style={{ flex: 1, height: "100%" }}>
+      <LoginScreen />
+    </View>
+  );
+}
 
 function Main(props: any) {
   return (
@@ -157,7 +166,7 @@ function MyDrawer() {
           ),
         }}
         name="Профиль"
-        component={Main}
+        component={Profile}
       />
       <Drawer.Screen
         options={{
