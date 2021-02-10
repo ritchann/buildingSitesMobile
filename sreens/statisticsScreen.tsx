@@ -1,13 +1,22 @@
 import React, { useState } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { TabButton } from "../components";
-import { BarChart } from "react-native-chart-kit";
+import { BarChart, LineChart } from "react-native-chart-kit";
 
 const data = {
   labels: ["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС"],
   datasets: [
     {
       data: [8, 9, 10, 8, 8, 9, 9],
+    },
+  ],
+};
+
+const dataSteps = {
+  labels: ["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС"],
+  datasets: [
+    {
+      data: [2500, 5000, 10000, 4908, 2444, 2509, 1243],
     },
   ],
 };
@@ -63,22 +72,34 @@ export const StatisticsScreen = () => {
           />
         </View>
       </View>
-      <BarChart
-        fromZero
-        yAxisLabel=""
-        yAxisSuffix=""
-        showBarTops={true}
-        withInnerLines
-        style={{
-          borderRadius: 16,
-          marginRight: "10%",
-          marginLeft: "10%",
-        }}
-        data={data}
-        width={400}
-        height={240}
-        chartConfig={chartConfig}
-      />
+      <View style={styles.containerBottom}>
+        <Text style={styles.chartText}>ОТРАБОТАННЫЕ ЧАСЫ</Text>
+        <BarChart
+          fromZero
+          yAxisLabel=""
+          yAxisSuffix=""
+          showBarTops={true}
+          withInnerLines
+          style={{
+            borderRadius: 16,
+          }}
+          data={data}
+          width={350}
+          height={220}
+          chartConfig={chartConfig}
+        />
+        <Text style={styles.chartText}>АКТИВНОСТЬ</Text>
+        <LineChart
+          style={{
+            borderRadius: 16,
+          }}
+          data={dataSteps}
+          width={350}
+          withInnerLines
+          height={220}
+          chartConfig={chartConfig}
+        />
+      </View>
     </View>
   );
 };
@@ -93,7 +114,7 @@ const styles = StyleSheet.create({
   containerTop: {
     width: "80%",
     marginTop: "5%",
-    height: "15%",
+    height: "10%",
   },
   headerText: {
     fontSize: 26,
@@ -101,7 +122,16 @@ const styles = StyleSheet.create({
     color: "#2E2E2E",
   },
   containerBottom: {
-    width: "90%",
-    height: "75%",
+    flexDirection: "column",
+    alignItems: "flex-start",
+    width: "80%",
+    height: "90%",
+  },
+  chartText: {
+    color: "#2E2E2E",
+    marginTop: "10%",
+    marginBottom: "3%",
+    fontSize: 12,
+    fontWeight: "bold",
   },
 });
