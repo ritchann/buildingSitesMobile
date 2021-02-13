@@ -5,10 +5,15 @@ interface Props {
   onPress: () => void;
   title: JSX.Element;
   active: boolean;
-  widthTab:number
+  widthTab: number;
 }
 
-export const TabButton: React.FC<Props> = ({ onPress, title, active , widthTab}) => {
+export const TabButton: React.FC<Props> = ({
+  onPress,
+  title,
+  active,
+  widthTab,
+}) => {
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -21,8 +26,9 @@ export const TabButton: React.FC<Props> = ({ onPress, title, active , widthTab})
         alignItems: "center",
         justifyContent: "center",
         padding: 5,
-        borderColor: active ? "#F9D24A" :"#e6e6e6",
+        borderColor: active ? "#F9D24A" : "#e6e6e6",
         borderWidth: 1,
+        marginRight: "5%",
       }}
     >
       {title}

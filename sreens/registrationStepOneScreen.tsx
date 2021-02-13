@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, Text, Image } from "react-native";
+import { View, StyleSheet, Text } from "react-native";
 import { Button, TextField } from "../components";
 
 export const RegistrationStepOneScreen = () => {
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
     fontFamily: "Roboto",
-    backgroundColor:'white'
+    backgroundColor: "white",
   },
   dataContainer: {
     width: "80%",

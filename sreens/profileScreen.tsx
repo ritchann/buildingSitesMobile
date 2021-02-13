@@ -1,6 +1,5 @@
 import React from "react";
-import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
-import { Button, TextField } from "../components";
+import { View, StyleSheet, Text } from "react-native";
 
 export const ProfileScreen = () => {
   return (
@@ -18,6 +17,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     height: "100%",
-    backgroundColor:'white'
+    backgroundColor: "white",
   },
 });

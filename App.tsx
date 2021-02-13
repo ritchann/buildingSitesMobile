@@ -1,7 +1,7 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { Provider } from "react-redux";
 import { store } from "./core/store";
-import { ProfileScreen, StatisticsScreen, MainScreen, LoginScreen } from "./sreens";
+import { StatisticsScreen, MainScreen, CompleteScreen, StartWorkOneScreen } from "./sreens";
 import { NavigationContainer } from "@react-navigation/native";
 import {
   createDrawerNavigator,
@@ -11,11 +11,40 @@ import {
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { Icon } from "react-native-elements";
 
+const MenuBar = (props: any) => {
+  return (
+    <View
+      style={{
+        height: "10%",
+        justifyContent: "flex-end",
+        backgroundColor: "white",
+      }}
+    >
+      <TouchableOpacity
+        style={{ marginLeft: 40 }}
+        onPress={() => props.navigation.openDrawer()}
+      >
+        <Image
+          source={{
+            uri:
+              "https://banner2.cleanpng.com/20180513/otq/kisspng-hamburger-button-computer-icons-menu-tab-5af896fdbf7b90.7623544115262410217843.jpg",
+          }}
+          style={{
+            opacity: 0.7,
+            width: 22,
+            height: 22,
+          }}
+        />
+      </TouchableOpacity>
+    </View>
+  );
+};
 
 function Profile(props: any) {
   return (
     <View style={{ flex: 1, height: "100%" }}>
-      <LoginScreen />
+      <MenuBar {...props} />
+      <CompleteScreen />
     </View>
   );
 }
@@ -23,30 +52,7 @@ function Profile(props: any) {
 function Main(props: any) {
   return (
     <View style={{ flex: 1, height: "100%" }}>
-      <View
-        style={{
-          height: "10%",
-          justifyContent: "flex-end",
-          backgroundColor: "white",
-        }}
-      >
-        <TouchableOpacity
-          style={{ marginLeft: 40 }}
-          onPress={() => props.navigation.openDrawer()}
-        >
-          <Image
-            source={{
-              uri:
-                "https://banner2.cleanpng.com/20180513/otq/kisspng-hamburger-button-computer-icons-menu-tab-5af896fdbf7b90.7623544115262410217843.jpg",
-            }}
-            style={{
-              opacity: 0.7,
-              width: 22,
-              height: 22,
-            }}
-          />
-        </TouchableOpacity>
-      </View>
+      <MenuBar {...props} />
       <MainScreen />
     </View>
   );
@@ -55,31 +61,16 @@ function Main(props: any) {
 function Statistics(props: any) {
   return (
     <View style={{ flex: 1, height: "100%" }}>
-      <View
-        style={{
-          height: "10%",
-          justifyContent: "flex-end",
-          backgroundColor: "white",
-        }}
-      >
-        <TouchableOpacity
-          style={{ marginLeft: 40 }}
-          onPress={() => props.navigation.openDrawer()}
-        >
-          <Image
-            source={{
-              uri:
-                "https://banner2.cleanpng.com/20180513/otq/kisspng-hamburger-button-computer-icons-menu-tab-5af896fdbf7b90.7623544115262410217843.jpg",
-            }}
-            style={{
-              opacity: 0.7,
-              width: 22,
-              height: 22,
-            }}
-          />
-        </TouchableOpacity>
-      </View>
+      <MenuBar {...props} />
       <StatisticsScreen />
+    </View>
+  );
+}
+
+function Test(props: any) {
+  return (
+    <View style={{ flex: 1, height: "100%" }}>
+      <StartWorkOneScreen />
     </View>
   );
 }
@@ -183,6 +174,7 @@ function MyDrawer() {
         name="Статистика"
         component={Statistics}
       />
+      <Drawer.Screen name="Test" component={Test} />
     </Drawer.Navigator>
   );
 }

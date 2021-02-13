@@ -40,14 +40,12 @@ export const StatisticsScreen = () => {
         <Text style={styles.headerText}>Статистика</Text>
         <View
           style={{
-            width: "100%",
             marginTop: "3%",
             flexDirection: "row",
-            justifyContent: "space-between",
           }}
         >
           <TabButton
-            widthTab={165}
+            widthTab={163}
             active={tab}
             title={
               <Text
@@ -59,7 +57,7 @@ export const StatisticsScreen = () => {
             onPress={() => setTab(true)}
           />
           <TabButton
-            widthTab={155}
+            widthTab={150}
             active={!tab}
             title={
               <Text

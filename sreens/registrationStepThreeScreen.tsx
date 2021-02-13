@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
     fontFamily: "Roboto",
-    backgroundColor:'white'
+    backgroundColor: "white",
   },
   dataContainer: {
     width: "80%",

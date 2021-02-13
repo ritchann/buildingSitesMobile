@@ -8,7 +8,7 @@ export const MainScreen = () => {
   const [test, setTest] = useState("test");
   const [tab, setTab] = useState(true);
   const [selectedItem, setSelectedItem] = useState(1);
-  
+
   return (
     <View style={styles.container}>
       <View style={styles.containerTop}>
@@ -17,14 +17,12 @@ export const MainScreen = () => {
         <SearchField value={test} onChange={setTest} />
         <View
           style={{
-            width: "75%",
             marginTop: "3%",
             flexDirection: "row",
-            justifyContent: "space-between",
           }}
         >
           <TabButton
-          widthTab={120}
+            widthTab={110}
             active={tab}
             title={
               <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -45,7 +43,7 @@ export const MainScreen = () => {
             onPress={() => setTab(true)}
           />
           <TabButton
-                   widthTab={120}
+            widthTab={110}
             active={!tab}
             title={
               <View style={{ flexDirection: "row", alignItems: "center" }}>
