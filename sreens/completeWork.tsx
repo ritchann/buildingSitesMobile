@@ -1,5 +1,11 @@
 import React from "react";
-import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
 import { ProgressChart } from "react-native-chart-kit";
 import { Icon } from "react-native-elements";
 
@@ -15,9 +21,18 @@ const chartConfig = {
 };
 
 export const CompleteScreen = () => {
+  let deviceHeight = Dimensions.get("window").height;
+  let deviceWidth = Dimensions.get("window").width;
+
   return (
     <View style={styles.container}>
-      <View style={styles.containerTop}>
+      <View
+        style={{
+          width: "80%",
+          marginTop: "5%",
+          height: deviceHeight / 4.5,
+        }}
+      >
         <Text style={styles.completeWorkText}>Завершить работу</Text>
         <Text style={styles.startTimeWork}>Вы начали работу в 8:00</Text>
         <View style={styles.containerAddress}>
@@ -36,13 +51,19 @@ export const CompleteScreen = () => {
         <ProgressChart
           data={data}
           width={350}
-          height={280}
+          height={deviceHeight / 2.6}
           strokeWidth={4}
-          radius={120}
+          radius={deviceWidth / 3.2}
           chartConfig={chartConfig}
           hideLegend
         />
-        <View style={styles.containerHours}>
+        <View
+          style={{
+            marginTop: -deviceHeight / 3.8,
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
           <Text style={styles.countHours}>5 часов</Text>
           <TouchableOpacity onPress={() => console.log("click")}>
             <Text
@@ -62,14 +83,25 @@ export const CompleteScreen = () => {
           style={{
             flexDirection: "column",
             alignItems: "center",
-            marginTop: "50%",
+            marginTop: deviceHeight / 6,
           }}
         >
           <Text style={styles.sosText}>Удерживайте кнопку SOS</Text>
           <Text style={styles.sosText}>в течение 3 секунд</Text>
           <Text style={styles.sosText}>для отправки экстренного сообщения</Text>
         </View>
-        <TouchableOpacity style={styles.containerSos}>
+        <TouchableOpacity
+          style={{
+            backgroundColor: "#F95F4A",
+            height: deviceHeight / 6,
+            width: deviceHeight / 6,
+            borderRadius: 100,
+            marginTop: deviceHeight / 35,
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
           <Text style={{ color: "white", fontSize: 30 }}>SOS</Text>
         </TouchableOpacity>
       </View>
@@ -79,16 +111,12 @@ export const CompleteScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexDirection: "column",
     alignItems: "center",
     fontFamily: "Roboto",
     backgroundColor: "white",
     height: "100%",
-  },
-  containerTop: {
-    width: "80%",
-    marginTop: "5%",
-    height: "25%",
+    justifyContent: "space-between",
   },
   completeWorkText: {
     fontSize: 26,
@@ -111,13 +139,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
     marginTop: "5%",
-    color: "#2E2E2E",
-  },
-  containerHours: {
-    marginTop: "-58%",
-    fontWeight: "500",
-    flexDirection: "column",
-    alignItems: "center",
   },
   countHours: {
     color: "#F9D24A",
@@ -127,15 +148,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "normal",
     color: "#757575",
-  },
-  containerSos: {
-    backgroundColor: "#F95F4A",
-    height: 120,
-    width: 120,
-    borderRadius: 100,
-    marginTop: "15%",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
   },
 });

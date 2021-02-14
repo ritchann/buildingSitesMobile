@@ -1,14 +1,26 @@
 import React from "react";
 import { Provider } from "react-redux";
 import { store } from "./core/store";
-import { StatisticsScreen, MainScreen, CompleteScreen, StartWorkOneScreen } from "./sreens";
+import {
+  StatisticsScreen,
+  MainScreen,
+  CompleteScreen,
+  StartWorkOneScreen,
+} from "./sreens";
 import { NavigationContainer } from "@react-navigation/native";
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
   DrawerItemList,
 } from "@react-navigation/drawer";
-import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  Dimensions,
+} from "react-native";
 import { Icon } from "react-native-elements";
 
 const MenuBar = (props: any) => {
@@ -76,6 +88,8 @@ function Test(props: any) {
 }
 
 function CustomDrawerContent(props: any) {
+  let deviceHeight = Dimensions.get("window").height;
+
   return (
     <DrawerContentScrollView
       style={{ flex: 1, height: "100%", width: "100%" }}
@@ -112,7 +126,11 @@ function CustomDrawerContent(props: any) {
           />
         </View>
         <TouchableOpacity
-          style={{ marginTop: "155%" }}
+          style={{
+            marginTop: `${
+              deviceHeight > 750 ? deviceHeight / 5 : deviceHeight / 6.5
+            }%`,
+          }}
           onPress={() => console.log("click")}
         >
           <Text style={styles.exit}>ВЫЙТИ</Text>
@@ -125,8 +143,10 @@ function CustomDrawerContent(props: any) {
 const Drawer = createDrawerNavigator();
 
 function MyDrawer() {
+  let deviceWidth = Dimensions.get("window").width;
   return (
     <Drawer.Navigator
+      drawerStyle={{ width: (deviceWidth / 3) * 2 }}
       drawerContent={(props) => <CustomDrawerContent {...props} />}
     >
       <Drawer.Screen
@@ -174,7 +194,7 @@ function MyDrawer() {
         name="Статистика"
         component={Statistics}
       />
-      <Drawer.Screen name="Test" component={Test} />
+      {/* <Drawer.Screen name="Test" component={Test} /> */}
     </Drawer.Navigator>
   );
 }
@@ -194,7 +214,7 @@ const styles = StyleSheet.create({
     width: "80%",
     fontSize: 24,
     fontWeight: "bold",
-    marginTop: "35%",
+    marginTop: "20%",
     marginBottom: "10%",
     color: "#2E2E2E",
   },

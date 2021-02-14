@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Text, FlatList } from "react-native";
+import { View, StyleSheet, Text, FlatList, Dimensions } from "react-native";
 import { Icon } from "react-native-elements";
 import { SearchField, TabButton, ListItem } from "../components";
 import { data } from "./data";
@@ -9,9 +9,17 @@ export const MainScreen = () => {
   const [tab, setTab] = useState(true);
   const [selectedItem, setSelectedItem] = useState(1);
 
+  let deviceHeight = Dimensions.get("window").height;
+
   return (
     <View style={styles.container}>
-      <View style={styles.containerTop}>
+      <View
+        style={{
+          width: "80%",
+          marginTop: "5%",
+          height: deviceHeight / 4,
+        }}
+      >
         <Text style={styles.startWorkText}>Начать работу</Text>
         <Text style={styles.underStartWork}>Выберите площадку из списка</Text>
         <SearchField value={test} onChange={setTest} />
@@ -65,7 +73,12 @@ export const MainScreen = () => {
           />
         </View>
       </View>
-      <View style={styles.containerBottom}>
+      <View
+        style={{
+          width: "90%",
+          height: deviceHeight - 240,
+        }}
+      >
         <FlatList
           showsVerticalScrollIndicator={false}
           data={data}
@@ -90,11 +103,6 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto",
     backgroundColor: "white",
   },
-  containerTop: {
-    width: "80%",
-    marginTop: "5%",
-    height: "25%",
-  },
   startWorkText: {
     fontSize: 26,
     fontWeight: "700",
@@ -104,9 +112,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "normal",
     color: "#757575",
-  },
-  containerBottom: {
-    width: "90%",
-    height: "75%",
   },
 });

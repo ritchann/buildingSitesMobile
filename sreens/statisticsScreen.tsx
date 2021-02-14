@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, Dimensions } from "react-native";
 import { TabButton } from "../components";
 import { BarChart, LineChart } from "react-native-chart-kit";
 
@@ -33,6 +33,8 @@ const chartConfig = {
 
 export const StatisticsScreen = () => {
   const [tab, setTab] = useState(true);
+  let deviceWidth = Dimensions.get("window").width;
+  let deviceHeight = Dimensions.get("window").height;
 
   return (
     <View style={styles.container}>
@@ -45,7 +47,7 @@ export const StatisticsScreen = () => {
           }}
         >
           <TabButton
-            widthTab={163}
+            widthTab={150}
             active={tab}
             title={
               <Text
@@ -57,7 +59,7 @@ export const StatisticsScreen = () => {
             onPress={() => setTab(true)}
           />
           <TabButton
-            widthTab={150}
+            widthTab={140}
             active={!tab}
             title={
               <Text
@@ -82,8 +84,8 @@ export const StatisticsScreen = () => {
             borderRadius: 16,
           }}
           data={data}
-          width={350}
-          height={220}
+          width={deviceWidth - 55}
+          height={deviceHeight / 3 - 15}
           chartConfig={chartConfig}
         />
         <Text style={styles.chartText}>АКТИВНОСТЬ</Text>
@@ -92,9 +94,9 @@ export const StatisticsScreen = () => {
             borderRadius: 16,
           }}
           data={dataSteps}
-          width={350}
+          width={deviceWidth - 55}
           withInnerLines
-          height={220}
+          height={deviceHeight / 3 - 15}
           chartConfig={chartConfig}
         />
       </View>
@@ -127,7 +129,7 @@ const styles = StyleSheet.create({
   },
   chartText: {
     color: "#2E2E2E",
-    marginTop: "10%",
+    marginTop: "8%",
     marginBottom: "3%",
     fontSize: 12,
     fontWeight: "bold",
