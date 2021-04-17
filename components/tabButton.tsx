@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, TouchableOpacity, Text } from "react-native";
+import { TouchableOpacity } from "react-native";
 
 interface Props {
   onPress: () => void;

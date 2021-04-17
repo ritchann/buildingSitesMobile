@@ -1,23 +1,52 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { View, StyleSheet, Text } from "react-native";
-import { Button, TextField } from "../components";
+import { Button, DateField, TextField } from "../components";
+import { useDispatch, useSelector } from "react-redux";
+import { StoreType } from "../core/rootReducer";
+import { setUser } from "../data/actions";
 
-export const RegistrationStepOneScreen = () => {
+interface Props {
+  toNext: () => void;
+}
+
+export const RegistrationStepOneScreen: React.FC<Props> = ({ toNext }) => {
+  const dispatch = useDispatch();
+  const { user } = useSelector((state: StoreType) => state.data);
+
+  const onChange = useCallback(
+    (field: string, value: string) => {
+      dispatch(setUser({ ...user, [field]: value }));
+    },
+    [dispatch, user]
+  );
+
   return (
     <View style={styles.container}>
       <View style={styles.dataContainer}>
         <Text style={styles.manual}>Пожалуйста, заполните данные о себе</Text>
-        <TextField value="Иванов" label="ФАМИЛИЯ" onChange={() => {}} />
-        <TextField value="Иван" label="ИМЯ" onChange={() => {}} />
-        <TextField value="Иванович" label="ОТЧЕСТВО" onChange={() => {}} />
         <TextField
-          value="01.01.1983"
+          value={user.surname}
+          label="ФАМИЛИЯ"
+          onChange={(v) => onChange("surname", v)}
+        />
+        <TextField
+          value={user.name}
+          label="ИМЯ"
+          onChange={(v) => onChange("name", v)}
+        />
+        <TextField
+          value={user.patronymic}
+          label="ОТЧЕСТВО"
+          onChange={(v) => onChange("patronymic", v)}
+        />
+        <DateField
+          value={user.birthDate}
           label="ДАТА РОЖДЕНИЯ"
-          onChange={() => {}}
+          onChange={(v) => onChange("birthDate", v)}
         />
       </View>
       <View style={styles.buttonContainer}>
-        <Button title="Далее" onPress={() => {}} />
+        <Button title="Далее" onPress={toNext} />
       </View>
     </View>
   );

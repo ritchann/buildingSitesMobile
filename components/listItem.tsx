@@ -1,15 +1,11 @@
 import React from "react";
 import { StyleSheet, TouchableOpacity, Text, View } from "react-native";
 import { Icon } from "react-native-elements";
+import { Site } from "../data/model";
 
 interface Props {
   onPress: () => void;
-  data: {
-    title: string;
-    address: string;
-    iconName: string;
-    id: number;
-  };
+  data: Site;
   selectedItem: number;
 }
 
@@ -30,11 +26,13 @@ export const ListItem: React.FC<Props> = ({ onPress, data, selectedItem }) => {
       }}
     >
       <View style={styles.containerIcon}>
-        <Icon color="#171717" type="font-awesome-5" name={data.iconName} />
+        <Icon color="#171717" type="font-awesome-5" name="tools" />
       </View>
       <View style={styles.containerInfo}>
-        <Text style={styles.title}>{data.title}</Text>
-        <Text style={styles.address}>{data.address}</Text>
+        <Text style={styles.title}>{data.name}</Text>
+        <Text style={styles.address}>
+          {data.city}, улица {data.street}
+        </Text>
       </View>
     </TouchableOpacity>
   );
@@ -61,13 +59,14 @@ const styles = StyleSheet.create({
   title: {
     color: "#2E2E2E",
     fontWeight: "bold",
-    lineHeight: 23,
+    height: 26,
     fontSize: 16,
   },
   address: {
     color: "#979797",
     fontWeight: "normal",
-    lineHeight: 16,
+    lineHeight: 18,
     fontSize: 12,
+    width: "100%",
   },
 });

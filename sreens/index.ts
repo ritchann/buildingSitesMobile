@@ -7,3 +7,4 @@ export { StatisticsScreen } from "./statisticsScreen";
 export { MainScreen } from "./mainScreen";
 export { CompleteScreen } from "./completeWork";
 export { StartWorkOneScreen } from "./startWorkOneStepScreen";
+export { StartWorkTwoScreen } from "./startWorkTwoScreen";

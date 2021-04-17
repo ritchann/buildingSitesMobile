@@ -1,20 +1,32 @@
 import React from "react";
-import { View, StyleSheet, Text, Image } from "react-native";
+import { View, StyleSheet, Text, Image, Dimensions } from "react-native";
 import { Button } from "../components";
 
-export const StartWorkOneScreen = () => {
+interface Props {
+  toNext: () => void;
+}
+
+export const StartWorkOneScreen: React.FC<Props> = ({ toNext }) => {
+  let deviceHeight = Dimensions.get("window").height;
+
   return (
     <View style={styles.container}>
       <Image style={styles.image} source={require("../image/startWork.png")} />
       <View style={styles.containerInfo}>
-        <View style={styles.bottomContainer}>
+        <View
+          style={{
+            marginTop: "8%",
+            alignItems: "flex-start",
+            marginBottom: `${deviceHeight / 30}%`,
+          }}
+        >
           <Text style={styles.question}>
             Вы хотите начать работу на этом объекте?
           </Text>
           <Text style={styles.underQuestion}>Строительная площадка</Text>
           <Text style={styles.underQuestion}>Москва, улица Новая, дом 123</Text>
         </View>
-        <Button title="Да, продолжить" onPress={() => {}} />
+        <Button title="Да, продолжить" onPress={toNext} />
       </View>
     </View>
   );
@@ -32,11 +44,6 @@ const styles = StyleSheet.create({
   containerInfo: {
     height: "100%",
     width: "80%",
-  },
-  bottomContainer: {
-    marginTop: "8%",
-    alignItems: "flex-start",
-    marginBottom: "35%",
   },
   question: {
     fontSize: 24,

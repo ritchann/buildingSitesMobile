@@ -3,17 +3,35 @@ export interface Action {
   data?: any;
 }
 
-export interface BuildingSite {
-  id: number;
-  address: string;
-  lat: number;
-  lon: number;
-  title: string;
-  image: any;
-}
-
 export interface Site {
   id: number;
   coords: number[][];
   name: string;
+  city: string;
+  street: string;
+  test: string;
+}
+
+export interface WorkingHours {
+  id: number;
+  start: Date;
+  end: Date;
+  employeeId: number;
+  siteId: number;
+  status: number;
+  steps: number;
+}
+
+export interface Employee {
+  id: number;
+  name: string;
+  surname: string;
+  patronymic: string;
+  inipa: string;
+  tin: string;
+  birthDate: string;
+  phoneNumber: string;
+  specialty: number;
+  password: string;
+  login: string;
 }

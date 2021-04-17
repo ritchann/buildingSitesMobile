@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import {
   View,
   StyleSheet,
@@ -8,11 +8,11 @@ import {
 } from "react-native";
 import { ProgressChart } from "react-native-chart-kit";
 import { Icon } from "react-native-elements";
-
-const data = {
-  labels: ["Hours"],
-  data: [0.625],
-};
+import { useDispatch, useSelector } from "react-redux";
+import { StoreType } from "../core/rootReducer";
+import { setStartWorkingHours, updateWorkingHoursAsync } from "../data/actions";
+import { DateTime } from "../utils/dateTime";
+import { StatusWork } from "../utils/enums";
 
 const chartConfig = {
   backgroundGradientFrom: "white",
@@ -23,6 +23,61 @@ const chartConfig = {
 export const CompleteScreen = () => {
   let deviceHeight = Dimensions.get("window").height;
   let deviceWidth = Dimensions.get("window").width;
+  const dispatch = useDispatch();
+
+  const { startWorkingHours, siteList } = useSelector(
+    (state: StoreType) => state.data
+  );
+
+  const currentSite = useMemo(
+    () => siteList.find((x) => x.id == startWorkingHours?.siteId),
+    [siteList, startWorkingHours]
+  );
+
+  const time = useMemo(() => {
+    if (startWorkingHours) {
+      const from =
+        startWorkingHours.start.getUTCHours() * 60 +
+        startWorkingHours.start.getMinutes();
+      const to =
+        startWorkingHours.end.getUTCHours() * 60 +
+        startWorkingHours.end.getMinutes();
+      return to - from;
+    }
+    return 0;
+  }, [startWorkingHours]);
+
+  const data = useMemo(() => {
+    return {
+      labels: ["Hours"],
+      data: [time / 480],
+    };
+  }, [time]);
+
+  const end = useCallback(() => {
+    if (startWorkingHours) {
+      dispatch(
+        updateWorkingHoursAsync({
+          ...startWorkingHours,
+          start: DateTime.addHours(startWorkingHours.start, -3),
+          end: new Date(),
+          status: StatusWork.End,
+        })
+      );
+      dispatch(
+        setStartWorkingHours({
+          ...startWorkingHours,
+          end: DateTime.addHours(new Date(), 3),
+          status: StatusWork.End,
+        })
+      );
+    }
+  }, [dispatch, startWorkingHours]);
+
+  useEffect(() => {
+    const interval = setInterval(() => end(), 30000);
+    return () => clearInterval(interval);
+  }, [end]);
 
   return (
     <View style={styles.container}>
@@ -34,7 +89,15 @@ export const CompleteScreen = () => {
         }}
       >
         <Text style={styles.completeWorkText}>Завершить работу</Text>
-        <Text style={styles.startTimeWork}>Вы начали работу в 8:00</Text>
+        <Text style={styles.startTimeWork}>
+          Вы начали работу в{" "}
+          {startWorkingHours
+            ? DateTime.format(
+                DateTime.addHours(startWorkingHours.start, -3),
+                "HH:mm"
+              )
+            : ""}
+        </Text>
         <View style={styles.containerAddress}>
           <Icon color="#DADADA" size={30} type="material" name="room" />
           <View style={{ flexDirection: "column", marginLeft: "3%" }}>
@@ -42,7 +105,8 @@ export const CompleteScreen = () => {
               СТРОИТЕЛЬНАЯ ПЛОЩАДКА
             </Text>
             <Text style={styles.startTimeWork}>
-              Москва, улица Новая, дом 123
+              "{currentSite?.name}" {currentSite?.city}, улица{" "}
+              {currentSite?.street}
             </Text>
           </View>
         </View>
@@ -64,8 +128,9 @@ export const CompleteScreen = () => {
             alignItems: "center",
           }}
         >
-          <Text style={styles.countHours}>5 часов</Text>
-          <TouchableOpacity onPress={() => console.log("click")}>
+          <Text style={styles.countHours}>{(time / 60).toFixed(0)} часов</Text>
+          <Text style={styles.countHours}>{(time % 60).toFixed(0)} минут</Text>
+          <TouchableOpacity onPress={() => end()}>
             <Text
               style={{
                 width: 150,
@@ -142,7 +207,7 @@ const styles = StyleSheet.create({
   },
   countHours: {
     color: "#F9D24A",
-    fontSize: 36,
+    fontSize: 28,
   },
   sosText: {
     fontSize: 14,

@@ -1,6 +1,6 @@
-import { combineReducers } from 'redux';
+import { combineReducers } from "redux";
 
-import { reducer } from '../data/reducer'
+import { reducer } from "../data/reducer";
 
 export const rootReducer = combineReducers({ data: reducer });
-export type StoreType = ReturnType<typeof rootReducer>
+export type StoreType = ReturnType<typeof rootReducer>;
