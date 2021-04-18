@@ -11,6 +11,7 @@ import { Icon } from "react-native-elements";
 import { useDispatch, useSelector } from "react-redux";
 import { StoreType } from "../core/rootReducer";
 import { setStartWorkingHours, updateWorkingHoursAsync } from "../data/actions";
+import { THEME } from "../data/constants";
 import { DateTime } from "../utils/dateTime";
 import { StatusWork } from "../utils/enums";
 
@@ -136,7 +137,7 @@ export const CompleteScreen = () => {
                 width: 150,
                 fontSize: 14,
                 fontWeight: "normal",
-                color: "#757575",
+                color: THEME.GREY,
                 textAlign: "center",
               }}
             >
@@ -191,7 +192,7 @@ const styles = StyleSheet.create({
   startTimeWork: {
     fontSize: 14,
     fontWeight: "normal",
-    color: "#757575",
+    color: THEME.GREY,
   },
   containerBottom: {
     width: "80%",
@@ -212,6 +213,6 @@ const styles = StyleSheet.create({
   sosText: {
     fontSize: 14,
     fontWeight: "normal",
-    color: "#757575",
+    color: THEME.GREY,
   },
 });

@@ -6,6 +6,7 @@ import {
   Text,
   KeyboardTypeOptions,
 } from "react-native";
+import { THEME } from "../data/constants";
 
 interface Props {
   value: string;
@@ -71,7 +72,7 @@ const styles = StyleSheet.create({
   input: {
     fontSize: 16,
     fontWeight: "300",
-    color: "#757575",
+    color: THEME.GREY,
   },
   underline: {
     opacity: 0.2,

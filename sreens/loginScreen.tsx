@@ -11,6 +11,7 @@ import {
 import { CustomButton, TextField } from "../components";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
+import { THEME } from "../data/constants";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -46,15 +47,15 @@ export const LoginScreen: React.FC<Props> = ({ setAuth, setReg }) => {
     <View style={styles.container}>
       <Image
         style={{
-          height: `${deviceHeight / 15}%`,
+          height: `${deviceHeight / 16}%`,
           width: "100%",
           resizeMode: "stretch",
         }}
         source={require("../image/main.png")}
       />
-      <View style={styles.textContainer}>
+      <View style={styles.infoContainer}>
         <View style={styles.greetingContainer}>
-          <Text style={styles.greeting}>{"Добро пожаловать!"}</Text>
+          <Text style={styles.greeting}>Добро пожаловать!</Text>
           <Text style={styles.underGreeting}>
             {"Войдите, чтобы продолжить"}
           </Text>
@@ -92,34 +93,32 @@ export const LoginScreen: React.FC<Props> = ({ setAuth, setReg }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: "flex-start",
+    flexDirection: "column",
     alignItems: "center",
     width: "100%",
     height: "100%",
     backgroundColor: "white",
   },
-  textContainer: {
+  infoContainer: {
     height: "100%",
     width: "80%",
   },
   greetingContainer: {
-    marginTop: "8%",
-    alignItems: "flex-start",
+    marginTop: "6%",
     marginBottom: "5%",
   },
   greeting: {
-    fontSize: 24,
+    fontSize: 25,
     fontWeight: "700",
     color: "#2E2E2E",
   },
   underGreeting: {
     fontSize: 14,
     fontWeight: "400",
-    color: "#757575",
+    color: THEME.GREY,
   },
   forgottenPassword: {
-    color: "#757575",
+    color: THEME.GREY,
     fontSize: 12,
     paddingTop: "5%",
   },
@@ -127,7 +126,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   newUser: {
-    color: "#757575",
+    color: THEME.GREY,
     fontSize: 12,
   },
   register: {

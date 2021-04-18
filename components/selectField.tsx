@@ -1,5 +1,6 @@
 import React from "react";
 import { View, StyleSheet, Text, Picker } from "react-native";
+import { THEME } from "../data/constants";
 
 interface Props {
   value: number;
@@ -47,7 +48,7 @@ const styles = StyleSheet.create({
   input: {
     fontSize: 16,
     fontWeight: "300",
-    color: "#757575",
+    color: THEME.GREY,
     marginLeft: -7,
     height: 30,
   },

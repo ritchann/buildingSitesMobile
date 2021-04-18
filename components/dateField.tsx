@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { View, StyleSheet, Text, LogBox } from "react-native";
 import DatePicker from "react-native-datepicker";
+import { THEME } from "../data/constants";
 
 interface Props {
   value: string;
@@ -25,7 +26,7 @@ export const DateField: React.FC<Props> = ({ value, onChange, label }) => {
           dateText: {
             fontSize: 16,
             fontWeight: "300",
-            color: "#757575",
+            color: THEME.GREY,
             margin: 0,
             padding: 0,
           },
@@ -60,7 +61,7 @@ const styles = StyleSheet.create({
   input: {
     fontSize: 16,
     fontWeight: "300",
-    color: "#757575",
+    color: THEME.GREY,
   },
   underline: {
     opacity: 0.2,

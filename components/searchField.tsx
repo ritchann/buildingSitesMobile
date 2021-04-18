@@ -1,6 +1,7 @@
 import React from "react";
 import { TextInput, View, StyleSheet } from "react-native";
 import { Icon } from "react-native-elements";
+import { THEME } from "../data/constants";
 
 interface Props {
   value: string;
@@ -11,7 +12,7 @@ export const SearchField: React.FC<Props> = ({ value, onChange }) => {
   return (
     <View style={styles.containerTextField}>
       <TextInput
-        selectionColor="#757575"
+        selectionColor={THEME.GREY}
         style={styles.input}
         value={value}
         onChangeText={(value) => onChange(value)}
@@ -48,7 +49,7 @@ const styles = StyleSheet.create({
     paddingBottom: 2,
     fontSize: 14,
     fontWeight: "300",
-    color: "#757575",
+    color: THEME.GREY,
     width: "90%",
   },
 });

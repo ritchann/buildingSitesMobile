@@ -16,6 +16,7 @@ import { WorkingHours } from "../data/model";
 import { DaysWeek } from "../enums/daysWeek";
 import { DateTime } from "../utils/dateTime";
 import { Tooltip } from "react-native-elements";
+import { THEME } from "../data/constants";
 
 enum Type {
   Week,
@@ -126,7 +127,7 @@ export const StatisticsScreen = () => {
             active={tab == Type.Week}
             title={
               <Text
-                style={{ color: tab ? "#2E2E2E" : "#757575", fontSize: 12 }}
+                style={{ color: tab ? "#2E2E2E" : THEME.GREY, fontSize: 12 }}
               >
                 За последнюю неделю
               </Text>
@@ -138,7 +139,7 @@ export const StatisticsScreen = () => {
             active={tab == Type.Month}
             title={
               <Text
-                style={{ color: !tab ? "#2E2E2E" : "#757575", fontSize: 12 }}
+                style={{ color: !tab ? "#2E2E2E" : THEME.GREY, fontSize: 12 }}
               >
                 За последний месяц
               </Text>

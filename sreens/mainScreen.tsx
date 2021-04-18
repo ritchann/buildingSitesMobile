@@ -18,6 +18,7 @@ import {
 } from "../data/actions";
 import * as Location from "expo-location";
 import { Site } from "../data/model";
+import { THEME } from "../data/constants";
 
 enum Tab {
   All,
@@ -126,14 +127,14 @@ export const MainScreen: React.FC<Props> = ({ toNext }) => {
             title={
               <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <Icon
-                  color={tab ? "#2E2E2E" : "#757575"}
+                  color={tab ? "#2E2E2E" : THEME.GREY}
                   size={12}
                   style={{ paddingRight: 4 }}
                   type="font-awesome-5"
                   name="clock"
                 />
                 <Text
-                  style={{ color: tab ? "#2E2E2E" : "#757575", fontSize: 12 }}
+                  style={{ color: tab ? "#2E2E2E" : THEME.GREY, fontSize: 12 }}
                 >
                   Все
                 </Text>
@@ -147,20 +148,20 @@ export const MainScreen: React.FC<Props> = ({ toNext }) => {
             title={
               <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <Icon
-                  color={!tab ? "#2E2E2E" : "#757575"}
+                  color={!tab ? "#2E2E2E" : THEME.GREY}
                   size={12}
                   style={{ paddingRight: 4 }}
                   type="material"
                   name="near-me"
                 />
                 <Text
-                  style={{ color: !tab ? "#2E2E2E" : "#757575", fontSize: 12 }}
+                  style={{ color: !tab ? "#2E2E2E" : THEME.GREY, fontSize: 12 }}
                 >
                   Ближайшие
                 </Text>
               </View>
             }
-            onPress={() => test()}
+            onPress={() => setTab(Tab.Near)}
           />
         </View>
       </View>
@@ -220,7 +221,7 @@ const styles = StyleSheet.create({
   underStartWork: {
     fontSize: 14,
     fontWeight: "normal",
-    color: "#757575",
+    color: THEME.GREY,
   },
   containerBottom: {
     width: "90%",

@@ -29,6 +29,7 @@ import {
   Dimensions,
 } from "react-native";
 import { Icon } from "react-native-elements";
+import { THEME } from "./data/constants";
 
 const MenuBar = (props: any) => {
   return (
@@ -63,7 +64,7 @@ function Profile(props: any) {
   return (
     <View style={{ flex: 1, height: "100%" }}>
       <MenuBar {...props} />
-      <ProfileScreen/>
+      <ProfileScreen />
     </View>
   );
 }
@@ -92,7 +93,7 @@ enum ActionStartWork {
 }
 
 export default function App() {
-  const [auth, setAuth] = useState(Action.None  );
+  const [auth, setAuth] = useState(Action.None);
   const [stepReg, setStepReg] = useState(1);
   const [startWork, setStartWork] = useState(ActionStartWork.None);
   const [stepStart, setStepStart] = useState(1);
@@ -221,7 +222,7 @@ export default function App() {
           <RegistrationStepTwoScreen toNext={() => setStepReg(stepReg + 1)} />
         )}
         {stepReg === 3 && (
-          <RegistrationStepThreeScreen toNext={() => (setAuth(Action.Auth))} />
+          <RegistrationStepThreeScreen toNext={() => setAuth(Action.Auth)} />
         )}
       </View>
     );
@@ -271,7 +272,7 @@ export default function App() {
             </TouchableOpacity>
             <Text style={styles.greeting}>Добрый день, Иван</Text>
             <DrawerItemList
-              inactiveTintColor="#757575"
+              inactiveTintColor={THEME.GREY}
               activeTintColor="#2E2E2E"
               labelStyle={{ fontSize: 16 }}
               activeBackgroundColor="white"
@@ -381,7 +382,7 @@ const styles = StyleSheet.create({
   },
   exit: {
     fontWeight: "normal",
-    color: "#757575",
+    color: THEME.GREY,
     fontSize: 16,
   },
 });

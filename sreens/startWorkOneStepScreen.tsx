@@ -1,6 +1,7 @@
 import React from "react";
 import { View, StyleSheet, Text, Image, Dimensions } from "react-native";
 import { CustomButton } from "../components";
+import { THEME } from "../data/constants";
 
 interface Props {
   toNext: () => void;
@@ -53,7 +54,7 @@ const styles = StyleSheet.create({
   underQuestion: {
     fontSize: 18,
     fontWeight: "normal",
-    color: "#757575",
+    color: THEME.GREY,
   },
   image: {
     height: "55%",
