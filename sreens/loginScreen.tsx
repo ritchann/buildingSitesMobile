@@ -7,12 +7,10 @@ import {
   TouchableOpacity,
   Dimensions,
   Platform,
-  Button as ButReact
 } from "react-native";
-import { Button, TextField } from "../components";
+import { CustomButton, TextField } from "../components";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
-import {Button as TestB} from 'react-native-elements'
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -79,7 +77,7 @@ export const LoginScreen: React.FC<Props> = ({ setAuth, setReg }) => {
             alignItems: "center",
           }}
         >
-          <Button title="Войти" onPress={() => setAuth(true)} />
+          <CustomButton title="Войти" onPress={() => setAuth(true)} />
           <View style={styles.containerNewUser}>
             <Text style={styles.newUser}>Новый пользователь? </Text>
             <TouchableOpacity onPress={() => setReg(true)}>

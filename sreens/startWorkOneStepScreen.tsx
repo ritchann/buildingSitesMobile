@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet, Text, Image, Dimensions } from "react-native";
-import { Button } from "../components";
+import { CustomButton } from "../components";
 
 interface Props {
   toNext: () => void;
@@ -26,7 +26,7 @@ export const StartWorkOneScreen: React.FC<Props> = ({ toNext }) => {
           <Text style={styles.underQuestion}>Строительная площадка</Text>
           <Text style={styles.underQuestion}>Москва, улица Новая, дом 123</Text>
         </View>
-        <Button title="Да, продолжить" onPress={toNext} />
+        <CustomButton title="Да, продолжить" onPress={toNext} />
       </View>
     </View>
   );

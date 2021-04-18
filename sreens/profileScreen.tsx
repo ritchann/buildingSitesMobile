@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet, Text, Dimensions } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { DateField, TextField, Button, SelectField } from "../components";
+import { DateField, TextField, CustomButton, SelectField } from "../components";
 import { StoreType } from "../core/rootReducer";
 import { updateUserAsync } from "../data/actions";
 import { Employee } from "../data/model";
@@ -90,7 +90,7 @@ export const ProfileScreen = () => {
           onChange={(v) => onChange("phoneNumber", v)}
         />
         <View style={styles.buttonContainer}>
-          <Button title="Сохранить" onPress={onSave} />
+          <CustomButton title="Сохранить" onPress={onSave} />
         </View>
       </View>
     </View>
