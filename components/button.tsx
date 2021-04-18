@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, TouchableOpacity, Text } from "react-native";
+import { Button as ButtonElements } from "react-native-elements";
 
 interface Props {
   onPress: () => void;
@@ -13,15 +14,13 @@ export const Button: React.FC<Props> = ({
   disabled = false,
 }) => {
   return (
-    <TouchableOpacity
-      disabled={disabled}
-      onPress={() => (!disabled ? onPress() : {})}
-      style={styles.containerButton}
-    >
-      <Text style={disabled ? styles.textButtonDisabled : styles.textButton}>
-        {title}
-      </Text>
-    </TouchableOpacity>
+    <ButtonElements
+      buttonStyle={styles.containerButton}
+      containerStyle={styles.containerButton}
+      title={title}
+      onPress={onPress}
+      titleStyle={styles.textButton}
+    ></ButtonElements>
   );
 };
 
