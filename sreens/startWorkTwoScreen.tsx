@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { View, StyleSheet, Text, ImageBackground } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { Button } from "../components";
+import { CustomButton } from "../components";
 import { startWorkingHoursAsync } from "../data/actions";
 import { StatusWork } from "../utils/enums";
 import { Camera, CameraCapturedPicture } from "expo-camera";
@@ -71,14 +71,14 @@ export const StartWorkTwoScreen: React.FC<Props> = ({ toNext }) => {
         ></Camera>
       )}
       <View style={styles.bottomContainer}>
-        <Button
+        <CustomButton
           title={capturedImage ? "Повторить" : "Сделать фото"}
           onPress={() =>
             capturedImage ? setCapturedImage(undefined) : takePicture()
           }
         />
         <View style={styles.nextButton}>
-          <Button title="Далее" onPress={() => (toNext(), start())} />
+          <CustomButton title="Далее" onPress={() => (toNext(), start())} />
         </View>
       </View>
     </View>

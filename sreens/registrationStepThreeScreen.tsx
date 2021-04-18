@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { View, StyleSheet } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, TextField } from "../components";
+import { CustomButton, TextField } from "../components";
 import { StoreType } from "../core/rootReducer";
 import { createUserAsync, setUser } from "../data/actions";
 
@@ -49,7 +49,7 @@ export const RegistrationStepThreeScreen: React.FC<Props> = ({ toNext }) => {
         />
       </View>
       <View style={styles.buttonContainer}>
-        <Button title="Далее" onPress={createUser} />
+        <CustomButton title="Далее" onPress={createUser} />
       </View>
     </View>
   );

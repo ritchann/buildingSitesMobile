@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet, Text } from "react-native";
-import { Button, DateField, TextField } from "../components";
+import { CustomButton, DateField, TextField } from "../components";
 import { useDispatch, useSelector } from "react-redux";
 import { StoreType } from "../core/rootReducer";
 import { setUser } from "../data/actions";
@@ -46,7 +46,7 @@ export const RegistrationStepOneScreen: React.FC<Props> = ({ toNext }) => {
         />
       </View>
       <View style={styles.buttonContainer}>
-        <Button title="Далее" onPress={toNext} />
+        <CustomButton title="Далее" onPress={toNext} />
       </View>
     </View>
   );

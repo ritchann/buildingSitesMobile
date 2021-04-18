@@ -39,14 +39,14 @@ export const MainScreen: React.FC<Props> = ({ toNext }) => {
   );
 
   const test = useCallback(() => {
-    dispatch(
-      createSiteAsync({
-        coords: "[[0, 1]]",
-        name: "test",
-        city: "test",
-        street: "test",
-      })
-    );
+    // dispatch(
+    //   createSiteAsync({
+    //     coords: "[[0, 1]]",
+    //     name: "test",
+    //     city: "test",
+    //     street: "test",
+    //   })
+    // );
   }, [dispatch]);
 
   useEffect(() => {

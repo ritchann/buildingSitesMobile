@@ -8,7 +8,7 @@ import {
   Dimensions,
   Platform,
 } from "react-native";
-import { Button, TextField } from "../components";
+import { CustomButton, TextField } from "../components";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
 
@@ -37,9 +37,9 @@ export const LoginScreen: React.FC<Props> = ({ setAuth, setReg }) => {
   const responseListener = useRef();
 
   useEffect(() => {
-    registerForPushNotificationsAsync().then((token) =>
-      setExpoPushToken(token)
-    );
+    // registerForPushNotificationsAsync().then((token) =>
+    //   setExpoPushToken(token)
+    // );
   }, []);
 
   return (
@@ -67,20 +67,20 @@ export const LoginScreen: React.FC<Props> = ({ setAuth, setReg }) => {
           onChange={() => {}}
         />
         <View style={styles.containerForgottenPassword}>
-          <TouchableOpacity onPress={() => setReg(true)}>
+          <TouchableOpacity onPress={() => {}}>
             <Text style={styles.forgottenPassword}>{"Забыли пароль?"}</Text>
           </TouchableOpacity>
         </View>
         <View
           style={{
-            marginTop: `${deviceHeight / 70}%`,
+            marginTop: `${deviceHeight / 80}%`,
             alignItems: "center",
           }}
         >
-          <Button title="Войти" onPress={() => setAuth(true)} />
+          <CustomButton title="Войти" onPress={() => setAuth(true)} />
           <View style={styles.containerNewUser}>
             <Text style={styles.newUser}>Новый пользователь? </Text>
-            <TouchableOpacity onPress={() => {}}>
+            <TouchableOpacity onPress={() => setReg(true)}>
               <Text style={styles.register}> Регистрация</Text>
             </TouchableOpacity>
           </View>
@@ -135,15 +135,14 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   containerNewUser: {
-    flex: 1,
-    flexWrap: "wrap",
+    flexDirection: "row",
+    justifyContent: "center",
     width: "100%",
     marginTop: "5%",
     alignContent: "center",
     fontSize: 12,
   },
 });
-// показать кликабельность линк, сделать регистрацию кликабельной
 
 async function schedulePushNotification() {
   await Notifications.scheduleNotificationAsync({
