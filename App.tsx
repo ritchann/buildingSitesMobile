@@ -32,10 +32,11 @@ import { Icon } from "react-native-elements";
 import { THEME } from "./data/constants";
 
 const MenuBar = (props: any) => {
+  let deviceHeight = Dimensions.get("window").height;
   return (
     <View
       style={{
-        height: "10%",
+        height: deviceHeight / 12,
         justifyContent: "flex-end",
         backgroundColor: "white",
       }}
@@ -245,6 +246,8 @@ export default function App() {
   }
 
   function CustomDrawerContent(props: any) {
+    let deviceHeight = Dimensions.get("window").height;
+
     return (
       <DrawerContentScrollView
         style={{ flex: 1, height: "100%", width: "100%" }}
@@ -256,7 +259,10 @@ export default function App() {
           }}
         >
           <View>
-            <TouchableOpacity onPress={() => props.navigation.closeDrawer()}>
+            <TouchableOpacity
+              style={{}}
+              onPress={() => props.navigation.closeDrawer()}
+            >
               <Image
                 source={{
                   uri:
@@ -266,14 +272,14 @@ export default function App() {
                   opacity: 0.7,
                   width: 22,
                   height: 22,
-                  marginTop: "12%",
+                  marginTop: deviceHeight / 90,
                 }}
               />
             </TouchableOpacity>
             <Text style={styles.greeting}>Добрый день, Иван</Text>
             <DrawerItemList
               inactiveTintColor={THEME.GREY}
-              activeTintColor="#2E2E2E"
+              activeTintColor={THEME.BLACK}
               labelStyle={{ fontSize: 16 }}
               activeBackgroundColor="white"
               itemStyle={{ marginLeft: -1 }}
@@ -358,7 +364,7 @@ export default function App() {
         {auth === Action.Registration && <Registration />}
         {auth === Action.None && (
           <LoginScreen
-          register={() => (setAuth(Action.Registration), setStepReg(1))}
+            register={() => (setAuth(Action.Registration), setStepReg(1))}
             auth={() => (
               setAuth(Action.Auth),
               setStartWork(ActionStartWork.None),
@@ -374,11 +380,11 @@ export default function App() {
 const styles = StyleSheet.create({
   greeting: {
     width: "80%",
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: "bold",
-    marginTop: "35%",
+    marginTop: "25%",
     marginBottom: "10%",
-    color: "#2E2E2E",
+    color: THEME.BLACK,
   },
   exit: {
     fontWeight: "normal",

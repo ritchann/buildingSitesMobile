@@ -4,6 +4,7 @@ import { CustomButton, DateField, TextField } from "../components";
 import { useDispatch, useSelector } from "react-redux";
 import { StoreType } from "../core/rootReducer";
 import { setUser } from "../data/actions";
+import { THEME } from "../data/constants";
 
 interface Props {
   toNext: () => void;
@@ -65,7 +66,7 @@ const styles = StyleSheet.create({
   },
   manual: {
     fontSize: 20,
-    color: "#2E2E2E",
+    color: THEME.BLACK,
     fontWeight: "bold",
   },
   buttonContainer: {

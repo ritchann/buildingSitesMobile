@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { DateField, TextField, CustomButton, SelectField } from "../components";
 import { StoreType } from "../core/rootReducer";
 import { updateUserAsync } from "../data/actions";
+import { THEME } from "../data/constants";
 import { Employee } from "../data/model";
 import { Specialty } from "../enums/specialtyEnum";
 
@@ -107,7 +108,7 @@ const styles = StyleSheet.create({
   startWorkText: {
     fontSize: 26,
     fontWeight: "700",
-    color: "#2E2E2E",
+    color: THEME.BLACK,
     marginTop: "5%",
   },
   dataContainer: {

@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
   greeting: {
     fontSize: 25,
     fontWeight: "700",
-    color: "#2E2E2E",
+    color: THEME.BLACK,
   },
   underGreeting: {
     fontSize: 14,

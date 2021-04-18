@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, TouchableOpacity, Text, View } from "react-native";
 import { Icon } from "react-native-elements";
+import { THEME } from "../data/constants";
 import { Site } from "../data/model";
 
 interface Props {
@@ -57,7 +58,7 @@ const styles = StyleSheet.create({
     marginLeft: "3%",
   },
   title: {
-    color: "#2E2E2E",
+    color: THEME.BLACK,
     fontWeight: "bold",
     height: 26,
     fontSize: 16,

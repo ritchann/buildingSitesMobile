@@ -127,7 +127,7 @@ export const StatisticsScreen = () => {
             active={tab == Type.Week}
             title={
               <Text
-                style={{ color: tab ? "#2E2E2E" : THEME.GREY, fontSize: 12 }}
+                style={{ color: tab ? THEME.BLACK : THEME.GREY, fontSize: 12 }}
               >
                 За последнюю неделю
               </Text>
@@ -139,7 +139,7 @@ export const StatisticsScreen = () => {
             active={tab == Type.Month}
             title={
               <Text
-                style={{ color: !tab ? "#2E2E2E" : THEME.GREY, fontSize: 12 }}
+                style={{ color: !tab ? THEME.BLACK : THEME.GREY, fontSize: 12 }}
               >
                 За последний месяц
               </Text>
@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 26,
     fontWeight: "700",
-    color: "#2E2E2E",
+    color: THEME.BLACK,
   },
   containerBottom: {
     flexDirection: "column",
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
     height: "90%",
   },
   chartText: {
-    color: "#2E2E2E",
+    color: THEME.BLACK,
     marginTop: "8%",
     marginBottom: "3%",
     fontSize: 12,

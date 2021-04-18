@@ -127,14 +127,17 @@ export const MainScreen: React.FC<Props> = ({ toNext }) => {
             title={
               <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <Icon
-                  color={tab ? "#2E2E2E" : THEME.GREY}
+                  color={tab ? THEME.BLACK : THEME.GREY}
                   size={12}
                   style={{ paddingRight: 4 }}
                   type="font-awesome-5"
                   name="clock"
                 />
                 <Text
-                  style={{ color: tab ? "#2E2E2E" : THEME.GREY, fontSize: 12 }}
+                  style={{
+                    color: tab ? THEME.BLACK : THEME.GREY,
+                    fontSize: 12,
+                  }}
                 >
                   Все
                 </Text>
@@ -148,14 +151,17 @@ export const MainScreen: React.FC<Props> = ({ toNext }) => {
             title={
               <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <Icon
-                  color={!tab ? "#2E2E2E" : THEME.GREY}
+                  color={!tab ? THEME.BLACK : THEME.GREY}
                   size={12}
                   style={{ paddingRight: 4 }}
                   type="material"
                   name="near-me"
                 />
                 <Text
-                  style={{ color: !tab ? "#2E2E2E" : THEME.GREY, fontSize: 12 }}
+                  style={{
+                    color: !tab ? THEME.BLACK : THEME.GREY,
+                    fontSize: 12,
+                  }}
                 >
                   Ближайшие
                 </Text>
@@ -216,7 +222,7 @@ const styles = StyleSheet.create({
   startWorkText: {
     fontSize: 26,
     fontWeight: "700",
-    color: "#2E2E2E",
+    color: THEME.BLACK,
   },
   underStartWork: {
     fontSize: 14,

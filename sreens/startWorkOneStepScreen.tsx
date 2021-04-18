@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
   question: {
     fontSize: 24,
     fontWeight: "700",
-    color: "#2E2E2E",
+    color: THEME.BLACK,
   },
   underQuestion: {
     fontSize: 18,

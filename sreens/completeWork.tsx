@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
   completeWorkText: {
     fontSize: 26,
     fontWeight: "700",
-    color: "#2E2E2E",
+    color: THEME.BLACK,
   },
   startTimeWork: {
     fontSize: 14,

@@ -6,6 +6,7 @@ import { startWorkingHoursAsync } from "../data/actions";
 import { StatusWork } from "../utils/enums";
 import { Camera, CameraCapturedPicture } from "expo-camera";
 import { StoreType } from "../core/rootReducer";
+import { THEME } from "../data/constants";
 
 interface Props {
   toNext: () => void;
@@ -107,7 +108,7 @@ const styles = StyleSheet.create({
   question: {
     fontSize: 24,
     fontWeight: "700",
-    color: "#2E2E2E",
+    color: THEME.BLACK,
   },
   nextButton: {
     marginTop: "2%",
