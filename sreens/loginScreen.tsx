@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   StyleSheet,
@@ -6,42 +6,25 @@ import {
   Image,
   TouchableOpacity,
   Dimensions,
-  Platform,
 } from "react-native";
 import { CustomButton, TextField } from "../components";
-import * as Notifications from "expo-notifications";
-import Constants from "expo-constants";
 import { THEME } from "../data/constants";
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false,
-  }),
-});
-
 interface Props {
-  setAuth: (value: boolean) => void;
-  setReg: (value: boolean) => void;
+  auth: () => void;
+  register: () => void;
 }
 
-export const LoginScreen: React.FC<Props> = ({ setAuth, setReg }) => {
+export const LoginScreen: React.FC<Props> = ({ auth, register }) => {
   let deviceHeight = Dimensions.get("window").height;
 
-  const [expoPushToken, setExpoPushToken] = useState<string>();
-  const [
-    notification,
-    setNotification,
-  ] = useState<Notifications.Notification>();
-  const notificationListener = useRef();
-  const responseListener = useRef();
-
-  useEffect(() => {
-    // registerForPushNotificationsAsync().then((token) =>
-    //   setExpoPushToken(token)
-    // );
-  }, []);
+  const [login, setLogin] = useState<{
+    login: string;
+    password: string;
+  }>({
+    login: "123-456-789 00",
+    password: "12345678",
+  });
 
   return (
     <View style={styles.container}>
@@ -56,32 +39,33 @@ export const LoginScreen: React.FC<Props> = ({ setAuth, setReg }) => {
       <View style={styles.infoContainer}>
         <View style={styles.greetingContainer}>
           <Text style={styles.greeting}>Добро пожаловать!</Text>
-          <Text style={styles.underGreeting}>
-            {"Войдите, чтобы продолжить"}
-          </Text>
+          <Text style={styles.underGreeting}>Войдите, чтобы продолжить</Text>
         </View>
-        <TextField value="123-456-789 00" label="СНИЛС" onChange={() => {}} />
+        <TextField
+          value={login.login}
+          label="СНИЛС"
+          onChange={(v) => setLogin({ ...login, login: v })}
+        />
         <TextField
           secureTextEntry
-          value="12345678"
+          value={login.password}
           label="ПАРОЛЬ"
-          onChange={() => {}}
+          onChange={(password) => setLogin({ ...login, password })}
         />
         <View style={styles.containerForgottenPassword}>
           <TouchableOpacity onPress={() => {}}>
-            <Text style={styles.forgottenPassword}>{"Забыли пароль?"}</Text>
+            <Text style={styles.forgottenPassword}>Забыли пароль?</Text>
           </TouchableOpacity>
         </View>
         <View
           style={{
             marginTop: `${deviceHeight / 80}%`,
-            alignItems: "center",
           }}
         >
-          <CustomButton title="Войти" onPress={() => setAuth(true)} />
+          <CustomButton title="Войти" onPress={auth} />
           <View style={styles.containerNewUser}>
-            <Text style={styles.newUser}>Новый пользователь? </Text>
-            <TouchableOpacity onPress={() => setReg(true)}>
+            <Text style={styles.newUser}>Новый пользователь?</Text>
+            <TouchableOpacity onPress={register}>
               <Text style={styles.register}> Регистрация</Text>
             </TouchableOpacity>
           </View>
@@ -120,7 +104,7 @@ const styles = StyleSheet.create({
   forgottenPassword: {
     color: THEME.GREY,
     fontSize: 12,
-    paddingTop: "5%",
+    paddingTop: "6%",
   },
   containerForgottenPassword: {
     alignItems: "flex-end",
@@ -131,58 +115,12 @@ const styles = StyleSheet.create({
   },
   register: {
     fontSize: 12,
-    zIndex: 10,
   },
   containerNewUser: {
     flexDirection: "row",
     justifyContent: "center",
     width: "100%",
-    marginTop: "5%",
-    alignContent: "center",
+    marginTop: "7%",
     fontSize: 12,
   },
 });
-
-async function schedulePushNotification() {
-  await Notifications.scheduleNotificationAsync({
-    content: {
-      title: "You've got mail! 📬",
-      body: "Here is the notification body",
-      data: { data: "goes here" },
-    },
-    trigger: { seconds: 5 },
-  });
-}
-
-async function registerForPushNotificationsAsync() {
-  let token;
-  if (Constants.isDevice) {
-    const {
-      status: existingStatus,
-    } = await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-    if (existingStatus !== "granted") {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-    }
-    if (finalStatus !== "granted") {
-      alert("Failed to get push token for push notification!");
-      return;
-    }
-    token = (await Notifications.getExpoPushTokenAsync()).data;
-    console.log(token);
-  } else {
-    alert("Must use physical device for Push Notifications");
-  }
-
-  if (Platform.OS === "android") {
-    Notifications.setNotificationChannelAsync("default", {
-      name: "default",
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [500, 250, 250, 250],
-      lightColor: "#FF231F7C",
-    });
-  }
-
-  return token;
-}

@@ -358,8 +358,8 @@ export default function App() {
         {auth === Action.Registration && <Registration />}
         {auth === Action.None && (
           <LoginScreen
-            setReg={() => (setAuth(Action.Registration), setStepReg(1))}
-            setAuth={() => (
+          register={() => (setAuth(Action.Registration), setStepReg(1))}
+            auth={() => (
               setAuth(Action.Auth),
               setStartWork(ActionStartWork.None),
               setStepStart(1)
