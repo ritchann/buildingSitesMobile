@@ -46,10 +46,7 @@ const MenuBar = (props: any) => {
         onPress={() => props.navigation.openDrawer()}
       >
         <Image
-          source={{
-            uri:
-              "https://banner2.cleanpng.com/20180513/otq/kisspng-hamburger-button-computer-icons-menu-tab-5af896fdbf7b90.7623544115262410217843.jpg",
-          }}
+          source={require("./image/menu.jpg")}
           style={{
             opacity: 0.7,
             width: 22,
@@ -264,10 +261,7 @@ export default function App() {
               onPress={() => props.navigation.closeDrawer()}
             >
               <Image
-                source={{
-                  uri:
-                    "https://banner2.cleanpng.com/20180513/otq/kisspng-hamburger-button-computer-icons-menu-tab-5af896fdbf7b90.7623544115262410217843.jpg",
-                }}
+                source={require("./image/menu.jpg")}
                 style={{
                   opacity: 0.7,
                   width: 22,
@@ -305,7 +299,7 @@ export default function App() {
 
     return (
       <Drawer.Navigator
-        drawerStyle={{ width: (deviceWidth / 3) * 2 }}
+        drawerStyle={{ width: deviceWidth * 0.65, backgroundColor: "white" }}
         drawerContent={(props) => <CustomDrawerContent {...props} />}
       >
         <Drawer.Screen
@@ -383,12 +377,12 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "bold",
     marginTop: "25%",
-    marginBottom: "10%",
+    marginBottom: "25%",
     color: THEME.BLACK,
   },
   exit: {
     fontWeight: "normal",
     color: THEME.GREY,
-    fontSize: 16,
+    fontSize: 14,
   },
 });

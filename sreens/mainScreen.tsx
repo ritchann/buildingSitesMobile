@@ -6,6 +6,7 @@ import {
   FlatList,
   Dimensions,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import { Icon } from "react-native-elements";
 import { useDispatch, useSelector } from "react-redux";
@@ -39,41 +40,29 @@ export const MainScreen: React.FC<Props> = ({ toNext }) => {
     (state: StoreType) => state.data
   );
 
-  const test = useCallback(() => {
-    // dispatch(
-    //   createSiteAsync({
-    //     coords: "[[0, 1]]",
-    //     name: "test",
-    //     city: "test",
-    //     street: "test",
-    //   })
-    // );
-  }, [dispatch]);
-
   useEffect(() => {
     dispatch(getSiteListAsync());
   }, [dispatch]);
 
   const [location, setLocation] = useState<Location.LocationObject>();
-  const [errorMsg, setErrorMsg] = useState<string>();
 
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        return;
+      if (status == "granted") {
+        let location = await Location.getCurrentPositionAsync({});
+        setLocation(location);
       }
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
     })();
   }, []);
 
-  const getDistance = useCallback((pointA: number[], pointB: number[]) => {
-    return Math.sqrt(
-      Math.pow(pointB[0] - pointA[0], 2) + Math.pow(pointB[1] - pointA[1], 2)
-    );
-  }, []);
+  const getDistance = useCallback(
+    (pointA: number[], pointB: number[]) =>
+      Math.sqrt(
+        Math.pow(pointB[0] - pointA[0], 2) + Math.pow(pointB[1] - pointA[1], 2)
+      ),
+    []
+  );
 
   const nearList = useMemo(() => {
     const result: Site[] = [];
@@ -103,29 +92,35 @@ export const MainScreen: React.FC<Props> = ({ toNext }) => {
     [search, siteList, tab, nearList]
   );
 
-  return (
+  return siteList.length == 0 ? (
+    <View style={{ width: "100%", height: "100%", backgroundColor: "white" }}>
+      <Image
+        style={{
+          height: "90%",
+          width: "100%",
+          resizeMode: "contain",
+        }}
+        source={require("../image/dote.gif")}
+      />
+    </View>
+  ) : (
     <View style={styles.container}>
       <View
         style={{
           width: "80%",
           marginTop: "5%",
-          height: deviceHeight / 4,
+          height: deviceHeight / 4.1,
         }}
       >
         <Text style={styles.startWorkText}>Начать работу</Text>
         <Text style={styles.underStartWork}>Выберите площадку из списка</Text>
         <SearchField value={search} onChange={setSearch} />
-        <View
-          style={{
-            marginTop: "3%",
-            flexDirection: "row",
-          }}
-        >
+        <View style={styles.lineTabs}>
           <TabButton
             widthTab={110}
             active={tab == Tab.All}
             title={
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <View style={styles.tab}>
                 <Icon
                   color={tab ? THEME.BLACK : THEME.GREY}
                   size={12}
@@ -149,9 +144,9 @@ export const MainScreen: React.FC<Props> = ({ toNext }) => {
             widthTab={110}
             active={tab == Tab.Near}
             title={
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <View style={styles.tab}>
                 <Icon
-                  color={!tab ? THEME.BLACK : THEME.GREY}
+                  color={tab ? THEME.GREY : THEME.BLACK}
                   size={12}
                   style={{ paddingRight: 4 }}
                   type="material"
@@ -159,7 +154,7 @@ export const MainScreen: React.FC<Props> = ({ toNext }) => {
                 />
                 <Text
                   style={{
-                    color: !tab ? THEME.BLACK : THEME.GREY,
+                    color: tab ? THEME.GREY : THEME.BLACK,
                     fontSize: 12,
                   }}
                 >
@@ -174,7 +169,7 @@ export const MainScreen: React.FC<Props> = ({ toNext }) => {
       <View
         style={{
           width: "90%",
-          height: deviceHeight - 240,
+          height: deviceHeight - 230,
         }}
       >
         <FlatList
@@ -191,20 +186,7 @@ export const MainScreen: React.FC<Props> = ({ toNext }) => {
         />
       </View>
       {currentSite && (
-        <TouchableOpacity
-          onPress={toNext}
-          style={{
-            backgroundColor: "#F9D24A",
-            height: 60,
-            width: 60,
-            borderRadius: 100,
-            marginTop: -100,
-            marginLeft: 210,
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
+        <TouchableOpacity onPress={toNext} style={styles.next}>
           <Icon size={20} type="ionicon" name="arrow-forward-outline" />
         </TouchableOpacity>
       )}
@@ -214,10 +196,11 @@ export const MainScreen: React.FC<Props> = ({ toNext }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexDirection: "column",
     alignItems: "center",
     fontFamily: "Roboto",
     backgroundColor: "white",
+    height: "100%",
   },
   startWorkText: {
     fontSize: 26,
@@ -229,8 +212,21 @@ const styles = StyleSheet.create({
     fontWeight: "normal",
     color: THEME.GREY,
   },
-  containerBottom: {
-    width: "90%",
-    height: "65%",
+  lineTabs: {
+    marginTop: "3%",
+    flexDirection: "row",
+  },
+  tab: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  next: {
+    backgroundColor: THEME.YELLOW,
+    height: 60,
+    width: 60,
+    borderRadius: 100,
+    marginTop: -100,
+    marginLeft: 250,
+    justifyContent: "center",
   },
 });
