@@ -35,3 +35,11 @@ export interface Employee {
   password: string;
   login: string;
 }
+
+export interface Accident {
+  id: number;
+  time: Date;
+  workingHoursId: number;
+  lon: number;
+  lat: number;
+}

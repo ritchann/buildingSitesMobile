@@ -58,7 +58,7 @@ export const StatisticsScreen = () => {
       tab == Type.Week
         ? DateTime.addDays(new Date(), -8)
         : DateTime.addMonths(new Date(), -1);
-    const toDate: Date = new Date();
+    const toDate: Date = DateTime.addHours(new Date(), 3);
     const res: WorkingHours[] = [];
     workingHoursList.forEach((x) => {
       if (

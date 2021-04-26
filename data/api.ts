@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Employee, Site, WorkingHours } from "./model";
+import { Accident, Employee, WorkingHours } from "./model";
 
 const url = "http://192.168.0.104:5000/";
 
@@ -21,5 +21,8 @@ export const getWorkingHoursList = (data: number) =>
 export const updateUser = (data: Employee) =>
   axios.put(url + `employee/${data.id}`, data).then((res) => res.data);
 
-export const createSite = (data: Site) =>
-  axios.post(url + "site", data).then((res) => res.data);
+export const createAccident = (data: Accident) =>
+  axios.post(url + "accident", data).then((res) => res.data);
+
+
+

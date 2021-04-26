@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -7,8 +7,14 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
+import { useDispatch } from "react-redux";
 import { CustomButton, TextField } from "../components";
+import { createAccidentAsync } from "../data/actions";
 import { THEME } from "../data/constants";
+
+import { w3cwebsocket as W3CWebSocket } from "websocket";
+
+const client = new W3CWebSocket("ws://192.168.0.104:8000");
 
 interface Props {
   auth: () => void;
@@ -18,6 +24,8 @@ interface Props {
 export const LoginScreen: React.FC<Props> = ({ auth, register }) => {
   let deviceHeight = Dimensions.get("window").height;
 
+  const dispatch = useDispatch();
+
   const [login, setLogin] = useState<{
     login: string;
     password: string;
@@ -25,6 +33,39 @@ export const LoginScreen: React.FC<Props> = ({ auth, register }) => {
     login: "123-456-789 00",
     password: "12345678",
   });
+
+  const urlWS = "ws://192.168.0.104:5000";
+
+  // const connection = new WebSocket(urlWS);
+
+  // connection.onopen = () => {
+  //   connection.onmessage = (e) => {
+  //     console.log(e.data);
+  //   };
+  // };
+
+  // connection.onmessage = (e) => {
+  //   console.log(e.data);
+  // };
+
+  client.onopen = () => {
+    console.log("WebSocket Client Connected");
+  };
+
+  client.onmessage = (message) => {
+    console.log(message);
+  };
+
+  const createAccident = useCallback(() => {
+    dispatch(
+      createAccidentAsync({
+        time: new Date(),
+        workingHoursId: 92,
+        lon: 56.1209,
+        lat: 44.1234,
+      })
+    );
+  }, [dispatch]);
 
   return (
     <View style={styles.container}>
@@ -62,7 +103,8 @@ export const LoginScreen: React.FC<Props> = ({ auth, register }) => {
             marginTop: `${deviceHeight / 80}%`,
           }}
         >
-          <CustomButton title="Войти" onPress={auth} />
+          {/* onPress={auth}  */}
+          <CustomButton title="Войти" onPress={createAccident} />
           <View style={styles.containerNewUser}>
             <Text style={styles.newUser}>Новый пользователь?</Text>
             <TouchableOpacity onPress={register}>

@@ -45,6 +45,6 @@ export const updateUserAsync: (data: any) => Action = (data) => {
   return { type: ActionType.UPDATEUSERASYNC, data };
 };
 
-export const createSiteAsync: (data: any) => Action = (data) => {
-  return { type: ActionType.CREATESITEASYNC, data };
+export const createAccidentAsync: (data: any) => Action = (data) => {
+  return { type: ActionType.CREATEACCIDENTASYNC, data };
 };

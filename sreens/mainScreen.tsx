@@ -12,11 +12,7 @@ import { Icon } from "react-native-elements";
 import { useDispatch, useSelector } from "react-redux";
 import { SearchField, TabButton, ListItem } from "../components";
 import { StoreType } from "../core/rootReducer";
-import {
-  createSiteAsync,
-  getSiteListAsync,
-  setCurrentSite,
-} from "../data/actions";
+import { getSiteListAsync, setCurrentSite } from "../data/actions";
 import * as Location from "expo-location";
 import { Site } from "../data/model";
 import { THEME } from "../data/constants";

@@ -2,7 +2,7 @@ import { ActionsObservable, combineEpics, ofType } from "redux-observable";
 import { from } from "rxjs";
 import { ActionType } from "./actionType";
 import {
-  createSite,
+  createAccident,
   createUser,
   getSiteList,
   getWorkingHoursList,
@@ -94,14 +94,14 @@ const updateUserEpic = (action$: ActionsObservable<Action<any>>) =>
     )
   );
 
-const createSiteEpic = (action$: ActionsObservable<Action<any>>) =>
+const createAccidentEpic = (action$: ActionsObservable<Action<any>>) =>
   action$.pipe(
-    ofType(ActionType.CREATESITEASYNC),
+    ofType(ActionType.CREATEACCIDENTASYNC),
     mergeMap((action) =>
-      from(createSite((action as any).data)).pipe(
+      from(createAccident((action as any).data)).pipe(
         map((response) => {
           console.log(response);
-          return setSiteList([]);
+          return setStartWorkingHours([]);
         })
       )
     )
@@ -114,5 +114,5 @@ export const epic = combineEpics(
   createUserEpic,
   getWorkingHoursListEpic,
   updateUserEpic,
-  createSiteEpic
+  createAccidentEpic
 );
