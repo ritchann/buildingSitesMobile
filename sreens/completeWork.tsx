@@ -159,14 +159,6 @@ export const CompleteScreen = () => {
 
   return (
     <View style={styles.container}>
-              <Modal
-          // style={{ backgroundColor: "white", width: 1200, height: 1300 }}
-          animationType="slide"
-          transparent={true}
-          visible={true}
-        >
-          <View><Text>Hello</Text> </View>
-        </Modal>
       <View
         style={{
           width: "80%",
