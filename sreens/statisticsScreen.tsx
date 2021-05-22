@@ -7,7 +7,7 @@ import {
   Image,
   Button,
 } from "react-native";
-import { LineChart } from "react-native-chart-kit";
+import { ContributionGraph, LineChart } from "react-native-chart-kit";
 import { useDispatch, useSelector } from "react-redux";
 import { StoreType } from "../core/rootReducer";
 import { getWorkingHoursListAsync } from "../data/actions";
@@ -20,7 +20,7 @@ import { CustomButton } from "../components";
 const chartConfig = {
   backgroundGradientFrom: "white",
   backgroundGradientTo: "white",
-  color: (opacity = 1) => `rgba(249, 210, 74, ${opacity})`,
+  color: (opacity: number) => `rgba(249, 210, 74, ${opacity})`,
   barPercentage: 5,
   fillShadowGradientOpacity: 100,
   decimalPlaces: 2,
@@ -81,7 +81,6 @@ export const StatisticsScreen = () => {
 
   const workingHoursWeek = useMemo(() => {
     const fromDate: Date = DateTime.addDays(new Date(), -8);
-
     const toDate: Date = DateTime.addHours(new Date(), 3);
     const res: WorkingHours[] = [];
     workingHoursList.forEach((x) => {
@@ -99,6 +98,7 @@ export const StatisticsScreen = () => {
         data.push(getDifference(x) / 60);
       }
     });
+
     return {
       labels: labels.length > 0 ? labels : [""],
       datasets: [
@@ -125,6 +125,29 @@ export const StatisticsScreen = () => {
       ],
     };
   }, []);
+
+  const contributionList = useMemo(() => {
+    const data: { date: string; count: number }[] = [];
+
+    const date: Date = new Date();
+    const fromDate: Date = new Date(date.getFullYear(), date.getMonth(), 2);
+    const toDate: Date = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      DateTime.getDaysInMonth(date.getFullYear(), date.getMonth())
+    );
+    workingHoursList.forEach((x) => {
+      const incl = data.some(
+        (item) => item.date == DateTime.format(x.start, "isodate")
+      );
+      if (!incl)
+        data.push({
+          date: DateTime.format(x.start, "isodate"),
+          count: getDifference(x) / 60,
+        });
+    });
+    return data;
+  }, [workingHoursList, getDifference]);
 
   const workingHoursMonth = useMemo(() => {
     const fromDate: Date = DateTime.addMonths(new Date(), -1);
@@ -187,20 +210,30 @@ export const StatisticsScreen = () => {
         <Text style={styles.chartText}>
           ОТРАБОТАННЫЕ ЧАСЫ ЗА ПОСЛЕДНЮЮ НЕДЕЛЮ
         </Text>
+        {/* <ContributionGraph
+        gutterSize={3}
+        horizontal={false}
+          showOutOfRangeDays={true}
+          onDayPress={(x) => x.count}
+          squareSize={20}
+          titleForValue={(x) => "hello"}
+          values={contributionList}
+          endDate={
+            new Date(new Date().getFullYear(), new Date().getMonth(), 30)
+          }
+          numDays={98}
+          width={deviceWidth - 10}
+          height={520}
+          chartConfig={chartConfig}
+        /> */}
         <LineChart
-          fromZero
-          yAxisInterval={2}
-          formatYLabel={(e) => e}
           bezier
-          yLabelsOffset={10}
-          fromNumber={0}
-          segments={8}
+          segments={6}
           verticalLabelRotation={-90}
-          formatXLabel={() => ""}
           style={{
             marginLeft: -25,
           }}
-          data={list}
+          data={workingHoursWeek}
           width={deviceWidth - 35}
           withInnerLines
           height={deviceHeight / 3 - 15}
@@ -215,6 +248,7 @@ export const StatisticsScreen = () => {
           style={{
             marginLeft: -25,
           }}
+          segments={6}
           data={workingHoursMonth}
           width={deviceWidth - 35}
           withInnerLines
