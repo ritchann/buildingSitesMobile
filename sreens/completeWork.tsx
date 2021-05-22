@@ -123,25 +123,28 @@ export const CompleteScreen = () => {
     };
   }, [time]);
 
-  const end = useCallback(() => {
-    if (startWorkingHours) {
-      dispatch(
-        updateWorkingHoursAsync({
-          ...startWorkingHours,
-          start: DateTime.addHours(startWorkingHours.start, -3),
-          end: new Date(),
-          status: StatusWork.End,
-        })
-      );
-      dispatch(
-        setStartWorkingHours({
-          ...startWorkingHours,
-          end: DateTime.addHours(new Date(), 3),
-          status: StatusWork.End,
-        })
-      );
-    }
-  }, [dispatch, startWorkingHours]);
+  const end = useCallback(
+    (end?: boolean) => {
+      if (startWorkingHours) {
+        dispatch(
+          updateWorkingHoursAsync({
+            ...startWorkingHours,
+            start: DateTime.addHours(startWorkingHours.start, -3),
+            end: new Date(),
+            status: end ? StatusWork.End : StatusWork.Process,
+          })
+        );
+        dispatch(
+          setStartWorkingHours({
+            ...startWorkingHours,
+            end: DateTime.addHours(new Date(), 3),
+            status: end ? StatusWork.End : StatusWork.Process,
+          })
+        );
+      }
+    },
+    [dispatch, startWorkingHours]
+  );
 
   useEffect(() => {
     const interval = setInterval(() => end(), 30000);
@@ -332,7 +335,7 @@ export const CompleteScreen = () => {
         >
           <Text style={styles.countHours}>{(time / 60).toFixed(0)} часов</Text>
           <Text style={styles.countHours}>{(time % 60).toFixed(0)} минут</Text>
-          <TouchableOpacity onPress={() => end()}>
+          <TouchableOpacity onPress={() => end(true)}>
             <Text
               style={{
                 width: 150,

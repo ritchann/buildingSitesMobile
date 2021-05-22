@@ -13,6 +13,7 @@ import {
   RegistrationStepThreeScreen,
   StartWorkTwoScreen,
   ProfileScreen,
+  ShiftsScreen,
 } from "./sreens";
 import { NavigationContainer } from "@react-navigation/native";
 import {
@@ -73,6 +74,15 @@ function Statistics(props: any) {
     <View style={{ flex: 1, height: "100%" }}>
       <MenuBar {...props} />
       <StatisticsScreen />
+    </View>
+  );
+}
+
+function Shifts(props: any){
+  return (
+    <View style={{ flex: 1, height: "100%" }}>
+      <MenuBar {...props} />
+      <ShiftsScreen />
     </View>
   );
 }
@@ -282,9 +292,9 @@ export default function App() {
             />
           </View>
           <TouchableOpacity
-            style={{
+            style={{ 
               marginTop: `${
-                deviceHeight > 750 ? deviceHeight / 5 : deviceHeight / 6.5
+                deviceHeight > 750 ? deviceHeight / 6 : deviceHeight / 6.5
               }%`,
             }}
             onPress={() => (setAuth(Action.None), dispatch(signOutAsync()))}
@@ -347,6 +357,21 @@ export default function App() {
           }}
           name="Статистика"
           component={Statistics}
+        />
+        <Drawer.Screen
+          options={{
+            drawerIcon: () => (
+              <Icon
+                color="#F9D24A"
+                size={22}
+                containerStyle={{ marginLeft: -5, marginRight: -8 }}
+                type="font-awesome-5"
+                name="file-alt"
+              />
+            ),
+          }}
+          name="Смены"
+          component={Shifts}
         />
       </Drawer.Navigator>
     );

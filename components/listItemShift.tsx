@@ -1,16 +1,20 @@
 import React from "react";
 import { StyleSheet, TouchableOpacity, Text, View } from "react-native";
 import { Icon } from "react-native-elements";
+import { useSelector } from "react-redux";
+import { StoreType } from "../core/rootReducer";
 import { THEME } from "../data/constants";
-import { Site } from "../data/model";
+import { WorkingHours } from "../data/model";
+import { DateTime } from "../utils/dateTime";
 
 interface Props {
   onPress: () => void;
-  data: Site;
-  selectedItem: number;
+  data: WorkingHours;
 }
 
-export const ListItem: React.FC<Props> = ({ onPress, data, selectedItem }) => {
+export const ListItemShift: React.FC<Props> = ({ onPress, data }) => {
+  const { siteList } = useSelector((state: StoreType) => state.data);
+
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -22,17 +26,23 @@ export const ListItem: React.FC<Props> = ({ onPress, data, selectedItem }) => {
         flexDirection: "row",
         alignItems: "center",
         marginBottom: 12,
-        borderColor: selectedItem === data.id ? "#F9D24A" : "#f6f6f6",
+        borderColor: "#f6f6f6",
         borderWidth: 0.7,
       }}
     >
       <View style={styles.containerIcon}>
-        <Icon color="#171717" type="font-awesome-5" name="building" />
+        <Icon color="#171717" type="font-awesome-5" name="wrench" />
       </View>
       <View style={styles.containerInfo}>
-        <Text style={styles.title}>{data.name}</Text>
+        <Text style={styles.title}>
+          {siteList.find((x) => x.id == data.siteId)?.name}
+          {data.id}
+        </Text>
         <Text style={styles.address}>
-          {data.city}, улица {data.street}
+          {DateTime.format(data.start)} - {DateTime.format(data.end)}
+        </Text>
+        <Text style={styles.address}>
+          {data.status == 0 ? "В процессе" : "Завершена"}
         </Text>
       </View>
     </TouchableOpacity>
