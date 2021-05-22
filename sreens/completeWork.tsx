@@ -24,7 +24,8 @@ import { StatusWork } from "../utils/enums";
 import * as Notifications from "expo-notifications";
 import io from "socket.io-client";
 import { Accident } from "../data/model";
-import { CustomButton } from "../components";
+import { CustomButton, Map } from "../components";
+import * as Location from "expo-location";
 
 const chartConfig = {
   backgroundGradientFrom: "white",
@@ -46,6 +47,34 @@ export const CompleteScreen = () => {
   const dispatch = useDispatch();
 
   const [showModal, setShowModal] = useState(false);
+  const [showModalWithMap, setShowModalWithMap] = useState<{
+    accident?: Accident;
+    show: boolean;
+  }>({
+    show: false,
+  });
+
+  const [location, setLocation] = useState<{ lon: number; lat: number }>({
+    lon: 0,
+    lat: 0,
+  });
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestPermissionsAsync();
+      if (status == "granted") {
+        let location = await Location.getCurrentPositionAsync({});
+        setLocation({
+          lon: location.coords.longitude,
+          lat: location.coords.latitude,
+        });
+      }
+    })();
+  }, [setLocation]);
+
+  useMemo(() => {
+    console.log(location);
+  }, [location]);
 
   const { startWorkingHours, siteList, user } = useSelector(
     (state: StoreType) => state.data
@@ -67,12 +96,12 @@ export const CompleteScreen = () => {
       createAccidentAsync({
         time: new Date(),
         workingHoursId: 92,
-        lon: 56.1209,
-        lat: 44.1234,
+        lon: location.lon,
+        lat: location.lat,
       })
     );
     setShowModal(true);
-  }, [dispatch]);
+  }, [dispatch, location]);
 
   const time = useMemo(() => {
     if (startWorkingHours) {
@@ -140,6 +169,7 @@ export const CompleteScreen = () => {
         console.log(data);
         const accident = data as Accident;
         notifications();
+        setShowModalWithMap({ accident, show: true });
         console.log(user.id, data);
       });
     });
@@ -154,6 +184,75 @@ export const CompleteScreen = () => {
           height: deviceHeight / 4.5,
         }}
       >
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={showModalWithMap.show}
+          onRequestClose={() => {
+            setShowModal(false);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalViewMap}>
+              <View
+                style={{
+                  width: "95%",
+                  flexDirection: "column",
+                  justifyContent: "flex-start",
+                  marginBottom: 10,
+                }}
+              >
+                <View
+                  style={{
+                    marginBottom: 3,
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <View
+                    style={{
+                      backgroundColor: "#b9ec2e",
+                      width: 18,
+                      height: 18,
+                      borderRadius: 100,
+                      marginRight: 10,
+                    }}
+                  ></View>
+                  <Text>{"Ваше местоположение"}</Text>
+                </View>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <View
+                    style={{
+                      backgroundColor: "#e7322f",
+                      width: 18,
+                      height: 18,
+                      borderRadius: 100,
+                      marginRight: 10,
+                    }}
+                  ></View>
+                  <Text>{"Местоположение сигнала"}</Text>
+                </View>
+              </View>
+              <Map accident={showModalWithMap.accident} location={location} />
+              <View
+                style={{
+                  width: "100%",
+                  flexDirection: "row",
+                  justifyContent: "flex-end",
+                }}
+              >
+                <View style={{ width: 80, marginTop: 30 }}>
+                  <CustomButton
+                    onPress={() =>
+                      setShowModalWithMap({ show: false, accident: undefined })
+                    }
+                    title={"Ок"}
+                  ></CustomButton>
+                </View>
+              </View>
+            </View>
+          </View>
+        </Modal>
         <Modal
           animationType="fade"
           transparent={true}
@@ -201,7 +300,6 @@ export const CompleteScreen = () => {
               )
             : ""}
         </Text>
-
         <View style={styles.containerAddress}>
           <Icon color="#DADADA" size={30} type="material" name="room" />
           <View style={{ flexDirection: "column", marginLeft: "3%" }}>
@@ -215,7 +313,6 @@ export const CompleteScreen = () => {
           </View>
         </View>
       </View>
-
       <View style={styles.containerBottom}>
         <ProgressChart
           data={data}
@@ -343,5 +440,22 @@ const styles = StyleSheet.create({
     elevation: 5,
     width: 320,
     height: 150,
+  },
+  modalViewMap: {
+    margin: 15,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 25,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    width: 360,
+    height: 550,
   },
 });

@@ -1,32 +1,40 @@
 import React from "react";
-import { ActivityIndicator, StyleSheet } from "react-native";
-import { Button } from "react-native-elements";
+import { StyleSheet } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { THEME } from "../data/constants";
+import { Accident } from "../data/model";
 
 interface Props {
-  loading?: boolean;
+  location: { lon: number; lat: number };
+  accident?: Accident;
 }
 
-export const Map: React.FC<Props> = ({ loading }) => {
+export const Map: React.FC<Props> = ({ location, accident }) => {
   return (
     <MapView
-      minZoomLevel={4}
+      minZoomLevel={10}
       region={{
-        latitude: 56.32761,
-        longitude: 44.004217,
-        latitudeDelta: 0,
-        longitudeDelta: 0,
+        latitude: location.lat,
+        longitude: location.lon,
+        latitudeDelta: 0.001,
+        longitudeDelta: 0.001,
       }}
-      style={{ width: 1000, height: 500 }}
+      style={{ width: 300, height: 380 }}
     >
       <Marker
-        coordinate={{ latitude: 56.32761, longitude: 44.004217 }}
+        title={"Сигнал SOS"}
+        coordinate={{
+          latitude: accident?.lat ? accident.lat - 0.00023 : 0,
+          longitude: accident?.lon ?? 0,
+        }}
       ></Marker>
       <Marker
-        pinColor="green"
+        pinColor="#607c15"
         title={"Вы здесь"}
-        coordinate={{ latitude: 56.327411, longitude: 44.003067 }}
+        coordinate={{
+          latitude: location.lat,
+          longitude: location.lon,
+        }}
       ></Marker>
     </MapView>
   );

@@ -17,8 +17,7 @@ import { getSiteListAsync, setCurrentSite } from "../data/actions";
 import * as Location from "expo-location";
 import { Site } from "../data/model";
 import { THEME } from "../data/constants";
-import MapView from "react-native-maps";
-import { Marker } from "react-native-maps";
+
 
 enum Tab {
   All,
