@@ -1,19 +1,29 @@
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   View,
   StyleSheet,
   Text,
   TouchableOpacity,
   Dimensions,
+  Alert,
+  Vibration,
+  Modal,
 } from "react-native";
 import { ProgressChart } from "react-native-chart-kit";
 import { Icon } from "react-native-elements";
 import { useDispatch, useSelector } from "react-redux";
 import { StoreType } from "../core/rootReducer";
-import { setStartWorkingHours, updateWorkingHoursAsync } from "../data/actions";
+import {
+  createAccidentAsync,
+  setStartWorkingHours,
+  updateWorkingHoursAsync,
+} from "../data/actions";
 import { THEME } from "../data/constants";
 import { DateTime } from "../utils/dateTime";
 import { StatusWork } from "../utils/enums";
+import * as Notifications from "expo-notifications";
+import io from "socket.io-client";
+import { Accident } from "../data/model";
 
 const chartConfig = {
   backgroundGradientFrom: "white",
@@ -21,12 +31,20 @@ const chartConfig = {
   color: (opacity = 1) => `rgba(249, 200, 74, ${opacity})`,
 };
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
+
 export const CompleteScreen = () => {
   let deviceHeight = Dimensions.get("window").height;
   let deviceWidth = Dimensions.get("window").width;
   const dispatch = useDispatch();
 
-  const { startWorkingHours, siteList } = useSelector(
+  const { startWorkingHours, siteList, user } = useSelector(
     (state: StoreType) => state.data
   );
 
@@ -34,6 +52,23 @@ export const CompleteScreen = () => {
     () => siteList.find((x) => x.id == startWorkingHours?.siteId),
     [siteList, startWorkingHours]
   );
+
+  const SERVER = "http://192.168.43.232:8080";
+
+  const socket = io(SERVER, {
+    transports: ["websocket"],
+  });
+
+  const createAccident = useCallback(() => {
+    dispatch(
+      createAccidentAsync({
+        time: new Date(),
+        workingHoursId: 92,
+        lon: 56.1209,
+        lat: 44.1234,
+      })
+    );
+  }, [dispatch]);
 
   const time = useMemo(() => {
     if (startWorkingHours) {
@@ -80,8 +115,58 @@ export const CompleteScreen = () => {
     return () => clearInterval(interval);
   }, [end]);
 
+  const onLongPress = useCallback(() => {
+    Alert.alert(
+      "",
+      "Ваш сигнал SOS отправлен",
+      [
+        {
+          text: "OK",
+          onPress: () => {
+            Notifications.setNotificationChannelAsync("new-emails", {
+              name: "E-mail notifications",
+              importance: Notifications.AndroidImportance.HIGH,
+            });
+            Notifications.scheduleNotificationAsync({
+              content: {
+                title: "Сработал сигнал SOS 📣",
+                body: "Проверьте работника: Иванов Иван Иванович",
+              },
+              trigger: {
+                seconds: 5,
+                channelId: "new-emails",
+              },
+            });
+            Vibration.vibrate([1000, 2000, 1000, 2000]);
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  }, []);
+
+  useEffect(() => {
+    socket.on("connect", () => {
+      console.log("connect to socket");
+      socket.on("join", function (data) {
+        console.log(data);
+        const accident = data as Accident;
+        if (user.id == 17) onLongPress();
+        console.log(user.id, data);
+      });
+    });
+  }, [socket, onLongPress]);
+
   return (
     <View style={styles.container}>
+              <Modal
+          // style={{ backgroundColor: "white", width: 1200, height: 1300 }}
+          animationType="slide"
+          transparent={true}
+          visible={true}
+        >
+          <View><Text>Hello</Text> </View>
+        </Modal>
       <View
         style={{
           width: "80%",
@@ -99,6 +184,7 @@ export const CompleteScreen = () => {
               )
             : ""}
         </Text>
+
         <View style={styles.containerAddress}>
           <Icon color="#DADADA" size={30} type="material" name="room" />
           <View style={{ flexDirection: "column", marginLeft: "3%" }}>
@@ -112,6 +198,7 @@ export const CompleteScreen = () => {
           </View>
         </View>
       </View>
+      
       <View style={styles.containerBottom}>
         <ProgressChart
           data={data}
@@ -157,6 +244,8 @@ export const CompleteScreen = () => {
           <Text style={styles.sosText}>для отправки экстренного сообщения</Text>
         </View>
         <TouchableOpacity
+          onLongPress={createAccident}
+          delayLongPress={3000}
           style={{
             backgroundColor: "#F95F4A",
             height: deviceHeight / 6,

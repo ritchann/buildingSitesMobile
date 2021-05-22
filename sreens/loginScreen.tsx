@@ -9,12 +9,11 @@ import {
 } from "react-native";
 import { useDispatch } from "react-redux";
 import { CustomButton, TextField } from "../components";
-import { createAccidentAsync } from "../data/actions";
+import { authAsync, setUser } from "../data/actions";
 import { THEME } from "../data/constants";
 
-import { w3cwebsocket as W3CWebSocket } from "websocket";
-
-const client = new W3CWebSocket("ws://192.168.0.104:8000");
+import { AuthResponse } from "../data/model";
+import { getError } from "../core/getError";
 
 interface Props {
   auth: () => void;
@@ -26,65 +25,99 @@ export const LoginScreen: React.FC<Props> = ({ auth, register }) => {
 
   const dispatch = useDispatch();
 
+  const [subscription, setSunscription] = useState<boolean>(false);
+  const [load, setLoad] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
   const [login, setLogin] = useState<{
     login: string;
     password: string;
   }>({
-    login: "123-456-789 00",
-    password: "12345678",
+    login: "test@mail.ru",
+    password: "123456",
   });
 
-  const urlWS = "ws://192.168.0.104:5000";
-
-  // const connection = new WebSocket(urlWS);
-
-  // connection.onopen = () => {
-  //   connection.onmessage = (e) => {
-  //     console.log(e.data);
-  //   };
+  // const _subscribe = () => {
+  //   Accelerometer.addListener((accelerometerData) => {
+  //     const x = accelerometerData.x;
+  //     const y = accelerometerData.y;
+  //     const z = accelerometerData.z;
+  //     const res = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
+  //     console.log("x: " + x + ",  y:  " + y + ",  z:  " + z + ",   res:  " + res);
+  //   });
   // };
 
-  // connection.onmessage = (e) => {
-  //   console.log(e.data);
+  // const unsubscribe = () => {
+  //   Accelerometer.removeAllListeners();
   // };
 
-  client.onopen = () => {
-    console.log("WebSocket Client Connected");
-  };
+  // const subscribe = useCallback(() => {
+  //   console.log('fall ------------------------------------------------------')
+  //   Accelerometer.setUpdateInterval(300);
+  //   _subscribe();
+  // }, []);
 
-  client.onmessage = (message) => {
-    console.log(message);
-  };
+  const test = useCallback(() => {
+    var x = 56.31874;
+    var y = 44.048072;
+    var xp = new Array(56.320183, 56.319534, 56.316274, 56.315201); // Массив X-координат полигона
+    var yp = new Array(44.049079, 44.054172, 44.054486, 44.045701); // Массив Y-координат полигона
+    const npol = xp.length;
+    let j = npol - 1;
+    let c = false;
+    for (var i = 0; i < npol; i++) {
+      if (
+        ((yp[i] <= y && y < yp[j]) || (yp[j] <= y && y < yp[i])) &&
+        x > ((xp[j] - xp[i]) * (y - yp[i])) / (yp[j] - yp[i]) + xp[i]
+      ) {
+        c = !c;
+      }
+      j = i;
+    }
+    console.log("result", c);
+  }, []);
 
-  const createAccident = useCallback(() => {
+  const authAction = useCallback(() => {
+    setLoad(true);
     dispatch(
-      createAccidentAsync({
-        time: new Date(),
-        workingHoursId: 92,
-        lon: 56.1209,
-        lat: 44.1234,
+      authAsync({
+        login: login.login,
+        password: login.password,
+        onResponseCallback: (res: AuthResponse) => {
+          setLoad(false);
+          if (res.employee != null) {
+            dispatch(setUser(res.employee));
+            setError("");
+            auth();
+          } else if (res.employee != "") setError(getError(res.error));
+        },
       })
     );
-  }, [dispatch]);
+  }, [dispatch, login]);
 
   return (
     <View style={styles.container}>
       <Image
         style={{
-          height: `${deviceHeight / 16}%`,
+          height: deviceHeight / 4.5,
           width: "100%",
           resizeMode: "stretch",
         }}
-        source={require("../image/main.png")}
+        source={require("../image/upImage.png")}
       />
-      <View style={styles.infoContainer}>
+      <View
+        style={{
+          height: deviceHeight / 1.7,
+          width: "80%",
+        }}
+      >
         <View style={styles.greetingContainer}>
           <Text style={styles.greeting}>Добро пожаловать!</Text>
           <Text style={styles.underGreeting}>Войдите, чтобы продолжить</Text>
         </View>
         <TextField
+          keyboardType="email-address"
           value={login.login}
-          label="СНИЛС"
+          label="EMAIL"
           onChange={(v) => setLogin({ ...login, login: v })}
         />
         <TextField
@@ -93,18 +126,15 @@ export const LoginScreen: React.FC<Props> = ({ auth, register }) => {
           label="ПАРОЛЬ"
           onChange={(password) => setLogin({ ...login, password })}
         />
-        <View style={styles.containerForgottenPassword}>
-          <TouchableOpacity onPress={() => {}}>
-            <Text style={styles.forgottenPassword}>Забыли пароль?</Text>
-          </TouchableOpacity>
+        <View style={styles.containerError}>
+          <Text style={styles.forgottenPassword}>{error}</Text>
         </View>
         <View
           style={{
-            marginTop: `${deviceHeight / 80}%`,
+            marginTop: `${deviceHeight / 35}%`,
           }}
         >
-          {/* onPress={auth}  */}
-          <CustomButton title="Войти" onPress={createAccident} />
+          <CustomButton title="Войти" loading={load} onPress={authAction} />
           <View style={styles.containerNewUser}>
             <Text style={styles.newUser}>Новый пользователь?</Text>
             <TouchableOpacity onPress={register}>
@@ -113,6 +143,14 @@ export const LoginScreen: React.FC<Props> = ({ auth, register }) => {
           </View>
         </View>
       </View>
+      <Image
+        style={{
+          height: deviceHeight / 2.8,
+          width: "100%",
+          resizeMode: "stretch",
+        }}
+        source={require("../image/downImage.png")}
+      />
     </View>
   );
 };
@@ -125,12 +163,8 @@ const styles = StyleSheet.create({
     height: "100%",
     backgroundColor: "white",
   },
-  infoContainer: {
-    height: "100%",
-    width: "80%",
-  },
   greetingContainer: {
-    marginTop: "6%",
+    marginTop: "4%",
     marginBottom: "5%",
   },
   greeting: {
@@ -147,9 +181,10 @@ const styles = StyleSheet.create({
     color: THEME.GREY,
     fontSize: 12,
     paddingTop: "6%",
+    fontWeight: "bold",
   },
-  containerForgottenPassword: {
-    alignItems: "flex-end",
+  containerError: {
+    alignItems: "center",
   },
   newUser: {
     color: THEME.GREY,

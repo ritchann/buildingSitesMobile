@@ -47,6 +47,7 @@
     "react-native-elements": "^3.1.0",
     "react-native-gesture-handler": "~1.8.0",
     "react-native-logs": "^2.2.1",
+    "react-native-maps": "^0.28.0",
     "react-native-pathjs-charts": "0.0.34",
     "react-native-reanimated": "^1.13.2",
     "react-native-safe-area-context": "^3.1.9",
@@ -60,6 +61,7 @@
     "redux": "^4.0.5",
     "redux-observable": "^1.2.0",
     "rxjs": "6.6.3",
+    "socket.io-client": "^4.1.2",
     "websocket": "^1.0.34"
   },
   "devDependencies": {

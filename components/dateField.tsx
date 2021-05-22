@@ -12,8 +12,12 @@ interface Props {
 export const DateField: React.FC<Props> = ({ value, onChange, label }) => {
   useEffect(() => {
     LogBox.ignoreLogs([
+      "componentWillReceiveProps has been renamed, and is not recommended for use. See https://fb.me/react-unsafe-component-lifecycles for details.",
       "Animated: `useNativeDriver`",
       "componentWillReceiveProps",
+      'DatePickerIOS has been merged with DatePickerAndroid and will be removed in a future release.',
+      'StatusBarIOS has been merged with StatusBar and will be removed in a future release.',
+      'DatePickerAndroid has been merged with DatePickerIOS and will be removed in a future release.'
     ]);
   }, []);
 

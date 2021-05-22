@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Provider } from "react-redux";
+import { Provider, useDispatch } from "react-redux";
 import { store } from "./core/store";
 
 import {
@@ -30,6 +30,7 @@ import {
 } from "react-native";
 import { Icon } from "react-native-elements";
 import { THEME } from "./data/constants";
+import { signOutAsync } from "./data/actions";
 
 const MenuBar = (props: any) => {
   let deviceHeight = Dimensions.get("window").height;
@@ -167,7 +168,7 @@ export default function App() {
       <View
         style={{
           flexDirection: "column",
-          height: `${deviceHeight > 700 ? 10 : 12}%`,
+          height: "10%",
         }}
       >
         <View
@@ -244,7 +245,7 @@ export default function App() {
 
   function CustomDrawerContent(props: any) {
     let deviceHeight = Dimensions.get("window").height;
-
+    const dispatch = useDispatch();
     return (
       <DrawerContentScrollView
         style={{ flex: 1, height: "100%", width: "100%" }}
@@ -286,7 +287,7 @@ export default function App() {
                 deviceHeight > 750 ? deviceHeight / 5 : deviceHeight / 6.5
               }%`,
             }}
-            onPress={() => setAuth(Action.None)}
+            onPress={() => (setAuth(Action.None), dispatch(signOutAsync()))}
           >
             <Text style={styles.exit}>ВЫЙТИ</Text>
           </TouchableOpacity>

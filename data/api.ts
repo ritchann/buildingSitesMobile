@@ -1,7 +1,9 @@
 import axios from "axios";
-import { Accident, Employee, WorkingHours } from "./model";
+import { Accident, AuthResponse, Employee, PPE, WorkingHours } from "./model";
 
-const url = "http://192.168.0.104:5000/";
+//const url = "https://building-test-123.herokuapp.com/";
+
+const url = "http://192.168.43.232:5000/";
 
 export const getSiteList = () =>
   axios.get(url + "site").then((res) => res.data);
@@ -24,5 +26,21 @@ export const updateUser = (data: Employee) =>
 export const createAccident = (data: Accident) =>
   axios.post(url + "accident", data).then((res) => res.data);
 
+export const checkPPE = (data: {
+  base64: string[];
+  onResponseCallback: (value: PPE) => void;
+}) => axios.post(url + "ml", data).then((res) => res.data);
+
+export const auth = (data: {
+  login: string;
+  password: string;
+  onResponseCallback: (value: AuthResponse) => void;
+}) => axios.post(url + "auth", data).then((res) => res.data);
+
+export const signOut = () => axios.get(url + "signOut").then((res) => res.data);
 
 
+export const signUp = (data: {
+  employee:Employee
+  onResponseCallback: (value: AuthResponse) => void;
+}) => axios.post(url + "signUp", data).then((res) => res.data);

@@ -48,3 +48,19 @@ export const updateUserAsync: (data: any) => Action = (data) => {
 export const createAccidentAsync: (data: any) => Action = (data) => {
   return { type: ActionType.CREATEACCIDENTASYNC, data };
 };
+
+export const checkPPEAsync: (data: any) => Action = (data) => {
+  return { type: ActionType.CHECKPPEASYNC, data };
+};
+
+export const authAsync: (data: any) => Action = (data) => {
+  return { type: ActionType.AUTHASYNC, data };
+};
+
+export const signOutAsync: () => Action = () => {
+  return { type: ActionType.SIGNOUTASYNC };
+};
+
+export const signUpAsync: (data: any) => Action = (data) => {
+  return { type: ActionType.SIGNUPASYNC, data };
+};

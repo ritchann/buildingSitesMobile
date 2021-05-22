@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet } from "react-native";
+import { ActivityIndicator, StyleSheet } from "react-native";
 import { Button } from "react-native-elements";
 import { THEME } from "../data/constants";
 
@@ -7,15 +7,19 @@ interface Props {
   onPress: () => void;
   title: string;
   disabled?: boolean;
+  loading?: boolean;
 }
 
 export const CustomButton: React.FC<Props> = ({
   onPress,
   title,
   disabled = false,
+  loading = false,
 }) => {
   return (
     <Button
+      loadingProps={{ color: THEME.BLACK }}
+      loading={loading}
       disabled={disabled}
       buttonStyle={styles.containerButton}
       containerStyle={styles.containerButton}

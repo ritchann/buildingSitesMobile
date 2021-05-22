@@ -1,3 +1,4 @@
+import { emptyUser } from "../core/emptyUser";
 import { ActionType } from "./actionType";
 import { Action, Employee, Site, WorkingHours } from "./model";
 
@@ -11,20 +12,8 @@ export interface StateType {
 
 const InitialState: StateType = {
   siteList: [],
-  user: {
-    id: 1,
-    name: "Иван",
-    surname: "Иванов",
-    patronymic: "Иванович",
-    inipa: "123-456-789 00",
-    tin: "3664069397",
-    birthDate: "10-05-1990",
-    phoneNumber: "+7(930)686-62-14",
-    specialty: 1,
-    password: "123456",
-    login: "bestWorker",
-  },
   workingHoursList: [],
+  user: emptyUser,
 };
 
 export const reducer = (state = InitialState, action: Action) => {
@@ -44,6 +33,7 @@ export const reducer = (state = InitialState, action: Action) => {
     case ActionType.SETWORKINGHOURSLIST: {
       return { ...state, workingHoursList: action.data as WorkingHours[] };
     }
+
     default:
       return state;
   }

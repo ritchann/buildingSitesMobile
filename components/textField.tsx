@@ -59,7 +59,7 @@ export const TextField: React.FC<Props> = ({
 const styles = StyleSheet.create({
   containerTextField: {
     width: "100%",
-    marginTop: 20,
+    marginTop: 18,
     flex: 0,
     justifyContent: "flex-start",
   },

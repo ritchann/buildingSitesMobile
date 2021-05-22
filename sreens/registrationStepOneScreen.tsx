@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, LogBox } from "react-native";
 import { CustomButton, DateField, TextField } from "../components";
 import { useDispatch, useSelector } from "react-redux";
 import { StoreType } from "../core/rootReducer";
@@ -14,6 +14,8 @@ export const RegistrationStepOneScreen: React.FC<Props> = ({ toNext }) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state: StoreType) => state.data);
 
+  LogBox.ignoreAllLogs();
+  
   const onChange = useCallback(
     (field: string, value: string) => {
       dispatch(setUser({ ...user, [field]: value }));
@@ -46,7 +48,9 @@ export const RegistrationStepOneScreen: React.FC<Props> = ({ toNext }) => {
           onChange={(v) => onChange("birthDate", v)}
         />
       </View>
-      <View style={styles.buttonContainer}>
+      <View style={{
+        width: "80%",marginTop:'10%'
+      }}>
         <CustomButton title="Далее" onPress={toNext} />
       </View>
     </View>
@@ -55,21 +59,19 @@ export const RegistrationStepOneScreen: React.FC<Props> = ({ toNext }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: "space-around",
+    flexDirection: "column",
     alignItems: "center",
     fontFamily: "Roboto",
     backgroundColor: "white",
   },
   dataContainer: {
     width: "80%",
+    marginTop: 55,
   },
   manual: {
     fontSize: 20,
     color: THEME.BLACK,
     fontWeight: "bold",
   },
-  buttonContainer: {
-    width: "80%",
-  },
+
 });

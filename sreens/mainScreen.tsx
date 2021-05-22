@@ -7,6 +7,7 @@ import {
   Dimensions,
   TouchableOpacity,
   Image,
+  Modal,
 } from "react-native";
 import { Icon } from "react-native-elements";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,6 +17,8 @@ import { getSiteListAsync, setCurrentSite } from "../data/actions";
 import * as Location from "expo-location";
 import { Site } from "../data/model";
 import { THEME } from "../data/constants";
+import MapView from "react-native-maps";
+import { Marker } from "react-native-maps";
 
 enum Tab {
   All,
@@ -89,14 +92,22 @@ export const MainScreen: React.FC<Props> = ({ toNext }) => {
   );
 
   return siteList.length == 0 ? (
-    <View style={{ width: "100%", height: "100%", backgroundColor: "white" }}>
+    <View
+      style={{
+        width: "100%",
+        height: "120%",
+        backgroundColor: "white",
+        marginTop: -100,
+      }}
+    >
       <Image
         style={{
           height: "90%",
           width: "100%",
           resizeMode: "contain",
+          backgroundColor: "white",
         }}
-        source={require("../image/dote.gif")}
+        source={require("../image/splash.gif")}
       />
     </View>
   ) : (
@@ -186,6 +197,7 @@ export const MainScreen: React.FC<Props> = ({ toNext }) => {
           <Icon size={20} type="ionicon" name="arrow-forward-outline" />
         </TouchableOpacity>
       )}
+
     </View>
   );
 };

@@ -1,48 +1,55 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { View, StyleSheet, Text, Dimensions } from "react-native";
-import { TabButton } from "../components";
-import { BarChart, LineChart } from "react-native-chart-kit";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  View,
+  StyleSheet,
+  Text,
+  Dimensions,
+  Image,
+  Button,
+} from "react-native";
+import { LineChart } from "react-native-chart-kit";
 import { useDispatch, useSelector } from "react-redux";
 import { StoreType } from "../core/rootReducer";
-import { dispatch } from "rxjs/internal/observable/pairs";
 import { getWorkingHoursListAsync } from "../data/actions";
 import { WorkingHours } from "../data/model";
-import { DaysWeek } from "../enums/daysWeek";
 import { DateTime } from "../utils/dateTime";
-import { Tooltip } from "react-native-elements";
 import { THEME } from "../data/constants";
-
-enum Type {
-  Week,
-  Month,
-}
+import { Accelerometer } from "expo-sensors";
+import { CustomButton } from "../components";
 
 const chartConfig = {
   backgroundGradientFrom: "white",
   backgroundGradientTo: "white",
   color: (opacity = 1) => `rgba(249, 210, 74, ${opacity})`,
-  barPercentage: 0.5,
+  barPercentage: 5,
   fillShadowGradientOpacity: 100,
   decimalPlaces: 2,
   labelColor: () => `black`,
 };
 
+const mas = [
+  1.0210740053531953, 1.0377244232345235, 1.0438503073331364,
+  1.0427709032237533, 1.0299807638363787, 1.1000497847801038,
+  0.9962431866491268, 1.0674232239832095, 0.9918381940102409,
+  1.0493879765481313, 1.0244950426514554, 1.0907544662011774,
+  0.9761681325344729, 1.0315572093595087, 1.014843028714255, 1.0111698148146133,
+  1.0206723667562334, 1.0135061206276876, 1.007716565752645, 1.01576584681935,
+  0.0199056329012792, 0.03526154373499607, 0.09746422393196247,
+  0.34187427879307974, 2.632023059077249, 1.0347094858304953,
+  1.0157016659102651, 1.0189330998982287, 1.018403205329069, 1.0287066171899426,
+  1.0172688974950361, 1.0217039647978507, 1.0217703187915372,
+  1.0205273840069968, 1.0213487754156356, 1.0164244396694615, 1.031071875717514,
+  0.9931022844199197, 1.0433996940295553, 1.0422185229640992,
+  1.0080293165821939, 1.0292543393951374, 1.0175150320996138,
+  0.9587879760174418, 1.0223301057219958,
+];
 export const StatisticsScreen = () => {
   const dispatch = useDispatch();
-
-  const [tab, setTab] = useState(Type.Week);
 
   let deviceWidth = Dimensions.get("window").width;
   let deviceHeight = Dimensions.get("window").height;
 
-  let tooltipRef = useRef<React.LegacyRef<Tooltip>>({ current: null });
-
+  const [sups, setSups] = useState(true);
   const { user, workingHoursList } = useSelector(
     (state: StoreType) => state.data
   );
@@ -53,11 +60,28 @@ export const StatisticsScreen = () => {
     return to - from;
   }, []);
 
-  const workingHours = useMemo(() => {
-    const fromDate: Date =
-      tab == Type.Week
-        ? DateTime.addDays(new Date(), -8)
-        : DateTime.addMonths(new Date(), -1);
+  const _subscribe = () => {
+    Accelerometer.addListener((accelerometerData) => {
+      const x = accelerometerData.x;
+      const y = accelerometerData.y;
+      const z = accelerometerData.z;
+      const res = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
+      console.log(res + ", ");
+    });
+  };
+
+  const uns = () => {
+    Accelerometer.removeAllListeners();
+  };
+
+  const sub = useCallback(() => {
+    Accelerometer.setUpdateInterval(200);
+    _subscribe();
+  }, []);
+
+  const workingHoursWeek = useMemo(() => {
+    const fromDate: Date = DateTime.addDays(new Date(), -8);
+
     const toDate: Date = DateTime.addHours(new Date(), 3);
     const res: WorkingHours[] = [];
     workingHoursList.forEach((x) => {
@@ -67,17 +91,9 @@ export const StatisticsScreen = () => {
       )
         res.push(x);
     });
-    return res;
-  }, [tab, workingHoursList]);
-
-  useEffect(() => {
-    dispatch(getWorkingHoursListAsync(user.id));
-  }, [dispatch]);
-
-  const dataHours = useMemo(() => {
     const data: number[] = [];
     const labels: string[] = [];
-    workingHours.forEach((x) => {
+    res.forEach((x) => {
       if (!labels.includes(x.start.getDate().toString())) {
         labels.push(x.start.getDate().toString());
         data.push(getDifference(x) / 60);
@@ -91,15 +107,42 @@ export const StatisticsScreen = () => {
         },
       ],
     };
-  }, [workingHours]);
+  }, [workingHoursList]);
 
-  const dataSteps = useMemo(() => {
+  const list = useMemo(() => {
+    const labels: string[] = [];
+    const data: number[] = [];
+    mas.forEach((x, key) => {
+      labels.push(x.toString());
+      data.push(x);
+    });
+    return {
+      labels: labels,
+      datasets: [
+        {
+          data,
+        },
+      ],
+    };
+  }, []);
+
+  const workingHoursMonth = useMemo(() => {
+    const fromDate: Date = DateTime.addMonths(new Date(), -1);
+    const toDate: Date = DateTime.addHours(new Date(), 3);
+    const res: WorkingHours[] = [];
+    workingHoursList.forEach((x) => {
+      if (
+        x.start.getTime() >= fromDate.getTime() &&
+        x.start.getTime() <= toDate.getTime()
+      )
+        res.push(x);
+    });
     const data: number[] = [];
     const labels: string[] = [];
-    workingHours.forEach((x) => {
+    res.forEach((x) => {
       if (!labels.includes(x.start.getDate().toString())) {
         labels.push(x.start.getDate().toString());
-        data.push(x.steps);
+        data.push(getDifference(x) / 60);
       }
     });
     return {
@@ -110,68 +153,69 @@ export const StatisticsScreen = () => {
         },
       ],
     };
-  }, [workingHours]);
+  }, [workingHoursList]);
 
-  return (
+  useEffect(() => {
+    dispatch(getWorkingHoursListAsync(user.id));
+  }, [dispatch]);
+
+  return workingHoursList.length == 0 ? (
+    <View
+      style={{
+        width: "100%",
+        height: "120%",
+        backgroundColor: "white",
+        marginTop: -100,
+      }}
+    >
+      <Image
+        style={{
+          height: "90%",
+          width: "100%",
+          resizeMode: "contain",
+          backgroundColor: "white",
+        }}
+        source={require("../image/splash.gif")}
+      />
+    </View>
+  ) : (
     <View style={styles.container}>
       <View style={styles.containerTop}>
         <Text style={styles.headerText}>Статистика</Text>
-        <View
-          style={{
-            marginTop: "3%",
-            flexDirection: "row",
-          }}
-        >
-          <TabButton
-            widthTab={163}
-            active={tab == Type.Week}
-            title={
-              <Text
-                style={{ color: tab ? THEME.BLACK : THEME.GREY, fontSize: 12 }}
-              >
-                За последнюю неделю
-              </Text>
-            }
-            onPress={() => setTab(Type.Week)}
-          />
-          <TabButton
-            widthTab={148}
-            active={tab == Type.Month}
-            title={
-              <Text
-                style={{ color: !tab ? THEME.BLACK : THEME.GREY, fontSize: 12 }}
-              >
-                За последний месяц
-              </Text>
-            }
-            onPress={() => setTab(Type.Month)}
-          />
-        </View>
       </View>
       <View style={styles.containerBottom}>
-        <Text style={styles.chartText}>ОТРАБОТАННЫЕ ЧАСЫ</Text>
-        <BarChart
-          verticalLabelRotation={-90}
-          xAxisLabel=""
+        <Text style={styles.chartText}>
+          ОТРАБОТАННЫЕ ЧАСЫ ЗА ПОСЛЕДНЮЮ НЕДЕЛЮ
+        </Text>
+        <LineChart
           fromZero
-          yAxisLabel=""
-          yAxisSuffix=""
+          yAxisInterval={2}
+          formatYLabel={(e) => e}
+          bezier
+          yLabelsOffset={10}
+          fromNumber={0}
+          segments={8}
+          verticalLabelRotation={-90}
+          formatXLabel={() => ""}
           style={{
             marginLeft: -25,
           }}
-          data={dataHours}
+          data={list}
           width={deviceWidth - 35}
+          withInnerLines
           height={deviceHeight / 3 - 15}
           chartConfig={chartConfig}
         />
-        <Text style={styles.chartText}>АКТИВНОСТЬ</Text>
+        <Text style={styles.chartText}>
+          ОТРАБОТАННЫЕ ЧАСЫ ЗА ПОСЛЕДНИЙ МЕСЯЦ
+        </Text>
         <LineChart
           bezier
           verticalLabelRotation={-90}
           style={{
-            marginLeft: -10,
+            marginLeft: -25,
           }}
-          data={dataSteps}
+          data={workingHoursMonth}
           width={deviceWidth - 35}
           withInnerLines
           height={deviceHeight / 3 - 15}
@@ -184,7 +228,7 @@ export const StatisticsScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexDirection: "column",
     alignItems: "center",
     fontFamily: "Roboto",
     backgroundColor: "white",
@@ -192,7 +236,7 @@ const styles = StyleSheet.create({
   containerTop: {
     width: "80%",
     marginTop: "5%",
-    height: "10%",
+    height: "5%",
   },
   headerText: {
     fontSize: 26,
@@ -208,7 +252,7 @@ const styles = StyleSheet.create({
   chartText: {
     color: THEME.BLACK,
     marginTop: "8%",
-    marginBottom: "3%",
+    marginBottom: "5%",
     fontSize: 12,
     fontWeight: "bold",
   },

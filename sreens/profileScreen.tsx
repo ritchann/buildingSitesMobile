@@ -1,9 +1,9 @@
 import React, { useCallback, useState } from "react";
-import { View, StyleSheet, Text, Dimensions } from "react-native";
+import { View, StyleSheet, Text, Dimensions, Modal } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { DateField, TextField, CustomButton, SelectField } from "../components";
 import { StoreType } from "../core/rootReducer";
-import { updateUserAsync } from "../data/actions";
+import { signOutAsync, updateUserAsync } from "../data/actions";
 import { THEME } from "../data/constants";
 import { Employee } from "../data/model";
 import { Specialty } from "../enums/specialtyEnum";
@@ -12,11 +12,13 @@ export const ProfileScreen = () => {
   const dispatch = useDispatch();
   let deviceHeight = Dimensions.get("window").height;
 
-  const { siteList, currentSite, user: storeUser } = useSelector(
-    (state: StoreType) => state.data
-  );
+  const {
+    siteList,
+    currentSite,
+    user: storeUser,
+  } = useSelector((state: StoreType) => state.data);
 
-  const [user, setUser] = useState<Employee>(storeUser);
+  const [user, setUser] = useState<Employee | undefined>(storeUser);
 
   const specialtyMap = new Map<number, string>(
     Specialty.all.map((x) => [x.id, x.name])
@@ -28,7 +30,7 @@ export const ProfileScreen = () => {
 
   const onChange = useCallback(
     (field: string, value: string | number) => {
-      setUser({ ...user, [field]: value });
+      if (user) setUser({ ...user, [field]: value });
     },
     [user]
   );
@@ -38,37 +40,26 @@ export const ProfileScreen = () => {
       <View style={styles.dataContainer}>
         <Text style={styles.startWorkText}>Профиль</Text>
         <TextField
-          value={user.surname}
+          value={user?.surname ?? ""}
           label="ФАМИЛИЯ"
           onChange={(v) => onChange("surname", v)}
         />
         <TextField
-          value={user.name}
+          value={user?.name ?? ""}
           label="ИМЯ"
           onChange={(v) => onChange("name", v)}
         />
         <TextField
-          value={user.patronymic}
+          value={user?.patronymic ?? ""}
           label="ОТЧЕСТВО"
           onChange={(v) => onChange("patronymic", v)}
-        />
-        <DateField
-          value={user.birthDate}
-          label="ДАТА РОЖДЕНИЯ"
-          onChange={(v) => onChange("birthDate", v)}
-        />
-        <SelectField
-          options={specialtyMap}
-          label="СПЕЦИАЛЬНОСТЬ"
-          value={user.specialty}
-          onChange={(v) => onChange("specialty", v)}
         />
         <TextField
           regexp={/^([0-9]{10}|[0-9]{12})$/}
           placeholder="0000000000"
           maxLength={10}
           keyboardType="decimal-pad"
-          value={user.tin}
+          value={user?.tin ?? ""}
           label="ИНН"
           onChange={(v) => onChange("tin", v)}
         />
@@ -77,7 +68,7 @@ export const ProfileScreen = () => {
           regexp={/^(?:[- ]*\d){11}$/}
           maxLength={14}
           keyboardType="decimal-pad"
-          value={user.inipa}
+          value={user?.inipa ?? ""}
           label="СНИЛС"
           onChange={(v) => onChange("inipa", v)}
         />
@@ -86,9 +77,20 @@ export const ProfileScreen = () => {
           regexp={/^(\+7|8)(?:[-()]*\d){10}$/}
           maxLength={16}
           keyboardType="phone-pad"
-          value={user.phoneNumber}
+          value={user?.phoneNumber ?? ""}
           label="НОМЕР ТЕЛЕФОНА"
           onChange={(v) => onChange("phoneNumber", v)}
+        />
+        <DateField
+          value={user?.birthDate ?? ""}
+          label="ДАТА РОЖДЕНИЯ"
+          onChange={(v) => onChange("birthDate", v)}
+        />
+        <SelectField
+          options={specialtyMap}
+          label="СПЕЦИАЛЬНОСТЬ"
+          value={user?.specialty ?? 0}
+          onChange={(v) => onChange("specialty", v)}
         />
         <View style={styles.buttonContainer}>
           <CustomButton title="Сохранить" onPress={onSave} />
@@ -115,6 +117,6 @@ const styles = StyleSheet.create({
     width: "80%",
   },
   buttonContainer: {
-    marginTop: 50,
+    marginTop: 90,
   },
 });

@@ -31,7 +31,7 @@ export const RegistrationStepTwoScreen: React.FC<Props> = ({ toNext }) => {
         <SelectField
           options={specialtyMap}
           label="СПЕЦИАЛЬНОСТЬ"
-          value={user.specialty}
+          value={user?.specialty ?? 0}
           onChange={(v) => onChange("specialty", v)}
         />
         <TextField
@@ -39,7 +39,7 @@ export const RegistrationStepTwoScreen: React.FC<Props> = ({ toNext }) => {
           placeholder="0000000000"
           maxLength={10}
           keyboardType="decimal-pad"
-          value={user.tin}
+          value={user?.tin ?? ""}
           label="ИНН"
           onChange={(v) => onChange("tin", v)}
         />
@@ -48,7 +48,7 @@ export const RegistrationStepTwoScreen: React.FC<Props> = ({ toNext }) => {
           regexp={/^(?:[- ]*\d){11}$/}
           maxLength={14}
           keyboardType="decimal-pad"
-          value={user.inipa}
+          value={user?.inipa ?? ""}
           label="СНИЛС"
           onChange={(v) => onChange("inipa", v)}
         />
@@ -57,7 +57,7 @@ export const RegistrationStepTwoScreen: React.FC<Props> = ({ toNext }) => {
           regexp={/^(\+7|8)(?:[-()]*\d){10}$/}
           maxLength={16}
           keyboardType="phone-pad"
-          value={user.phoneNumber}
+          value={user?.phoneNumber ?? ""}
           label="НОМЕР ТЕЛЕФОНА"
           onChange={(v) => onChange("phoneNumber", v)}
         />
@@ -71,16 +71,17 @@ export const RegistrationStepTwoScreen: React.FC<Props> = ({ toNext }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: "space-around",
+    flexDirection: "column",
     alignItems: "center",
     fontFamily: "Roboto",
     backgroundColor: "white",
   },
   dataContainer: {
     width: "80%",
+    marginTop: 110,
   },
   buttonContainer: {
     width: "80%",
+    marginTop: 230,
   },
 });
