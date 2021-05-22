@@ -24,6 +24,7 @@ import { StatusWork } from "../utils/enums";
 import * as Notifications from "expo-notifications";
 import io from "socket.io-client";
 import { Accident } from "../data/model";
+import { CustomButton } from "../components";
 
 const chartConfig = {
   backgroundGradientFrom: "white",
@@ -43,6 +44,8 @@ export const CompleteScreen = () => {
   let deviceHeight = Dimensions.get("window").height;
   let deviceWidth = Dimensions.get("window").width;
   const dispatch = useDispatch();
+
+  const [showModal, setShowModal] = useState(false);
 
   const { startWorkingHours, siteList, user } = useSelector(
     (state: StoreType) => state.data
@@ -68,6 +71,7 @@ export const CompleteScreen = () => {
         lat: 44.1234,
       })
     );
+    setShowModal(true);
   }, [dispatch]);
 
   const time = useMemo(() => {
@@ -115,34 +119,18 @@ export const CompleteScreen = () => {
     return () => clearInterval(interval);
   }, [end]);
 
-  const onLongPress = useCallback(() => {
-    Alert.alert(
-      "",
-      "Ваш сигнал SOS отправлен",
-      [
-        {
-          text: "OK",
-          onPress: () => {
-            Notifications.setNotificationChannelAsync("new-emails", {
-              name: "E-mail notifications",
-              importance: Notifications.AndroidImportance.HIGH,
-            });
-            Notifications.scheduleNotificationAsync({
-              content: {
-                title: "Сработал сигнал SOS 📣",
-                body: "Проверьте работника: Иванов Иван Иванович",
-              },
-              trigger: {
-                seconds: 5,
-                channelId: "new-emails",
-              },
-            });
-            Vibration.vibrate([1000, 2000, 1000, 2000]);
-          },
-        },
-      ],
-      { cancelable: false }
-    );
+  const notifications = useCallback(() => {
+    Notifications.scheduleNotificationAsync({
+      content: {
+        title: "Сработал сигнал SOS 📣",
+        body: "Проверьте работника: Иванов Иван Иванович",
+      },
+      trigger: {
+        seconds: 5,
+        channelId: "new-emails",
+      },
+    });
+    Vibration.vibrate([1000, 2000, 1000, 2000]);
   }, []);
 
   useEffect(() => {
@@ -151,11 +139,11 @@ export const CompleteScreen = () => {
       socket.on("join", function (data) {
         console.log(data);
         const accident = data as Accident;
-        if (user.id == 17) onLongPress();
+        notifications();
         console.log(user.id, data);
       });
     });
-  }, [socket, onLongPress]);
+  }, [socket, notifications]);
 
   return (
     <View style={styles.container}>
@@ -166,6 +154,43 @@ export const CompleteScreen = () => {
           height: deviceHeight / 4.5,
         }}
       >
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={showModal}
+          onRequestClose={() => {
+            setShowModal(false);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <View
+                style={{
+                  justifyContent: "flex-end",
+                  width: "100%",
+                  flexDirection: "row",
+                }}
+              ></View>
+              <Text style={{ fontSize: 17 }}>
+                {"Ваш сигнал SOS отправлен 📣"}
+              </Text>
+              <View
+                style={{
+                  width: "100%",
+                  flexDirection: "row",
+                  justifyContent: "flex-end",
+                }}
+              >
+                <View style={{ width: 80, marginTop: 30 }}>
+                  <CustomButton
+                    onPress={() => setShowModal(false)}
+                    title={"Ок"}
+                  ></CustomButton>
+                </View>
+              </View>
+            </View>
+          </View>
+        </Modal>
         <Text style={styles.completeWorkText}>Завершить работу</Text>
         <Text style={styles.startTimeWork}>
           Вы начали работу в{" "}
@@ -190,7 +215,7 @@ export const CompleteScreen = () => {
           </View>
         </View>
       </View>
-      
+
       <View style={styles.containerBottom}>
         <ProgressChart
           data={data}
@@ -295,5 +320,28 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "normal",
     color: THEME.GREY,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 20,
+  },
+  modalView: {
+    margin: 15,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 25,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    width: 320,
+    height: 150,
   },
 });

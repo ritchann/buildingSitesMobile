@@ -1,5 +1,12 @@
 import React, { useCallback, useState } from "react";
-import { View, StyleSheet, Text, Modal, TouchableOpacity, Picker } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  Modal,
+  TouchableOpacity,
+  Picker,
+} from "react-native";
 import { Icon } from "react-native-elements";
 import { ScrollView } from "react-native-gesture-handler";
 import { THEME } from "../data/constants";
@@ -53,8 +60,7 @@ export const SelectField: React.FC<Props> = ({
                 width: "100%",
                 flexDirection: "row",
               }}
-            >
-            </View>
+            ></View>
             <ScrollView showsVerticalScrollIndicator={false}>
               {Array.from(options).map(([key]) => (
                 <TouchableOpacity
@@ -68,9 +74,21 @@ export const SelectField: React.FC<Props> = ({
           </View>
         </View>
       </Modal>
-      <TouchableOpacity style={{flexDirection:'row', alignItems:'center', justifyContent:'space-between'}} onPress={() => setShowModal(true)}>
+      <TouchableOpacity
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+        onPress={() => setShowModal(true)}
+      >
         <Text style={styles.input}>{options.get(value)}</Text>
-        <Icon iconStyle={{color:THEME.GREY}} size={18} type="ionicon" name="chevron-down-outline" />
+        <Icon
+          iconStyle={{ color: THEME.GREY }}
+          size={18}
+          type="ionicon"
+          name="chevron-down-outline"
+        />
       </TouchableOpacity>
       <View style={styles.underline}></View>
     </View>
