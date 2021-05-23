@@ -177,14 +177,14 @@ export const LoginScreen: React.FC<Props> = ({ auth, register }) => {
           width: "80%",
         }}
       >
-        <CustomButton
+        {/* <CustomButton
           title="Падение"
           onPress={() => {
             if (subscription) unsubscribe();
             else subscribe();
             setSubscription(!subscription);
           }}
-        ></CustomButton>
+        ></CustomButton> */}
         <View style={styles.greetingContainer}>
           <Text style={styles.greeting}>Добро пожаловать!</Text>
           <Text style={styles.underGreeting}>Войдите, чтобы продолжить</Text>

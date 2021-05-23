@@ -1,10 +1,11 @@
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { CustomButton, TextField } from "../components";
+import { CustomButton, ModalMessage, TextField } from "../components";
 import { getError } from "../core/getError";
+import { regexpEmail, regexpPassword } from "../core/objectConst";
 import { StoreType } from "../core/rootReducer";
-import { createUserAsync, setUser, signUpAsync } from "../data/actions";
+import { setUser, signUpAsync } from "../data/actions";
 import { THEME } from "../data/constants";
 import { AuthResponse } from "../data/model";
 
@@ -18,6 +19,10 @@ export const RegistrationStepThreeScreen: React.FC<Props> = ({ toNext }) => {
 
   const [load, setLoad] = useState(false);
   const [error, setError] = useState<string>("");
+  const [showWarning, setShowWarning] = useState<{
+    show: boolean;
+    message: string;
+  }>({ show: false, message: "" });
 
   const onChange = useCallback(
     (field: string, value: string) => {
@@ -41,37 +46,67 @@ export const RegistrationStepThreeScreen: React.FC<Props> = ({ toNext }) => {
         },
       })
     );
-  }, [dispatch, user]);
+  }, [dispatch, user, toNext]);
+
+  const onClick = useCallback(() => {
+    const result: string[] = [];
+    if (!user.email.match(regexpEmail)) result.push("email");
+    if (
+      user.password == "" ||
+      user.repeatedPassword == "" ||
+      !user.password?.match(regexpPassword)
+    )
+      result.push("пароль");
+    const aboutPassword =
+      user.password != user.repeatedPassword ? "Пароли не совпадают" : "";
+    if (result.length > 0 || aboutPassword.length > 0) {
+      setShowWarning({
+        show: true,
+        message:
+          result.length > 0
+            ? "Некоторые поля не заполнены или заполнены неверно: " +
+              result.join(", ")
+            : aboutPassword,
+      });
+    } else signUp();
+  }, [signUp, user]);
 
   return (
     <View style={styles.container}>
       <View style={styles.dataContainer}>
         <TextField
+          regexp={regexpEmail}
           value={user.email}
           label="EMAIL"
+          keyboardType="email-address"
           onChange={(v) => onChange("email", v)}
         />
         <TextField
-          regexp={/^(?=.*\d).{8,}$/}
+          regexp={regexpPassword}
           secureTextEntry
           value={user?.password ?? ""}
           label="ПРИДУМАЙТЕ ПАРОЛЬ"
           onChange={(v) => onChange("password", v)}
         />
         <TextField
-          regexp={/^(?=.*\d).{8,}$/}
+          regexp={regexpPassword}
           secureTextEntry
           value={user?.repeatedPassword ?? ""}
           label="ПОВТОРИТЕ ПАРОЛЬ"
-          onChange={(v) => onChange("password", v)}
+          onChange={(v) => onChange("repeatedPassword", v)}
         />
       </View>
       <View style={styles.containerError}>
         <Text style={styles.forgottenPassword}>{error}</Text>
       </View>
       <View style={styles.buttonContainer}>
-        <CustomButton loading={load} title="Далее" onPress={() => signUp()} />
+        <CustomButton loading={load} title="Далее" onPress={onClick} />
       </View>
+      <ModalMessage
+        message={showWarning.message}
+        visible={showWarning.show}
+        onClose={() => setShowWarning({ show: false, message: "" })}
+      ></ModalMessage>
     </View>
   );
 };

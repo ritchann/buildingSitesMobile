@@ -1,4 +1,4 @@
-import { emptyUser } from "../core/emptyUser";
+import { emptyUser } from "../core/objectConst";
 import { ActionType } from "./actionType";
 import { Action, Employee, Site, WorkingHours } from "./model";
 
