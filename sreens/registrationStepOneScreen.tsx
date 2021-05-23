@@ -49,8 +49,7 @@ export const RegistrationStepOneScreen: React.FC<Props> = ({ toNext }) => {
         />
       </View>
       <View style={{
-        width: "80%",marginTop:'10%'
-      }}>
+        width: "80%",marginTop: 230   }}>
         <CustomButton title="Далее" onPress={toNext} />
       </View>
     </View>

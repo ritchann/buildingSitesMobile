@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 import { StyleSheet, TouchableOpacity, Text, View } from "react-native";
 import { Icon } from "react-native-elements";
 import { useSelector } from "react-redux";
 import { StoreType } from "../core/rootReducer";
 import { THEME } from "../data/constants";
 import { WorkingHours } from "../data/model";
+import { Status } from "../enums/statusEnum";
 import { DateTime } from "../utils/dateTime";
 
 interface Props {
@@ -14,6 +15,17 @@ interface Props {
 
 export const ListItemShift: React.FC<Props> = ({ onPress, data }) => {
   const { siteList } = useSelector((state: StoreType) => state.data);
+
+  const status = useMemo(()=>{
+    switch(data.status){
+      case Status.Process:
+        return "В процессе"
+      case Status.Paused:
+        return "Приостановлена";
+      case Status.End:
+        return "Завершена"
+    }
+  },[])
 
   return (
     <TouchableOpacity
@@ -36,13 +48,12 @@ export const ListItemShift: React.FC<Props> = ({ onPress, data }) => {
       <View style={styles.containerInfo}>
         <Text style={styles.title}>
           {siteList.find((x) => x.id == data.siteId)?.name}
-          {data.id}
         </Text>
         <Text style={styles.address}>
           {DateTime.format(data.start)} - {DateTime.format(data.end)}
         </Text>
         <Text style={styles.address}>
-          {data.status == 0 ? "В процессе" : "Завершена"}
+          {status}
         </Text>
       </View>
     </TouchableOpacity>

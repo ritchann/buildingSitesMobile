@@ -48,7 +48,7 @@ export const RegistrationStepThreeScreen: React.FC<Props> = ({ toNext }) => {
       <View style={styles.dataContainer}>
         <TextField
           value={user.email}
-          label="ЛОГИН"
+          label="EMAIL"
           onChange={(v) => onChange("email", v)}
         />
         <TextField

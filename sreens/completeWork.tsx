@@ -20,12 +20,12 @@ import {
 } from "../data/actions";
 import { THEME } from "../data/constants";
 import { DateTime } from "../utils/dateTime";
-import { StatusWork } from "../utils/enums";
 import * as Notifications from "expo-notifications";
 import io from "socket.io-client";
 import { Accident } from "../data/model";
 import { CustomButton, Map } from "../components";
 import * as Location from "expo-location";
+import { Status } from "../enums/statusEnum";
 
 const chartConfig = {
   backgroundGradientFrom: "white",
@@ -41,7 +41,12 @@ Notifications.setNotificationHandler({
   }),
 });
 
-export const CompleteScreen = () => {
+
+interface Props {
+  endShift: () => void;
+}
+
+export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
   let deviceHeight = Dimensions.get("window").height;
   let deviceWidth = Dimensions.get("window").width;
   const dispatch = useDispatch();
@@ -71,10 +76,7 @@ export const CompleteScreen = () => {
       }
     })();
   }, [setLocation]);
-
-  useMemo(() => {
-    console.log(location);
-  }, [location]);
+;
 
   const { startWorkingHours, siteList, user } = useSelector(
     (state: StoreType) => state.data
@@ -131,19 +133,21 @@ export const CompleteScreen = () => {
             ...startWorkingHours,
             start: DateTime.addHours(startWorkingHours.start, -3),
             end: new Date(),
-            status: end ? StatusWork.End : StatusWork.Process,
+            status: end ? Status.End : Status.Process,
           })
         );
         dispatch(
-          setStartWorkingHours({
+          setStartWorkingHours(end? undefined: {
             ...startWorkingHours,
             end: DateTime.addHours(new Date(), 3),
-            status: end ? StatusWork.End : StatusWork.Process,
+            status: end ? Status.End : Status.Process,
           })
         );
+        if(end)
+        endShift()
       }
     },
-    [dispatch, startWorkingHours]
+    [dispatch, startWorkingHours, endShift]
   );
 
   useEffect(() => {

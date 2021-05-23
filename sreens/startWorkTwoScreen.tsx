@@ -16,11 +16,11 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { CustomButton } from "../components";
 import { checkPPEAsync, startWorkingHoursAsync } from "../data/actions";
-import { StatusWork } from "../utils/enums";
 import { Camera, CameraCapturedPicture } from "expo-camera";
 import { StoreType } from "../core/rootReducer";
 import { THEME } from "../data/constants";
 import { PPE } from "../data/model";
+import { Status } from "../enums/statusEnum";
 
 interface Props {
   toNext: () => void;
@@ -42,7 +42,7 @@ enum Result {
 export const StartWorkTwoScreen: React.FC<Props> = ({ toNext }) => {
   const dispatch = useDispatch();
 
-  const { currentSite } = useSelector((state: StoreType) => state.data);
+  const { currentSite, startWorkingHours, user } = useSelector((state: StoreType) => state.data);
 
   const [hasPermission, setHasPermission] = useState<boolean>();
   const [capturedImage, setCapturedImage] = useState<CameraCapturedPicture>();
@@ -114,17 +114,17 @@ export const StartWorkTwoScreen: React.FC<Props> = ({ toNext }) => {
   );
 
   const start = useCallback(() => {
-    if (currentSite)
+    if (currentSite && startWorkingHours==undefined)
       dispatch(
         startWorkingHoursAsync({
           start: new Date(),
           end: new Date(),
-          employeeId: 1,
+          employeeId: user.id,
           siteId: currentSite.id,
-          status: StatusWork.Process,
+          status: Status.Process,
         })
       );
-  }, [dispatch]);
+  }, [dispatch, user, currentSite, startWorkingHours]);
 
   const timeoutRef = useRef<any>(null);
   const timeoutRef1 = useRef<any>(null);
@@ -213,8 +213,8 @@ export const StartWorkTwoScreen: React.FC<Props> = ({ toNext }) => {
           resizeMode="stretch"
           source={{ uri: capturedImage && capturedImage.uri }}
           style={{
-            width: capturedImage.width * 1.4,
-            height: capturedImage.height * 1.4,
+            width: capturedImage.width * 1.5,
+            height: capturedImage.height * 1.55,
             marginTop: 20,
             padding: 0,
           }}
@@ -223,7 +223,7 @@ export const StartWorkTwoScreen: React.FC<Props> = ({ toNext }) => {
         <Camera
           pictureSize="320x240"
           ref={(r) => (camera = r)}
-          style={{ width: "95%", height: "68%", marginTop: 20 }}
+          style={{ width: "90%", height: "65%", marginTop: 20 }}
           type={Camera.Constants.Type.back}
         ></Camera>
       )}
@@ -236,7 +236,7 @@ export const StartWorkTwoScreen: React.FC<Props> = ({ toNext }) => {
         />
         <View style={styles.nextButton}>
           <CustomButton
-            // disabled={!capturedImage}
+           // disabled={!capturedImage}
             title="Далее"
             // onPress={() => checkPPE([])}
             onPress={() => (start(), next())}

@@ -78,15 +78,6 @@ function Statistics(props: any) {
   );
 }
 
-function Shifts(props: any){
-  return (
-    <View style={{ flex: 1, height: "100%" }}>
-      <MenuBar {...props} />
-      <ShiftsScreen />
-    </View>
-  );
-}
-
 const Drawer = createDrawerNavigator();
 
 enum Action {
@@ -109,11 +100,34 @@ export default function App() {
 
   let deviceHeight = Dimensions.get("window").height;
 
+  function Shifts(props: any) {
+    return (
+      <View style={{ flex: 1, height: "100%" }}>
+        <MenuBar {...props} />
+        <ShiftsScreen
+          toNext={() => {
+            setStartWork(ActionStartWork.Check);
+            setStepStart(1);
+            props.navigation.jumpTo("Главная")
+          }}
+        />
+      </View>
+    );
+  }
+
   function Main(props: any) {
     return (
       <View style={{ flex: 1, height: "100%" }}>
         <MenuBar {...props} />
-        {startWork === ActionStartWork.Start && <CompleteScreen />}
+        {startWork === ActionStartWork.Start && (
+          <CompleteScreen
+            endShift={() => (
+              setAuth(Action.Auth),
+              setStartWork(ActionStartWork.None),
+              setStepStart(1)
+            )}
+          />
+        )}
         {startWork === ActionStartWork.None && (
           <MainScreen toNext={() => setStartWork(ActionStartWork.Check)} />
         )}
@@ -292,7 +306,7 @@ export default function App() {
             />
           </View>
           <TouchableOpacity
-            style={{ 
+            style={{
               marginTop: `${
                 deviceHeight > 750 ? deviceHeight / 6 : deviceHeight / 6.5
               }%`,
