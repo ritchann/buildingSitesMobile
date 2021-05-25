@@ -41,7 +41,6 @@ Notifications.setNotificationHandler({
   }),
 });
 
-
 interface Props {
   endShift: () => void;
 }
@@ -76,8 +75,6 @@ export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
       }
     })();
   }, [setLocation]);
-;
-
   const { startWorkingHours, siteList, user } = useSelector(
     (state: StoreType) => state.data
   );
@@ -86,6 +83,10 @@ export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
     () => siteList.find((x) => x.id == startWorkingHours?.siteId),
     [siteList, startWorkingHours]
   );
+
+  useMemo(() => {
+    console.log(startWorkingHours);
+  }, [startWorkingHours]);
 
   const SERVER = "http://192.168.43.232:8080";
 
@@ -137,14 +138,17 @@ export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
           })
         );
         dispatch(
-          setStartWorkingHours(end? undefined: {
-            ...startWorkingHours,
-            end: DateTime.addHours(new Date(), 3),
-            status: end ? Status.End : Status.Process,
-          })
+          setStartWorkingHours(
+            end
+              ? undefined
+              : {
+                  ...startWorkingHours,
+                  end: DateTime.addHours(new Date(), 3),
+                  status: end ? Status.End : Status.Process,
+                }
+          )
         );
-        if(end)
-        endShift()
+        if (end) endShift();
       }
     },
     [dispatch, startWorkingHours, endShift]

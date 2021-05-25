@@ -21,15 +21,8 @@ export const ModalMessage: React.FC<Props> = ({
   >
     <View style={styles.centeredView}>
       <View style={styles.modalView}>
-        <Text style={{ fontSize: 17, textAlign:'center', height:'65%' }}>{message}</Text>
-        <View
-          style={{
-            width: "100%",
-            flexDirection: "row",
-            justifyContent: "center",
-            marginTop: "8%",
-          }}
-        >
+        <Text style={styles.textMessage}>{message}</Text>
+        <View style={styles.viewButton}>
           <View style={{ width: 90 }}>
             <CustomButton onPress={onClose} title="Ок"></CustomButton>
           </View>
@@ -62,5 +55,16 @@ const styles = StyleSheet.create({
     elevation: 100,
     width: 300,
     height: 220,
+  },
+  textMessage: {
+    fontSize: 17,
+    textAlign: "center",
+    height: "65%",
+  },
+  viewButton: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: "8%",
   },
 });

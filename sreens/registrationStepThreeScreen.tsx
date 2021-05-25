@@ -1,7 +1,8 @@
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { CustomButton, ModalMessage, TextField } from "../components";
+import { CustomButton, TextField } from "../components";
+import { ModalMessage } from "../components/modalMessage";
 import { getError } from "../core/getError";
 import { regexpEmail, regexpPassword } from "../core/objectConst";
 import { StoreType } from "../core/rootReducer";

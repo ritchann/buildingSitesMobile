@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -17,8 +17,9 @@ import { getSiteListAsync, setCurrentSite } from "../data/actions";
 import * as Location from "expo-location";
 import { Site } from "../data/model";
 import { THEME } from "../data/constants";
-
-
+import * as TaskManager from "expo-task-manager";
+import * as Permissions from "expo-permissions";
+import { usePermissions } from "expo-permissions";
 enum Tab {
   All,
   Near,
@@ -26,6 +27,8 @@ enum Tab {
 interface Props {
   toNext: () => void;
 }
+
+const LOCATION_TASK_NAME = "background-location-task";
 
 export const MainScreen: React.FC<Props> = ({ toNext }) => {
   const dispatch = useDispatch();
@@ -42,18 +45,40 @@ export const MainScreen: React.FC<Props> = ({ toNext }) => {
     dispatch(getSiteListAsync());
   }, [dispatch]);
 
-  const [location, setLocation] = useState<Location.LocationObject>();
+  const [location, setLocation] = useState<{ lon: number; lat: number }>({
+    lon: 0,
+    lat: 0,
+  });
 
-  useEffect(() => {
+  useMemo(() => {
+    console.log(location);
+  }, [location]);
+
+  const getLocation= useCallback(() => {
     (async () => {
       let { status } = await Location.requestPermissionsAsync();
       if (status == "granted") {
         let location = await Location.getCurrentPositionAsync({});
-        setLocation(location);
+        setLocation({
+          lon: location.coords.longitude,
+          lat: location.coords.latitude,
+        });
       }
     })();
   }, []);
 
+  const timeoutRef = useRef<any>(null);
+
+  const setShowModalFalse = useCallback(() => {
+    timeoutRef.current = setTimeout(() => {
+      getLocation()
+      clearTimeout(timeoutRef.current);
+    }, 4000);
+  }, []);
+  
+  useEffect(()=>{
+    setShowModalFalse()
+  },[setShowModalFalse])
   const getDistance = useCallback(
     (pointA: number[], pointB: number[]) =>
       Math.sqrt(
@@ -68,10 +93,7 @@ export const MainScreen: React.FC<Props> = ({ toNext }) => {
       siteList.forEach((x) => {
         let near = 2;
         x.coords.forEach((c) => {
-          const distance = getDistance(c, [
-            location.coords.latitude,
-            location.coords.longitude,
-          ]);
+          const distance = getDistance(c, [location.lat, location.lon]);
           if (near > distance) near = distance;
         });
         if (near < 0.01) result.push(x);
@@ -196,7 +218,6 @@ export const MainScreen: React.FC<Props> = ({ toNext }) => {
           <Icon size={20} type="ionicon" name="arrow-forward-outline" />
         </TouchableOpacity>
       )}
-
     </View>
   );
 };

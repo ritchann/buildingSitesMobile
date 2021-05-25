@@ -44,7 +44,7 @@ export const SelectField: React.FC<Props> = ({
   return (
     <View style={styles.containerTextField}>
       <Text style={styles.textInput}>{label}</Text>
-      <Modal
+      <Modal  onLayout={()=> console.log('s')}
         animationType="fade"
         transparent={true}
         visible={showModal}
@@ -54,14 +54,10 @@ export const SelectField: React.FC<Props> = ({
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <View
-              style={{
-                justifyContent: "flex-end",
-                width: "100%",
-                flexDirection: "row",
-              }}
-            ></View>
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView
+              style={{ width: "100%" }}
+              showsVerticalScrollIndicator={false}
+            >
               {Array.from(options).map(([key]) => (
                 <TouchableOpacity
                   onPress={() => (onChange(key), setShowModal(false))}
@@ -114,6 +110,8 @@ const styles = StyleSheet.create({
     color: THEME.GREY,
     marginLeft: 4,
     height: 30,
+    width:305,
+
   },
   underline: {
     opacity: 0.2,
@@ -131,16 +129,16 @@ const styles = StyleSheet.create({
     margin: 5,
     backgroundColor: "white",
     borderRadius: 20,
-    padding: 15,
+    padding: 0,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
-      width: 0,
+      width: 2,
       height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5,
+    elevation: 80,
     width: 380,
     height: 600,
   },
@@ -176,6 +174,7 @@ const styles = StyleSheet.create({
   itemText: {
     fontSize: 15,
     fontWeight: "700",
+    marginLeft: 20,
   },
   underlineItem: {
     opacity: 0.2,

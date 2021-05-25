@@ -6,15 +6,14 @@ class Type extends BaseEnum {
   public "Инженер-строитель" = 2;
   public Технолог = 3;
   public Крановщик = 4;
-  public "Мастер монтажных и строительных работ" = 5;
-  public Плотник = 6;
-  public Cтоляр = 7;
-  public Каменщик = 8;
-  public Бетонщик = 9;
-  public Кровельщик = 10;
-  public Электросварщик = 11;
-  public Газосварщик = 12;
-  public Облицовщик = 13;
+  public Плотник = 5;
+  public Cтоляр = 6;
+  public Каменщик = 7;
+  public Бетонщик = 8;
+  public Кровельщик = 9;
+  public Электросварщик = 10;
+  public Газосварщик = 11;
+  public Облицовщик = 12;
 
   public constructor() {
     super();

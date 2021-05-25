@@ -3,7 +3,6 @@ import { View, StyleSheet } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import {
   CustomButton,
-  ModalMessage,
   SelectField,
   TextField,
 } from "../components";
@@ -11,6 +10,7 @@ import { StoreType } from "../core/rootReducer";
 import { setUser } from "../data/actions";
 import { Specialty } from "../enums/specialtyEnum";
 import { regexpInipa, regexpTin, regexpPhone } from "../core/objectConst";
+import { ModalMessage } from "../components/modalMessage";
 
 interface Props {
   toNext: () => void;

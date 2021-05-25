@@ -3,13 +3,13 @@ import { View, StyleSheet, Text, LogBox } from "react-native";
 import {
   CustomButton,
   DateField,
-  ModalMessage,
   TextField,
 } from "../components";
 import { useDispatch, useSelector } from "react-redux";
 import { StoreType } from "../core/rootReducer";
 import { setUser } from "../data/actions";
 import { THEME } from "../data/constants";
+import { ModalMessage } from "../components/modalMessage";
 
 interface Props {
   toNext: () => void;
