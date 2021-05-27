@@ -1,9 +1,9 @@
 import axios from "axios";
 import { Accident, AuthResponse, Employee, PPE, WorkingHours } from "./model";
 
-//const url = "https://building-test-123.herokuapp.com/";
+const url = "https://building-test-123.herokuapp.com/";
 
-const url = "http://192.168.43.232:5000/";
+//const url = "http://192.168.43.232:5000/";
 
 export const getSiteList = () =>
   axios.get(url + "site").then((res) => res.data);

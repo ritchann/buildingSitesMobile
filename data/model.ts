@@ -19,6 +19,7 @@ export interface WorkingHours {
   employeeId: number;
   siteId: number;
   status: number;
+  site?: Site
 }
 
 export interface Employee {

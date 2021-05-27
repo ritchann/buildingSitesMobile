@@ -69,7 +69,8 @@ export class DateTime {
         useFormat = "MM/dd/yyyy HH:mm";
         break;
     }
-    const value = formatFn(date, useFormat);
+    const a = DateTime.addHours(date, -3);
+    const value = formatFn(a, useFormat);
     return value;
   }
 

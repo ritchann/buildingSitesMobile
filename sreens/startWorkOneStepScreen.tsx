@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { View, StyleSheet, Text, Image, Dimensions } from "react-native";
 import { useSelector } from "react-redux";
 import { CustomButton } from "../components";
@@ -12,10 +12,17 @@ interface Props {
 export const StartWorkOneScreen: React.FC<Props> = ({ toNext }) => {
   let deviceHeight = Dimensions.get("window").height;
 
-  const { siteList, currentSite } = useSelector(
+  const { siteList, currentSite, startWorkingHours } = useSelector(
     (state: StoreType) => state.data
   );
-  
+
+  const data = useMemo(
+    () => (startWorkingHours ? startWorkingHours.site : currentSite),
+    [startWorkingHours, currentSite]
+  );
+
+  console.log(startWorkingHours, currentSite)
+
   return (
     <View style={styles.container}>
       <Image style={styles.image} source={require("../image/startWork.png")} />
@@ -31,7 +38,9 @@ export const StartWorkOneScreen: React.FC<Props> = ({ toNext }) => {
             Вы хотите начать работу на этом объекте?
           </Text>
           <Text style={styles.underQuestion}>Строительная площадка</Text>
-          <Text style={styles.underQuestion}>{currentSite?.city + ', улица '+ currentSite?.street}</Text>
+          <Text style={styles.underQuestion}>
+            {data?.city + ", улица " + data?.street}
+          </Text>
         </View>
         <CustomButton title="Да, продолжить" onPress={toNext} />
       </View>

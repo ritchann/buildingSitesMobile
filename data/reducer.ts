@@ -8,12 +8,14 @@ export interface StateType {
   user: Employee;
   currentSite?: Site;
   workingHoursList: WorkingHours[];
+  location: { lon: number; lat: number };
 }
 
 const InitialState: StateType = {
   siteList: [],
   workingHoursList: [],
   user: emptyUser,
+  location: { lon: 0, lat: 0 },
 };
 
 export const reducer = (state = InitialState, action: Action) => {
@@ -33,7 +35,12 @@ export const reducer = (state = InitialState, action: Action) => {
     case ActionType.SETWORKINGHOURSLIST: {
       return { ...state, workingHoursList: action.data as WorkingHours[] };
     }
-
+    case ActionType.SETLOCATION: {
+      return {
+        ...state,
+        location: action.data as { lon: number; lat: number },
+      };
+    }
     default:
       return state;
   }

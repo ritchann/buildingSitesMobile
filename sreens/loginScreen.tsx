@@ -60,7 +60,6 @@ export const LoginScreen: React.FC<Props> = ({ auth, register }) => {
       const y = accelerometerData.y;
       const z = accelerometerData.z;
       i++;
-      // console.log(accelerometerData, i);
       const res = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
       console.log("result : ", res, " index: ", i);
       if (res <= minRes) {
@@ -121,26 +120,6 @@ export const LoginScreen: React.FC<Props> = ({ auth, register }) => {
     console.log("fall ------------------------------------------------------");
     Accelerometer.setUpdateInterval(400);
     _subscribe();
-  }, []);
-
-  const test = useCallback(() => {
-    var x = 56.31874;
-    var y = 44.048072;
-    var xp = new Array(56.320183, 56.319534, 56.316274, 56.315201); // Массив X-координат полигона
-    var yp = new Array(44.049079, 44.054172, 44.054486, 44.045701); // Массив Y-координат полигона
-    const npol = xp.length;
-    let j = npol - 1;
-    let c = false;
-    for (var i = 0; i < npol; i++) {
-      if (
-        ((yp[i] <= y && y < yp[j]) || (yp[j] <= y && y < yp[i])) &&
-        x > ((xp[j] - xp[i]) * (y - yp[i])) / (yp[j] - yp[i]) + xp[i]
-      ) {
-        c = !c;
-      }
-      j = i;
-    }
-    console.log("result", c);
   }, []);
 
   const authAction = useCallback(() => {

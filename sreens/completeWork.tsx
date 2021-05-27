@@ -24,8 +24,11 @@ import * as Notifications from "expo-notifications";
 import io from "socket.io-client";
 import { Accident } from "../data/model";
 import { CustomButton, Map } from "../components";
-import * as Location from "expo-location";
 import { Status } from "../enums/statusEnum";
+import { useLocation } from "../hooks/useLocation";
+import { useInWorkArea } from "../hooks/useInWorkArea";
+
+const SERVER = "http://192.168.43.232:8080";
 
 const chartConfig = {
   backgroundGradientFrom: "white",
@@ -49,6 +52,8 @@ export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
   let deviceHeight = Dimensions.get("window").height;
   let deviceWidth = Dimensions.get("window").width;
   const dispatch = useDispatch();
+  const getLocation = useLocation();
+  const inWorkArea = useInWorkArea();
 
   const [showModal, setShowModal] = useState(false);
   const [showModalWithMap, setShowModalWithMap] = useState<{
@@ -58,24 +63,7 @@ export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
     show: false,
   });
 
-  const [location, setLocation] = useState<{ lon: number; lat: number }>({
-    lon: 0,
-    lat: 0,
-  });
-
-  useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestPermissionsAsync();
-      if (status == "granted") {
-        let location = await Location.getCurrentPositionAsync({});
-        setLocation({
-          lon: location.coords.longitude,
-          lat: location.coords.latitude,
-        });
-      }
-    })();
-  }, [setLocation]);
-  const { startWorkingHours, siteList, user } = useSelector(
+  const { startWorkingHours, siteList, user, location } = useSelector(
     (state: StoreType) => state.data
   );
 
@@ -84,15 +72,18 @@ export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
     [siteList, startWorkingHours]
   );
 
-  useMemo(() => {
-    console.log(startWorkingHours);
-  }, [startWorkingHours]);
-
-  const SERVER = "http://192.168.43.232:8080";
-
   const socket = io(SERVER, {
     transports: ["websocket"],
   });
+
+  useMemo(() => {
+    console.log("current location ", location, new Date().toTimeString());
+  }, [location]);
+
+  useEffect(() => {
+    setTimeout(() => getLocation(), 60000);
+  }, [location]);
+
 
   const createAccident = useCallback(() => {
     dispatch(
@@ -127,35 +118,41 @@ export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
   }, [time]);
 
   const end = useCallback(
-    (end?: boolean) => {
+    (status: number) => {
       if (startWorkingHours) {
         dispatch(
           updateWorkingHoursAsync({
             ...startWorkingHours,
             start: DateTime.addHours(startWorkingHours.start, -3),
             end: new Date(),
-            status: end ? Status.End : Status.Process,
+            status,
           })
         );
         dispatch(
           setStartWorkingHours(
-            end
+            status == Status.End
               ? undefined
               : {
                   ...startWorkingHours,
                   end: DateTime.addHours(new Date(), 3),
-                  status: end ? Status.End : Status.Process,
+                  status,
                 }
           )
         );
-        if (end) endShift();
+        if (Status.End == status) endShift();
       }
     },
     [dispatch, startWorkingHours, endShift]
   );
 
   useEffect(() => {
-    const interval = setInterval(() => end(), 30000);
+    if (currentSite)
+      if (!inWorkArea(location.lat, location.lon, currentSite?.coords))
+        end(Status.Paused);
+  }, [location, currentSite, end]);
+
+  useEffect(() => {
+    const interval = setInterval(() => end(Status.Process), 30000);
     return () => clearInterval(interval);
   }, [end]);
 
@@ -343,7 +340,7 @@ export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
         >
           <Text style={styles.countHours}>{(time / 60).toFixed(0)} часов</Text>
           <Text style={styles.countHours}>{(time % 60).toFixed(0)} минут</Text>
-          <TouchableOpacity onPress={() => end(true)}>
+          <TouchableOpacity onPress={() => end(Status.End)}>
             <Text
               style={{
                 width: 150,

@@ -42,7 +42,9 @@ enum Result {
 export const StartWorkTwoScreen: React.FC<Props> = ({ toNext }) => {
   const dispatch = useDispatch();
 
-  const { currentSite, startWorkingHours, user } = useSelector((state: StoreType) => state.data);
+  const { currentSite, startWorkingHours, user } = useSelector(
+    (state: StoreType) => state.data
+  );
 
   const [hasPermission, setHasPermission] = useState<boolean>();
   const [capturedImage, setCapturedImage] = useState<CameraCapturedPicture>();
@@ -114,7 +116,7 @@ export const StartWorkTwoScreen: React.FC<Props> = ({ toNext }) => {
   );
 
   const start = useCallback(() => {
-    if (currentSite && startWorkingHours==undefined)
+    if (currentSite && startWorkingHours == undefined)
       dispatch(
         startWorkingHoursAsync({
           start: new Date(),
@@ -145,7 +147,7 @@ export const StartWorkTwoScreen: React.FC<Props> = ({ toNext }) => {
       toNext();
       clearTimeout(timeoutRef.current);
     }, 4000);
-  }, []);
+  }, [start, toNext]);
 
   const imageModal = useMemo(() => {
     switch (result) {
@@ -236,10 +238,10 @@ export const StartWorkTwoScreen: React.FC<Props> = ({ toNext }) => {
         />
         <View style={styles.nextButton}>
           <CustomButton
-           // disabled={!capturedImage}
+            // disabled={!capturedImage}
             title="Далее"
             // onPress={() => checkPPE([])}
-            onPress={() => (start(), next())}
+            onPress={() => next()}
           />
         </View>
       </View>

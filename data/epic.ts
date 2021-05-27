@@ -112,6 +112,7 @@ const checkPPEEpic = (action$: ActionsObservable<Action<any>>) =>
     mergeMap((action) =>
       from(checkPPE((action as any).data)).pipe(
         tap((response: string) => {
+          console.log("checkPPE ", response);
           const result = JSON.parse(
             response.replace(/True/g, "true").replace(/'/g, '"')
           ) as PPE;

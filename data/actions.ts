@@ -64,3 +64,7 @@ export const signOutAsync: () => Action = () => {
 export const signUpAsync: (data: any) => Action = (data) => {
   return { type: ActionType.SIGNUPASYNC, data };
 };
+
+export const setLocation: (data: any) => Action = (data) => {
+  return { type: ActionType.SETLOCATION, data };
+};

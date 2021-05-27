@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -7,19 +7,23 @@ import {
   Dimensions,
   TouchableOpacity,
   Image,
-  Modal,
 } from "react-native";
 import { Icon } from "react-native-elements";
 import { useDispatch, useSelector } from "react-redux";
 import { SearchField, TabButton, ListItem } from "../components";
 import { StoreType } from "../core/rootReducer";
-import { getSiteListAsync, setCurrentSite } from "../data/actions";
-import * as Location from "expo-location";
+import {
+  getSiteListAsync,
+  getWorkingHoursListAsync,
+  setCurrentSite,
+} from "../data/actions";
 import { Site } from "../data/model";
 import { THEME } from "../data/constants";
-import * as TaskManager from "expo-task-manager";
-import * as Permissions from "expo-permissions";
-import { usePermissions } from "expo-permissions";
+import { useLocation } from "../hooks/useLocation";
+import { useInWorkArea } from "../hooks/useInWorkArea";
+import { ModalMessage } from "../components/modalMessage";
+import { DateTime } from "../utils/dateTime";
+
 enum Tab {
   All,
   Near,
@@ -28,57 +32,45 @@ interface Props {
   toNext: () => void;
 }
 
-const LOCATION_TASK_NAME = "background-location-task";
-
 export const MainScreen: React.FC<Props> = ({ toNext }) => {
   const dispatch = useDispatch();
   const [search, setSearch] = useState("");
   const [tab, setTab] = useState<number>(Tab.All);
+  const [showModal, setShowModal] = useState<{
+    show: boolean;
+    message: string;
+  }>({ show: false, message: "" });
 
+  const getLocation = useLocation();
   let deviceHeight = Dimensions.get("window").height;
+  const inWorkArea = useInWorkArea();
 
-  const { siteList, currentSite } = useSelector(
-    (state: StoreType) => state.data
-  );
+  const { siteList, location, currentSite, workingHoursList, user } =
+    useSelector((state: StoreType) => state.data);
 
   useEffect(() => {
     dispatch(getSiteListAsync());
   }, [dispatch]);
 
-  const [location, setLocation] = useState<{ lon: number; lat: number }>({
-    lon: 0,
-    lat: 0,
-  });
+  useEffect(() => {
+    if (user.id != undefined) dispatch(getWorkingHoursListAsync(user.id));
+  }, [dispatch, user]);
 
   useMemo(() => {
-    console.log(location);
+    console.log(location, new Date().toTimeString());
   }, [location]);
 
-  const getLocation= useCallback(() => {
-    (async () => {
-      let { status } = await Location.requestPermissionsAsync();
-      if (status == "granted") {
-        let location = await Location.getCurrentPositionAsync({});
-        setLocation({
-          lon: location.coords.longitude,
-          lat: location.coords.latitude,
-        });
-      }
-    })();
+  const workingHoursIsExist = useMemo(() => {
+    const currentDate = DateTime.format(new Date(), "isodate");
+    return workingHoursList
+      .map((x) => DateTime.format(x.start, "isodate"))
+      .includes(currentDate);
+  }, [workingHoursList]);
+
+  useEffect(() => {
+    getLocation();
   }, []);
 
-  const timeoutRef = useRef<any>(null);
-
-  const setShowModalFalse = useCallback(() => {
-    timeoutRef.current = setTimeout(() => {
-      getLocation()
-      clearTimeout(timeoutRef.current);
-    }, 4000);
-  }, []);
-  
-  useEffect(()=>{
-    setShowModalFalse()
-  },[setShowModalFalse])
   const getDistance = useCallback(
     (pointA: number[], pointB: number[]) =>
       Math.sqrt(
@@ -111,6 +103,22 @@ export const MainScreen: React.FC<Props> = ({ toNext }) => {
         : nearList,
     [search, siteList, tab, nearList]
   );
+
+  const onNextButton = useCallback(() => {
+    if (currentSite)
+      if (workingHoursIsExist) {
+        // setShowModal({ show: true, message: "Запись о смене уже существует" });
+        toNext();
+      } else {
+        if (inWorkArea(location.lat, location.lon, currentSite?.coords))
+          toNext();
+        else
+          setShowModal({
+            show: true,
+            message: "Вы находитесь за пределами данной стройплощадки",
+          });
+      }
+  }, [location, currentSite]);
 
   return siteList.length == 0 ? (
     <View
@@ -214,10 +222,15 @@ export const MainScreen: React.FC<Props> = ({ toNext }) => {
         />
       </View>
       {currentSite && (
-        <TouchableOpacity onPress={toNext} style={styles.next}>
+        <TouchableOpacity onPress={onNextButton} style={styles.next}>
           <Icon size={20} type="ionicon" name="arrow-forward-outline" />
         </TouchableOpacity>
       )}
+      <ModalMessage
+        message={showModal.message}
+        visible={showModal.show}
+        onClose={() => setShowModal({ show: false, message: "" })}
+      ></ModalMessage>
     </View>
   );
 };

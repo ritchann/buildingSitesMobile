@@ -11,6 +11,7 @@ import {
 import { Icon } from "react-native-elements";
 import { useDispatch, useSelector } from "react-redux";
 import { CustomButton, ListItemShift } from "../components";
+import { ModalMessage } from "../components/modalMessage";
 import { StoreType } from "../core/rootReducer";
 import {
   getWorkingHoursListAsync,
@@ -18,6 +19,7 @@ import {
 } from "../data/actions";
 import { THEME } from "../data/constants";
 import { WorkingHours } from "../data/model";
+import { Status } from "../enums/statusEnum";
 import { DateTime } from "../utils/dateTime";
 
 interface Props {
@@ -27,6 +29,10 @@ interface Props {
 export const ShiftsScreen: React.FC<Props> = ({ toNext }) => {
   const dispatch = useDispatch();
 
+  const [showMessage, setShowMessage] = useState<{
+    show: boolean;
+    message: string;
+  }>({ show: false, message: "" });
   const [showModal, setShowModal] = useState<{
     show: boolean;
     data?: WorkingHours;
@@ -57,7 +63,7 @@ export const ShiftsScreen: React.FC<Props> = ({ toNext }) => {
   }, [workingHoursList]);
 
   useEffect(() => {
-    dispatch(getWorkingHoursListAsync(user.id));
+    if (user.id != undefined) dispatch(getWorkingHoursListAsync(user.id));
   }, [dispatch, user]);
 
   const onClickYes = useCallback(() => {
@@ -65,6 +71,25 @@ export const ShiftsScreen: React.FC<Props> = ({ toNext }) => {
     setShowModal({ show: false, data: undefined });
     toNext();
   }, [dispatch, toNext]);
+
+  const onClickItem = useCallback((item: WorkingHours) => {
+    const dateItem = DateTime.format(item.start, "isodate");
+    const currentDate = DateTime.format(new Date(), "isodate");
+    if (currentDate == dateItem) {
+      if (item.status == Status.Paused)
+        setShowModal({ show: true, data: item });
+      else {
+        let status = "";
+        if (item.status == Status.End) status = "завершена";
+        if (item.status == Status.Process) status = "в процессе";
+        setShowMessage({ show: true, message: "Смена " + status });
+      }
+    } else
+      setShowMessage({
+        show: true,
+        message: "Выберите смену за сегодняшний день",
+      });
+  }, []);
 
   return workingHoursList.length == 0 ? (
     <View
@@ -145,14 +170,16 @@ export const ShiftsScreen: React.FC<Props> = ({ toNext }) => {
           showsVerticalScrollIndicator={false}
           data={data}
           renderItem={({ item }) => (
-            <ListItemShift
-              onPress={() => setShowModal({ show: true, data: item })}
-              data={item}
-            />
+            <ListItemShift onPress={() => onClickItem(item)} data={item} />
           )}
           keyExtractor={(item) => item.id.toString()}
         />
       </View>
+      <ModalMessage
+        message={showMessage.message}
+        visible={showMessage.show}
+        onClose={() => setShowMessage({ show: false, message: "" })}
+      ></ModalMessage>
     </View>
   );
 };

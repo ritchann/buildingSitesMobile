@@ -44,7 +44,7 @@ export const SelectField: React.FC<Props> = ({
   return (
     <View style={styles.containerTextField}>
       <Text style={styles.textInput}>{label}</Text>
-      <Modal  onLayout={()=> console.log('s')}
+      <Modal
         animationType="fade"
         transparent={true}
         visible={showModal}
@@ -110,8 +110,7 @@ const styles = StyleSheet.create({
     color: THEME.GREY,
     marginLeft: 4,
     height: 30,
-    width:305,
-
+    width: 305,
   },
   underline: {
     opacity: 0.2,
