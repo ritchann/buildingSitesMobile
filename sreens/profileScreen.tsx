@@ -19,13 +19,20 @@ export const ProfileScreen = () => {
   } = useSelector((state: StoreType) => state.data);
 
   const [user, setUser] = useState<Employee | undefined>(storeUser);
+  const [load, setLoad] = useState(false);
 
   const specialtyMap = new Map<number, string>(
     Specialty.all.map((x) => [x.id, x.name])
   );
 
   const onSave = useCallback(() => {
-    dispatch(updateUserAsync(user));
+    setLoad(true);
+    dispatch(
+      updateUserAsync({
+        employee: user,
+        onResponseCallback: () => setLoad(false),
+      })
+    );
   }, [dispatch, user]);
 
   const onChange = useCallback(
@@ -93,7 +100,7 @@ export const ProfileScreen = () => {
           onChange={(v) => onChange("specialty", v)}
         />
         <View style={styles.buttonContainer}>
-          <CustomButton title="Сохранить" onPress={onSave} />
+          <CustomButton loading={load} title="Сохранить" onPress={onSave} />
         </View>
       </View>
     </View>

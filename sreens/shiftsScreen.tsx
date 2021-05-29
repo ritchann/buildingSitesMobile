@@ -7,10 +7,11 @@ import {
   Image,
   FlatList,
   Modal,
+  TouchableOpacity,
 } from "react-native";
 import { Icon } from "react-native-elements";
 import { useDispatch, useSelector } from "react-redux";
-import { CustomButton, ListItemShift } from "../components";
+import { CustomButton, ListItemShift, TabButton } from "../components";
 import { ModalMessage } from "../components/modalMessage";
 import { StoreType } from "../core/rootReducer";
 import {
@@ -22,6 +23,11 @@ import { WorkingHours } from "../data/model";
 import { Status } from "../enums/statusEnum";
 import { DateTime } from "../utils/dateTime";
 
+enum Tab {
+  All,
+  Paused,
+}
+
 interface Props {
   toNext: () => void;
 }
@@ -29,6 +35,8 @@ interface Props {
 export const ShiftsScreen: React.FC<Props> = ({ toNext }) => {
   const dispatch = useDispatch();
 
+  const [selectedItem, setSelectedItem] = useState<WorkingHours>();
+  const [tab, setTab] = useState(Tab.All);
   const [showMessage, setShowMessage] = useState<{
     show: boolean;
     message: string;
@@ -44,14 +52,21 @@ export const ShiftsScreen: React.FC<Props> = ({ toNext }) => {
   const { user, workingHoursList } = useSelector(
     (state: StoreType) => state.data
   );
+  const list = useMemo(() => {
+    if (tab == Tab.All) return workingHoursList;
+    else
+      return workingHoursList.flatMap((x) =>
+        x.status == Status.Paused ? [x] : []
+      );
+  }, [workingHoursList, tab]);
 
   const data = useMemo(() => {
     return (
-      workingHoursList
+      list
         .map((x) => ({
           ...x,
-          start: DateTime.addHours(x.start, -3),
-          end: DateTime.addHours(x.end, -3),
+          // start: DateTime.addHours(x.start, -3),
+          // end: DateTime.addHours(x.end, -3),
         }))
         // .filter(
         //   (x) =>
@@ -60,17 +75,25 @@ export const ShiftsScreen: React.FC<Props> = ({ toNext }) => {
         // )
         .sort((a, b) => (a.id < b.id ? 1 : -1))
     );
-  }, [workingHoursList]);
+  }, [list]);
 
   useEffect(() => {
     if (user.id != undefined) dispatch(getWorkingHoursListAsync(user.id));
   }, [dispatch, user]);
 
   const onClickYes = useCallback(() => {
-    dispatch(setStartWorkingHours(showModal.data));
+    console.log('set start working housr ',showModal.data);
+    if (showModal.data != undefined)
+      dispatch(
+        setStartWorkingHours({
+          ...showModal.data,
+          start: DateTime.addHours(showModal.data.start, 3),
+          end: DateTime.addHours(showModal.data.end, 3),
+        })
+      );
     setShowModal({ show: false, data: undefined });
     toNext();
-  }, [dispatch, toNext]);
+  }, [dispatch, toNext, showModal]);
 
   const onClickItem = useCallback((item: WorkingHours) => {
     const dateItem = DateTime.format(item.start, "isodate");
@@ -114,14 +137,29 @@ export const ShiftsScreen: React.FC<Props> = ({ toNext }) => {
     <View style={styles.container}>
       <View style={styles.containerTop}>
         <Text style={styles.headerText}>Смены</Text>
+        <View style={{ marginTop: "10%", flexDirection: "row" }}>
+          <TabButton
+            type="font-awesome-5"
+            widthTab={110}
+            active={tab == Tab.All}
+            title="Все"
+            nameIcon="history"
+            onPress={() => setTab(Tab.All)}
+          />
+          <TabButton
+            type="font-awesome-5"
+            widthTab={160}
+            active={tab == Tab.Paused}
+            title="Приостановленные"
+            nameIcon="pause-circle"
+            onPress={() => setTab(Tab.Paused)}
+          />
+        </View>
       </View>
       <Modal
         animationType="fade"
         transparent={true}
         visible={showModal.show && showModal.data != undefined}
-        onRequestClose={() => {
-          setShowModal({ show: false });
-        }}
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
@@ -162,19 +200,31 @@ export const ShiftsScreen: React.FC<Props> = ({ toNext }) => {
       <View
         style={{
           width: "90%",
-          height: deviceHeight - 120,
-          marginTop: 35,
+          height: deviceHeight - 170,
+          marginTop: 80,
         }}
       >
         <FlatList
           showsVerticalScrollIndicator={false}
           data={data}
           renderItem={({ item }) => (
-            <ListItemShift onPress={() => onClickItem(item)} data={item} />
+            <ListItemShift
+              selectedItem={selectedItem?.id}
+              onPress={() => setSelectedItem(item)}
+              data={item}
+            />
           )}
           keyExtractor={(item) => item.id.toString()}
         />
       </View>
+      {selectedItem && (
+        <TouchableOpacity
+          onPress={() => (selectedItem ? onClickItem(selectedItem) : {})}
+          style={styles.next}
+        >
+          <Icon size={20} type="ionicon" name="arrow-forward-outline" />
+        </TouchableOpacity>
+      )}
       <ModalMessage
         message={showMessage.message}
         visible={showMessage.show}
@@ -190,6 +240,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     fontFamily: "Roboto",
     backgroundColor: "white",
+    height: "100%",
   },
   containerTop: {
     width: "80%",
@@ -229,5 +280,18 @@ const styles = StyleSheet.create({
     elevation: 100,
     width: 295,
     height: 250,
+  },
+  tab: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  next: {
+    backgroundColor: THEME.YELLOW,
+    height: 60,
+    width: 60,
+    borderRadius: 100,
+    marginTop: -100,
+    marginLeft: 250,
+    justifyContent: "center",
   },
 });

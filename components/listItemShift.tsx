@@ -11,9 +11,10 @@ import { DateTime } from "../utils/dateTime";
 interface Props {
   onPress: () => void;
   data: WorkingHours;
+  selectedItem?: number;
 }
 
-export const ListItemShift: React.FC<Props> = ({ onPress, data }) => {
+export const ListItemShift: React.FC<Props> = ({ onPress, data, selectedItem }) => {
   const { siteList } = useSelector((state: StoreType) => state.data);
 
   const status = useMemo(()=>{
@@ -38,7 +39,7 @@ export const ListItemShift: React.FC<Props> = ({ onPress, data }) => {
         flexDirection: "row",
         alignItems: "center",
         marginBottom: 12,
-        borderColor: "#f6f6f6",
+        borderColor: selectedItem === data.id ? "#F9D24A" : "#f6f6f6",
         borderWidth: 0.7,
       }}
     >

@@ -12,6 +12,8 @@ import {
   ImageBackground,
   Modal,
   Image,
+  Platform,
+  TouchableOpacity,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { CustomButton } from "../components";
@@ -21,6 +23,9 @@ import { StoreType } from "../core/rootReducer";
 import { THEME } from "../data/constants";
 import { PPE } from "../data/model";
 import { Status } from "../enums/statusEnum";
+import * as ImagePicker from "expo-image-picker";
+import { Icon } from "react-native-elements";
+import { DateTime } from "../utils/dateTime";
 
 interface Props {
   toNext: () => void;
@@ -51,8 +56,21 @@ export const StartWorkTwoScreen: React.FC<Props> = ({ toNext }) => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [step, setStep] = useState<Type>(Type.Progress);
   const [result, setResult] = useState<Result>(Result.None);
+  const [testMode] = useState(true);
 
   let camera: Camera | null;
+
+  useEffect(() => {
+    (async () => {
+      if (Platform.OS !== "web") {
+        const { status } =
+          await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== "granted") {
+          alert("Sorry, we need camera roll permissions to make this work!");
+        }
+      }
+    })();
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -61,13 +79,30 @@ export const StartWorkTwoScreen: React.FC<Props> = ({ toNext }) => {
     })();
   }, [hasPermission]);
 
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      base64: true,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [3, 4],
+      quality: 1,
+    });
+    if (!result.cancelled) {
+      console.log(result.base64?.length);
+      checkPPE(result?.base64 ?? "");
+      setCapturedImage({
+        height: result.height,
+        uri: result.uri,
+        width: result.width,
+      });
+    }
+  };
+
   const takePicture = async () => {
     if (!camera) return;
     const photo = await camera.takePictureAsync({ base64: true });
-    console.log(photo?.base64?.length);
-    setShowModal(true);
-    setStep(Type.Progress);
-    checkPPE(photo.base64?.split("0") ?? []);
+    console.log(photo.base64?.length);
+    checkPPE(photo?.base64 ?? "");
     setCapturedImage({
       height: photo.height,
       uri: photo.uri,
@@ -76,7 +111,9 @@ export const StartWorkTwoScreen: React.FC<Props> = ({ toNext }) => {
   };
 
   const checkPPE = useCallback(
-    (base64: string[]) => {
+    (base64: string) => {
+      setShowModal(true);
+      setStep(Type.Progress);
       dispatch(
         checkPPEAsync({
           base64,
@@ -119,11 +156,12 @@ export const StartWorkTwoScreen: React.FC<Props> = ({ toNext }) => {
     if (currentSite && startWorkingHours == undefined)
       dispatch(
         startWorkingHoursAsync({
-          start: new Date(),
-          end: new Date(),
+          start: DateTime.addHours(new Date(), 3),
+          end: DateTime.addHours(new Date(), 3),
           employeeId: user.id,
           siteId: currentSite.id,
           status: Status.Process,
+          time: 0,
         })
       );
   }, [dispatch, user, currentSite, startWorkingHours]);
@@ -156,7 +194,7 @@ export const StartWorkTwoScreen: React.FC<Props> = ({ toNext }) => {
       case Result.FaceNotRecognized:
       case Result.FaceNotRecognizedWithoutRequiredEquipment:
       case Result.WithoutRequiredEquipment:
-        return require("../image/close.jpg");
+        return require("../image/alert.gif");
       case Result.WithRequiredEquipment:
         return require("../image/check.gif");
     }
@@ -212,22 +250,26 @@ export const StartWorkTwoScreen: React.FC<Props> = ({ toNext }) => {
       </Modal>
       {capturedImage ? (
         <ImageBackground
-          resizeMode="stretch"
+          // resizeMode="stretch"
           source={{ uri: capturedImage && capturedImage.uri }}
           style={{
-            width: capturedImage.width * 1.5,
-            height: capturedImage.height * 1.55,
+            width: 370,
+            height: 490,
             marginTop: 20,
-            padding: 0,
           }}
         />
       ) : (
         <Camera
-          pictureSize="320x240"
+          pictureSize="3264x1836"
           ref={(r) => (camera = r)}
           style={{ width: "90%", height: "65%", marginTop: 20 }}
           type={Camera.Constants.Type.back}
         ></Camera>
+      )}
+      {testMode && (
+        <TouchableOpacity onPress={pickImage} style={styles.next}>
+          <Icon size={20} type="ionicon" name="images-outline" />
+        </TouchableOpacity>
       )}
       <View style={styles.bottomContainer}>
         <CustomButton
@@ -263,7 +305,7 @@ const styles = StyleSheet.create({
     marginTop: "5%",
   },
   bottomContainer: {
-    marginTop: "5%",
+    marginTop: "15%",
     alignItems: "flex-start",
     marginBottom: "25%",
     width: "80%",
@@ -311,5 +353,14 @@ const styles = StyleSheet.create({
     color: THEME.GREY,
     width: 265,
     textAlign: "center",
+  },
+  next: {
+    backgroundColor: THEME.YELLOW,
+    height: 60,
+    width: 60,
+    borderRadius: 100,
+    marginTop: -80,
+    marginLeft: 250,
+    justifyContent: "center",
   },
 });

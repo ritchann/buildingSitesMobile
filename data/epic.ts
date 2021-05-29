@@ -48,8 +48,8 @@ const getWorkingHoursListEpic = (action$: ActionsObservable<Action<any>>) =>
             (x) => x as WorkingHours
           );
           list.forEach((x) => {
-            x.start = DateTime.addHours(x.start, 3);
-            x.end = DateTime.addHours(x.end, 3);
+            x.start = DateTime.addHours(x.start, -3);
+            x.end = DateTime.addHours(x.end, -3);
           });
           list.sort((a, b) => (a.start.getTime() > b.start.getTime() ? 1 : -1));
           return setWorkingHoursList(list);
@@ -64,8 +64,8 @@ const startWorkingHoursEpic = (action$: ActionsObservable<Action<any>>) =>
     mergeMap((action) =>
       from(startWorkingHours((action as any).data)).pipe(
         map((response) => {
-          response.start = DateTime.addHours(response.start, 3);
-          response.end = DateTime.addHours(response.end, 3);
+          response.start = new Date(response?.start);
+          response.end = new Date(response?.end);
           return setStartWorkingHours(response);
         })
       )
@@ -94,7 +94,10 @@ const updateUserEpic = (action$: ActionsObservable<Action<any>>) =>
   action$.pipe(
     ofType(ActionType.UPDATEUSERASYNC),
     mergeMap((action) =>
-      from(updateUser((action as any).data)).pipe(ignoreElements())
+      from(updateUser((action as any).data)).pipe(
+        tap(() => (action as any).data.onResponseCallback()),
+        ignoreElements()
+      )
     )
   );
 
@@ -114,7 +117,11 @@ const checkPPEEpic = (action$: ActionsObservable<Action<any>>) =>
         tap((response: string) => {
           console.log("checkPPE ", response);
           const result = JSON.parse(
-            response.replace(/True/g, "true").replace(/'/g, '"')
+            response
+              .replace(/True/g, "true")
+              .replace(/'/g, '"')
+              .replace(/False/g, "false")
+              .replace(/'/g, '"')
           ) as PPE;
           return (action as any).data.onResponseCallback(result);
         }),

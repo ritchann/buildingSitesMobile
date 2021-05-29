@@ -20,14 +20,19 @@ export const createUser = (data: Employee) =>
 export const getWorkingHoursList = (data: number) =>
   axios.get(url + `workingHours/${data}`).then((res) => res.data);
 
-export const updateUser = (data: Employee) =>
-  axios.put(url + `employee/${data.id}`, data).then((res) => res.data);
+export const updateUser = (data: {
+  employee: Employee;
+  onResponseCallback: () => void;
+}) =>
+  axios
+    .put(url + `employee/${data.employee.id}`, data.employee)
+    .then((res) => res.data);
 
 export const createAccident = (data: Accident) =>
   axios.post(url + "accident", data).then((res) => res.data);
 
 export const checkPPE = (data: {
-  base64: string[];
+  base64: string;
   onResponseCallback: (value: PPE) => void;
 }) => axios.post(url + "ml", data).then((res) => res.data);
 
@@ -39,8 +44,7 @@ export const auth = (data: {
 
 export const signOut = () => axios.get(url + "signOut").then((res) => res.data);
 
-
 export const signUp = (data: {
-  employee:Employee
+  employee: Employee;
   onResponseCallback: (value: AuthResponse) => void;
 }) => axios.post(url + "signUp", data).then((res) => res.data);

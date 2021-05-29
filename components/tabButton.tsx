@@ -1,11 +1,15 @@
 import React from "react";
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, View, StyleSheet, Text } from "react-native";
+import { Icon } from "react-native-elements";
+import { THEME } from "../data/constants";
 
 interface Props {
   onPress: () => void;
-  title: JSX.Element;
+  title: string;
   active: boolean;
   widthTab: number;
+  nameIcon: string;
+  type: string;
 }
 
 export const TabButton: React.FC<Props> = ({
@@ -13,6 +17,8 @@ export const TabButton: React.FC<Props> = ({
   title,
   active,
   widthTab,
+  nameIcon,
+  type,
 }) => {
   return (
     <TouchableOpacity
@@ -31,7 +37,30 @@ export const TabButton: React.FC<Props> = ({
         marginRight: "5%",
       }}
     >
-      {title}
+      <View style={styles.tab}>
+        <Icon
+          color={!active ? THEME.BLACK : THEME.GREY}
+          size={12}
+          style={{ paddingRight: 4 }}
+          type={type}
+          name={nameIcon}
+        />
+        <Text
+          style={{
+            color: !active ? THEME.BLACK : THEME.GREY,
+            fontSize: 12,
+          }}
+        >
+          {title}
+        </Text>
+      </View>
     </TouchableOpacity>
   );
 };
+
+const styles = StyleSheet.create({
+  tab: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+});

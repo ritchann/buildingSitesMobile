@@ -4,7 +4,7 @@ import formatFn from "date-fns/format";
 export class DateTime {
   public static parse(dateTime: string) {
     const value = parseISO(dateTime);
-    return value;
+    return value;;
   }
 
   public static format(
@@ -69,8 +69,7 @@ export class DateTime {
         useFormat = "MM/dd/yyyy HH:mm";
         break;
     }
-    const a = DateTime.addHours(date, -3);
-    const value = formatFn(a, useFormat);
+    const value = formatFn(date, useFormat);
     return value;
   }
 

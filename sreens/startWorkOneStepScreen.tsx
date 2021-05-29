@@ -20,9 +20,7 @@ export const StartWorkOneScreen: React.FC<Props> = ({ toNext }) => {
     () => (startWorkingHours ? startWorkingHours.site : currentSite),
     [startWorkingHours, currentSite]
   );
-
-  console.log(startWorkingHours, currentSite)
-
+  
   return (
     <View style={styles.container}>
       <Image style={styles.image} source={require("../image/startWork.png")} />

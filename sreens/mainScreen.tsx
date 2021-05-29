@@ -28,6 +28,7 @@ enum Tab {
   All,
   Near,
 }
+
 interface Props {
   toNext: () => void;
 }
@@ -55,10 +56,6 @@ export const MainScreen: React.FC<Props> = ({ toNext }) => {
   useEffect(() => {
     if (user.id != undefined) dispatch(getWorkingHoursListAsync(user.id));
   }, [dispatch, user]);
-
-  useMemo(() => {
-    console.log(location, new Date().toTimeString());
-  }, [location]);
 
   const workingHoursIsExist = useMemo(() => {
     const currentDate = DateTime.format(new Date(), "isodate");
@@ -153,51 +150,19 @@ export const MainScreen: React.FC<Props> = ({ toNext }) => {
         <SearchField value={search} onChange={setSearch} />
         <View style={styles.lineTabs}>
           <TabButton
+            type="font-awesome-5"
             widthTab={110}
             active={tab == Tab.All}
-            title={
-              <View style={styles.tab}>
-                <Icon
-                  color={tab ? THEME.BLACK : THEME.GREY}
-                  size={12}
-                  style={{ paddingRight: 4 }}
-                  type="font-awesome-5"
-                  name="clock"
-                />
-                <Text
-                  style={{
-                    color: tab ? THEME.BLACK : THEME.GREY,
-                    fontSize: 12,
-                  }}
-                >
-                  Все
-                </Text>
-              </View>
-            }
+            title="Все"
+            nameIcon="clock"
             onPress={() => setTab(Tab.All)}
           />
           <TabButton
+            type="material"
+            nameIcon="near-me"
             widthTab={110}
             active={tab == Tab.Near}
-            title={
-              <View style={styles.tab}>
-                <Icon
-                  color={tab ? THEME.GREY : THEME.BLACK}
-                  size={12}
-                  style={{ paddingRight: 4 }}
-                  type="material"
-                  name="near-me"
-                />
-                <Text
-                  style={{
-                    color: tab ? THEME.GREY : THEME.BLACK,
-                    fontSize: 12,
-                  }}
-                >
-                  Ближайшие
-                </Text>
-              </View>
-            }
+            title="Ближайшие"
             onPress={() => setTab(Tab.Near)}
           />
         </View>

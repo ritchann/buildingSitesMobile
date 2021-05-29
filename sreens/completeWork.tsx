@@ -28,7 +28,7 @@ import { Status } from "../enums/statusEnum";
 import { useLocation } from "../hooks/useLocation";
 import { useInWorkArea } from "../hooks/useInWorkArea";
 
-const SERVER = "http://192.168.43.232:8080";
+const SERVER = "https://building-test-123.herokuapp.com";
 
 const chartConfig = {
   backgroundGradientFrom: "white",
@@ -62,28 +62,51 @@ export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
   }>({
     show: false,
   });
+  const [pausedTime, setPausedTime] = useState(0);
 
   const { startWorkingHours, siteList, user, location } = useSelector(
     (state: StoreType) => state.data
   );
+
+  const [test, setTest] = useState(startWorkingHours?.time ?? 0);
 
   const currentSite = useMemo(
     () => siteList.find((x) => x.id == startWorkingHours?.siteId),
     [siteList, startWorkingHours]
   );
 
-  const socket = io(SERVER, {
-    transports: ["websocket"],
-  });
+  // const socket = io(SERVER, {
+  //   port:'8080',
+  //   transports: ["websocket"],
+  // });
+
+  // useEffect(() => {
+  //   if (startWorkingHours?.status == Status.Paused && pausedTime == 0) {
+  //     const currentTime = DateTime.addHours(new Date(), 3);
+  //     console.log(
+  //       "use effect status paused",
+  //       currentTime,
+  //       startWorkingHours.end
+  //     );
+  //     const from =
+  //       startWorkingHours.end.getUTCHours() * 60 +
+  //       startWorkingHours.end.getMinutes();
+  //     const to = currentTime.getUTCHours() * 60 + currentTime.getMinutes();
+  //     setPausedTime(to - from);
+  //   }
+  // }, [startWorkingHours]);
+
+  useEffect(() => {
+    setTimeout(() => setTest(test + 1), 60000);
+  }, [test]);
 
   useMemo(() => {
-    console.log("current location ", location, new Date().toTimeString());
-  }, [location]);
+    console.log("TEST ", test, new Date());
+  }, [test]);
 
   useEffect(() => {
     setTimeout(() => getLocation(), 60000);
   }, [location]);
-
 
   const createAccident = useCallback(() => {
     dispatch(
@@ -97,25 +120,36 @@ export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
     setShowModal(true);
   }, [dispatch, location]);
 
-  const time = useMemo(() => {
-    if (startWorkingHours) {
-      const from =
-        startWorkingHours.start.getUTCHours() * 60 +
-        startWorkingHours.start.getMinutes();
-      const to =
-        startWorkingHours.end.getUTCHours() * 60 +
-        startWorkingHours.end.getMinutes();
-      return to - from;
-    }
-    return 0;
+  useMemo(() => {
+    console.log(
+      "startWorkingHours start, end ",
+      startWorkingHours?.start,
+      startWorkingHours?.end
+    );
   }, [startWorkingHours]);
+
+  // const time = useMemo(() => {
+  //   if (startWorkingHours) {
+  //     const from =
+  //       startWorkingHours.start.getUTCHours() * 60 +
+  //       startWorkingHours.start.getMinutes();
+  //     const to =
+  //       startWorkingHours.end.getUTCHours() * 60 +
+  //       startWorkingHours.end.getMinutes();
+  //     const result = to - from;
+  //     if (startWorkingHours.status == Status.Paused)
+  //       return startWorkingHours.time;
+  //     else return to - from - pausedTime;
+  //   }
+  //   return 0;
+  // }, [startWorkingHours, pausedTime]);
 
   const data = useMemo(() => {
     return {
       labels: ["Hours"],
-      data: [time / 480],
+      data: [test / 480],
     };
-  }, [time]);
+  }, [test]);
 
   const end = useCallback(
     (status: number) => {
@@ -123,9 +157,10 @@ export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
         dispatch(
           updateWorkingHoursAsync({
             ...startWorkingHours,
-            start: DateTime.addHours(startWorkingHours.start, -3),
-            end: new Date(),
+            //  start: DateTime.addHours(startWorkingHours.start, -3),
+            end: DateTime.addHours(new Date(), 3),
             status,
+            time: test,
           })
         );
         dispatch(
@@ -134,15 +169,17 @@ export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
               ? undefined
               : {
                   ...startWorkingHours,
+                  //  start: DateTime.addHours(startWorkingHours.start, -3),
                   end: DateTime.addHours(new Date(), 3),
                   status,
+                  time: test,
                 }
           )
         );
         if (Status.End == status) endShift();
       }
     },
-    [dispatch, startWorkingHours, endShift]
+    [dispatch, startWorkingHours, endShift, test]
   );
 
   useEffect(() => {
@@ -170,18 +207,34 @@ export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
     Vibration.vibrate([1000, 2000, 1000, 2000]);
   }, []);
 
-  useEffect(() => {
-    socket.on("connect", () => {
-      console.log("connect to socket");
-      socket.on("join", function (data) {
-        console.log(data);
-        const accident = data as Accident;
-        notifications();
-        setShowModalWithMap({ accident, show: true });
-        console.log(user.id, data);
-      });
-    });
-  }, [socket, notifications]);
+  // useEffect(() => {
+  //   socket.on("connect", () => {
+  //     console.log("connect to socket");
+  //     socket.on("join", function (data) {
+  //       console.log(data);
+  //       const accident = data as Accident;
+  //       notifications();
+  //       setShowModalWithMap({ accident, show: true });
+  //       console.log(user.id, data);
+  //     });
+  //   });
+  // }, [socket, notifications]);
+
+  const labelHours = useMemo(() => {
+    const hours = parseInt((test / 60).toFixed(0));
+    if (hours == 1) return "час";
+    else if ([0, 5, 6, 7, 8, 9, 10].includes(hours)) return "часов";
+    else if ([2, 3, 4].includes(hours)) return "часа";
+    else return "час";
+  }, [test]);
+
+  const labelMinute = useMemo(() => {
+    const hours = parseInt((test % 60).toFixed(0));
+    if (hours == 1) return "минута";
+    else if ([0, 5, 6, 7, 8, 9, 10].includes(hours)) return "минут";
+    else if ([2, 3, 4].includes(hours)) return "минуты";
+    else return "минут";
+  }, [test]);
 
   return (
     <View style={styles.container}>
@@ -338,8 +391,12 @@ export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
             alignItems: "center",
           }}
         >
-          <Text style={styles.countHours}>{(time / 60).toFixed(0)} часов</Text>
-          <Text style={styles.countHours}>{(time % 60).toFixed(0)} минут</Text>
+          <Text style={styles.countHours}>
+            {(test / 60).toFixed(0)} {labelHours}
+          </Text>
+          <Text style={styles.countHours}>
+            {(test % 60).toFixed(0)} {labelMinute}
+          </Text>
           <TouchableOpacity onPress={() => end(Status.End)}>
             <Text
               style={{
@@ -366,6 +423,7 @@ export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
           <Text style={styles.sosText}>для отправки экстренного сообщения</Text>
         </View>
         <TouchableOpacity
+          activeOpacity={0.6}
           onLongPress={createAccident}
           delayLongPress={3000}
           style={{

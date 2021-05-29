@@ -46,6 +46,7 @@ export const StatisticsScreen = () => {
   const workingHoursWeek = useMemo(() => {
     const fromDate: Date = DateTime.addDays(new Date(), -8);
     const toDate: Date = DateTime.addHours(new Date(), 3);
+
     const res: WorkingHours[] = [];
     workingHoursList.forEach((x) => {
       if (
@@ -59,7 +60,7 @@ export const StatisticsScreen = () => {
     res.forEach((x) => {
       if (!labels.includes(x.start.getDate().toString())) {
         labels.push(x.start.getDate().toString());
-        data.push(getDifference(x) / 60);
+        data.push(x.time / 60);
       }
     });
 
@@ -90,7 +91,7 @@ export const StatisticsScreen = () => {
       if (!incl)
         data.push({
           date: DateTime.format(x.start, "isodate"),
-          count: getDifference(x) / 60,
+          count: x.time / 60,
         });
     });
     return data;
@@ -112,7 +113,8 @@ export const StatisticsScreen = () => {
     res.forEach((x) => {
       if (!labels.includes(x.start.getDate().toString())) {
         labels.push(x.start.getDate().toString());
-        data.push(getDifference(x) / 60);
+        //data.push(getDifference(x) / 60);
+        data.push(x.time / 60);
       }
     });
     return {
