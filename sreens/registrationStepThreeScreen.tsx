@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, Dimensions } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { CustomButton, TextField } from "../components";
 import { ModalMessage } from "../components/modalMessage";
@@ -16,6 +16,7 @@ interface Props {
 
 export const RegistrationStepThreeScreen: React.FC<Props> = ({ toNext }) => {
   const dispatch = useDispatch();
+  let deviceHeight = Dimensions.get("window").height;
   const { user } = useSelector((state: StoreType) => state.data);
 
   const [load, setLoad] = useState(false);
@@ -74,7 +75,10 @@ export const RegistrationStepThreeScreen: React.FC<Props> = ({ toNext }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.dataContainer}>
+      <View style={{
+              width: "80%",
+              marginTop: deviceHeight > 700 ? 105 : 85,
+      }}>
         <TextField
           regexp={regexpEmail}
           value={user.email}
@@ -100,7 +104,10 @@ export const RegistrationStepThreeScreen: React.FC<Props> = ({ toNext }) => {
       <View style={styles.containerError}>
         <Text style={styles.forgottenPassword}>{error}</Text>
       </View>
-      <View style={styles.buttonContainer}>
+      <View style={{
+            width: "80%",
+            marginTop: deviceHeight > 700 ? 270 : 137,
+      }}>
         <CustomButton loading={load} title="Далее" onPress={onClick} />
       </View>
       <ModalMessage

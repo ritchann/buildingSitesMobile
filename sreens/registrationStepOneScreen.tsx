@@ -1,10 +1,6 @@
 import React, { useCallback, useState } from "react";
-import { View, StyleSheet, Text, LogBox } from "react-native";
-import {
-  CustomButton,
-  DateField,
-  TextField,
-} from "../components";
+import { View, StyleSheet, Text, LogBox, Dimensions } from "react-native";
+import { CustomButton, DateField, TextField } from "../components";
 import { useDispatch, useSelector } from "react-redux";
 import { StoreType } from "../core/rootReducer";
 import { setUser } from "../data/actions";
@@ -18,6 +14,7 @@ interface Props {
 export const RegistrationStepOneScreen: React.FC<Props> = ({ toNext }) => {
   const dispatch = useDispatch();
 
+  let deviceHeight = Dimensions.get("window").height;
   const { user } = useSelector((state: StoreType) => state.data);
 
   const [showWarning, setShowWarning] = useState<{
@@ -49,7 +46,12 @@ export const RegistrationStepOneScreen: React.FC<Props> = ({ toNext }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.dataContainer}>
+      <View
+        style={{
+          width: "80%",
+          marginTop: deviceHeight > 700 ? 50 : 35,
+        }}
+      >
         <Text style={styles.manual}>Пожалуйста, заполните данные о себе</Text>
         <TextField
           value={user.surname}
@@ -72,7 +74,12 @@ export const RegistrationStepOneScreen: React.FC<Props> = ({ toNext }) => {
           onChange={(v) => onChange("birthDate", v)}
         />
       </View>
-      <View style={styles.nextButton}>
+      <View
+        style={{
+          width: "80%",
+          marginTop: deviceHeight > 700 ? 280 : 140,
+        }}
+      >
         <CustomButton title="Далее" onPress={onClick} />
       </View>
       <ModalMessage
@@ -99,9 +106,5 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: THEME.BLACK,
     fontWeight: "bold",
-  },
-  nextButton: {
-    width: "80%",
-    marginTop: 230,
   },
 });

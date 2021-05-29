@@ -15,7 +15,6 @@ import { THEME } from "../data/constants";
 import { AuthResponse } from "../data/model";
 import { getError } from "../core/getError";
 import { Accelerometer } from "expo-sensors";
-import { reduce } from "rxjs/operators";
 
 interface Props {
   auth: () => void;
@@ -24,10 +23,8 @@ interface Props {
 
 export const LoginScreen: React.FC<Props> = ({ auth, register }) => {
   let deviceHeight = Dimensions.get("window").height;
-
   const dispatch = useDispatch();
 
-  const [subscription, setSubscription] = useState<boolean>(false);
   const [load, setLoad] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [login, setLogin] = useState<{
@@ -44,8 +41,8 @@ export const LoginScreen: React.FC<Props> = ({ auth, register }) => {
     let checkSecondMas: { index: number; data: number; count: number }[] = [];
     let checkThreeMas: { index: number; count: number }[] = [];
     const minRes = 0.8; //0.5
-    const maxRes = 1.2;//2
-    const minHeight = 3;//7
+    const maxRes = 1.2; //2
+    const minHeight = 3; //7
     const maxHeight = 60;
     const checkSpeed = 400;
     const minIndex = (Math.sqrt((2 * minHeight) / 9.8) * 1000) / checkSpeed;
@@ -156,14 +153,6 @@ export const LoginScreen: React.FC<Props> = ({ auth, register }) => {
           width: "80%",
         }}
       >
-        {/* <CustomButton
-          title="Падение"
-          onPress={() => {
-            if (subscription) unsubscribe();
-            else subscribe();
-            setSubscription(!subscription);
-          }}
-        ></CustomButton> */}
         <View style={styles.greetingContainer}>
           <Text style={styles.greeting}>Добро пожаловать!</Text>
           <Text style={styles.underGreeting}>Войдите, чтобы продолжить</Text>
@@ -199,7 +188,7 @@ export const LoginScreen: React.FC<Props> = ({ auth, register }) => {
       </View>
       <Image
         style={{
-          height: deviceHeight / 2.8,
+          height: deviceHeight / 3.65,
           width: "100%",
           resizeMode: "stretch",
         }}

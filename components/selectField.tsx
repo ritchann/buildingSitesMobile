@@ -6,6 +6,7 @@ import {
   Modal,
   TouchableOpacity,
   Picker,
+  Dimensions,
 } from "react-native";
 import { Icon } from "react-native-elements";
 import { ScrollView } from "react-native-gesture-handler";
@@ -26,6 +27,9 @@ export const SelectField: React.FC<Props> = ({
 }) => {
   const [showModal, setShowModal] = useState(false);
 
+  let deviceHeight = Dimensions.get("window").height;
+
+  
   const item = useCallback(
     (key: number) => {
       return (
@@ -53,7 +57,23 @@ export const SelectField: React.FC<Props> = ({
         }}
       >
         <View style={styles.centeredView}>
-          <View style={styles.modalView}>
+          <View style={{
+                margin: 5,
+                backgroundColor: "white",
+                borderRadius: 20,
+                padding: 0,
+                alignItems: "center",
+                shadowColor: "#000",
+                shadowOffset: {
+                  width: 2,
+                  height: 2,
+                },
+                shadowOpacity: 0.25,
+                shadowRadius: 4,
+                elevation: 80,
+                width: deviceHeight > 700 ? 370: 330,
+                height: deviceHeight > 700 ?500: 450,
+          }}>
             <ScrollView
               style={{ width: "100%" }}
               showsVerticalScrollIndicator={false}
@@ -110,7 +130,7 @@ const styles = StyleSheet.create({
     color: THEME.GREY,
     marginLeft: 4,
     height: 30,
-    width: 305,
+    width: '90%',
   },
   underline: {
     opacity: 0.2,
@@ -138,8 +158,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 80,
-    width: 380,
-    height: 600,
+    width: 320,
+    height: 520,
   },
   button: {
     borderRadius: 20,

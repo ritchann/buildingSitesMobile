@@ -192,7 +192,7 @@ export default function App() {
       <View
         style={{
           flexDirection: "column",
-          height: 85,
+          height: deviceHeight > 700 ? 85 : 65,
         }}
       >
         <View

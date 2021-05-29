@@ -1,11 +1,7 @@
 import React, { useCallback, useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Dimensions } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  CustomButton,
-  SelectField,
-  TextField,
-} from "../components";
+import { CustomButton, SelectField, TextField } from "../components";
 import { StoreType } from "../core/rootReducer";
 import { setUser } from "../data/actions";
 import { Specialty } from "../enums/specialtyEnum";
@@ -18,6 +14,7 @@ interface Props {
 
 export const RegistrationStepTwoScreen: React.FC<Props> = ({ toNext }) => {
   const dispatch = useDispatch();
+  let deviceHeight = Dimensions.get("window").height;
 
   const [showWarning, setShowWarning] = useState<{
     show: boolean;
@@ -54,7 +51,12 @@ export const RegistrationStepTwoScreen: React.FC<Props> = ({ toNext }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.dataContainer}>
+      <View
+        style={{
+          width: "80%",
+          marginTop: deviceHeight > 700 ? 105 : 85,
+        }}
+      >
         <SelectField
           options={specialtyMap}
           label="СПЕЦИАЛЬНОСТЬ"
@@ -89,7 +91,12 @@ export const RegistrationStepTwoScreen: React.FC<Props> = ({ toNext }) => {
           onChange={(v) => onChange("phoneNumber", v)}
         />
       </View>
-      <View style={styles.buttonContainer}>
+      <View
+        style={{
+          width: "80%",
+          marginTop: deviceHeight > 700 ? 280 : 140,
+        }}
+      >
         <CustomButton title="Далее" onPress={onClick} />
       </View>
       <ModalMessage
@@ -107,10 +114,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     fontFamily: "Roboto",
     backgroundColor: "white",
-  },
-  dataContainer: {
-    width: "80%",
-    marginTop: 110,
   },
   buttonContainer: {
     width: "80%",
