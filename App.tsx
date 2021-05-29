@@ -14,6 +14,7 @@ import {
   StartWorkTwoScreen,
   ProfileScreen,
   ShiftsScreen,
+  Greeting,
 } from "./sreens";
 import { NavigationContainer } from "@react-navigation/native";
 import {
@@ -295,7 +296,7 @@ export default function App() {
                 }}
               />
             </TouchableOpacity>
-            <Text style={styles.greeting}>Добрый день, Иван</Text>
+            <Greeting/>
             <DrawerItemList
               inactiveTintColor={THEME.GREY}
               activeTintColor={THEME.BLACK}
@@ -308,7 +309,7 @@ export default function App() {
           <TouchableOpacity
             style={{
               marginTop: `${
-                deviceHeight > 750 ? deviceHeight / 6 : deviceHeight / 6.5
+                deviceHeight > 700 ? 130 : 80
               }%`,
             }}
             onPress={() => (setAuth(Action.None), dispatch(signOutAsync()))}

@@ -9,3 +9,4 @@ export { CompleteScreen } from "./completeWork";
 export { StartWorkOneScreen } from "./startWorkOneStepScreen";
 export { StartWorkTwoScreen } from "./startWorkTwoScreen";
 export { ShiftsScreen } from "./shiftsScreen";
+export { Greeting } from "./greeting";

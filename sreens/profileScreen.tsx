@@ -1,9 +1,10 @@
 import React, { useCallback, useState } from "react";
-import { View, StyleSheet, Text, Dimensions, Modal } from "react-native";
+import { View, StyleSheet, Text, Dimensions } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import { useDispatch, useSelector } from "react-redux";
 import { DateField, TextField, CustomButton, SelectField } from "../components";
 import { StoreType } from "../core/rootReducer";
-import { signOutAsync, updateUserAsync } from "../data/actions";
+import { updateUserAsync } from "../data/actions";
 import { THEME } from "../data/constants";
 import { Employee } from "../data/model";
 import { Specialty } from "../enums/specialtyEnum";
@@ -46,60 +47,62 @@ export const ProfileScreen = () => {
     <View style={styles.container}>
       <View style={styles.dataContainer}>
         <Text style={styles.startWorkText}>Профиль</Text>
-        <TextField
-          value={user?.surname ?? ""}
-          label="ФАМИЛИЯ"
-          onChange={(v) => onChange("surname", v)}
-        />
-        <TextField
-          value={user?.name ?? ""}
-          label="ИМЯ"
-          onChange={(v) => onChange("name", v)}
-        />
-        <TextField
-          value={user?.patronymic ?? ""}
-          label="ОТЧЕСТВО"
-          onChange={(v) => onChange("patronymic", v)}
-        />
-        <TextField
-          regexp={/^([0-9]{10}|[0-9]{12})$/}
-          placeholder="0000000000"
-          maxLength={10}
-          keyboardType="decimal-pad"
-          value={user?.tin ?? ""}
-          label="ИНН"
-          onChange={(v) => onChange("tin", v)}
-        />
-        <TextField
-          placeholder="000-000-00000"
-          regexp={/^(?:[- ]*\d){11}$/}
-          maxLength={14}
-          keyboardType="decimal-pad"
-          value={user?.inipa ?? ""}
-          label="СНИЛС"
-          onChange={(v) => onChange("inipa", v)}
-        />
-        <TextField
-          placeholder="+7(900)000-00-00"
-          regexp={/^(\+7|8)(?:[-()]*\d){10}$/}
-          maxLength={16}
-          keyboardType="phone-pad"
-          value={user?.phoneNumber ?? ""}
-          label="НОМЕР ТЕЛЕФОНА"
-          onChange={(v) => onChange("phoneNumber", v)}
-        />
-        <DateField
-          value={user?.birthDate ?? ""}
-          label="ДАТА РОЖДЕНИЯ"
-          onChange={(v) => onChange("birthDate", v)}
-        />
-        <SelectField
-          options={specialtyMap}
-          label="СПЕЦИАЛЬНОСТЬ"
-          value={user?.specialty ?? 0}
-          onChange={(v) => onChange("specialty", v)}
-        />
-        <View style={styles.buttonContainer}>
+        <ScrollView style={{ height: deviceHeight > 700 ? 550 : 440 }}>
+          <TextField
+            value={user?.surname ?? ""}
+            label="ФАМИЛИЯ"
+            onChange={(v) => onChange("surname", v)}
+          />
+          <TextField
+            value={user?.name ?? ""}
+            label="ИМЯ"
+            onChange={(v) => onChange("name", v)}
+          />
+          <TextField
+            value={user?.patronymic ?? ""}
+            label="ОТЧЕСТВО"
+            onChange={(v) => onChange("patronymic", v)}
+          />
+          <TextField
+            regexp={/^([0-9]{10}|[0-9]{12})$/}
+            placeholder="0000000000"
+            maxLength={10}
+            keyboardType="decimal-pad"
+            value={user?.tin ?? ""}
+            label="ИНН"
+            onChange={(v) => onChange("tin", v)}
+          />
+          <TextField
+            placeholder="000-000-00000"
+            regexp={/^(?:[- ]*\d){11}$/}
+            maxLength={14}
+            keyboardType="decimal-pad"
+            value={user?.inipa ?? ""}
+            label="СНИЛС"
+            onChange={(v) => onChange("inipa", v)}
+          />
+          <TextField
+            placeholder="+7(900)000-00-00"
+            regexp={/^(\+7|8)(?:[-()]*\d){10}$/}
+            maxLength={16}
+            keyboardType="phone-pad"
+            value={user?.phoneNumber ?? ""}
+            label="НОМЕР ТЕЛЕФОНА"
+            onChange={(v) => onChange("phoneNumber", v)}
+          />
+          <DateField
+            value={user?.birthDate ?? ""}
+            label="ДАТА РОЖДЕНИЯ"
+            onChange={(v) => onChange("birthDate", v)}
+          />
+          <SelectField
+            options={specialtyMap}
+            label="СПЕЦИАЛЬНОСТЬ"
+            value={user?.specialty ?? 0}
+            onChange={(v) => onChange("specialty", v)}
+          />
+        </ScrollView>
+        <View style={{ marginTop: deviceHeight > 700 ? 90 : 30 }}>
           <CustomButton loading={load} title="Сохранить" onPress={onSave} />
         </View>
       </View>
@@ -122,8 +125,5 @@ const styles = StyleSheet.create({
   },
   dataContainer: {
     width: "80%",
-  },
-  buttonContainer: {
-    marginTop: 90,
   },
 });
