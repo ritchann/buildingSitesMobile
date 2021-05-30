@@ -48,3 +48,12 @@ export const signUp = (data: {
   employee: Employee;
   onResponseCallback: (value: AuthResponse) => void;
 }) => axios.post(url + "signUp", data).then((res) => res.data);
+
+export const getAccidents = (data: {
+  workingHours: WorkingHours;
+  onResponseCallback: (value: Accident[]) => void;
+}) =>
+  axios.get(url + `accident/${data.workingHours.id}`).then((res) => res.data);
+
+export const updateAccident = (data: Accident) =>
+  axios.put(url + `accident/${data.id}`, data).then((res) => res.data);

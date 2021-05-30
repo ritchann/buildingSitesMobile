@@ -68,3 +68,11 @@ export const signUpAsync: (data: any) => Action = (data) => {
 export const setLocation: (data: any) => Action = (data) => {
   return { type: ActionType.SETLOCATION, data };
 };
+
+export const getAccidentsAsync: (data: any) => Action = (data) => {
+  return { type: ActionType.GETACCIDENTSASYNC, data };
+};
+
+export const updateAccidentAsync: (data: any) => Action = (data) => {
+  return { type: ActionType.UPDATEACCIDENTASYNC, data };
+};

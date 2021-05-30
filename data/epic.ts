@@ -6,11 +6,13 @@ import {
   checkPPE,
   createAccident,
   createUser,
+  getAccidents,
   getSiteList,
   getWorkingHoursList,
   signOut,
   signUp,
   startWorkingHours,
+  updateAccident,
   updateUser,
   updateWorkingHours,
 } from "./api";
@@ -22,7 +24,14 @@ import {
   setWorkingHoursList,
 } from "./actions";
 import { Action } from "redux";
-import { AuthResponse, Employee, PPE, Site, WorkingHours } from "./model";
+import {
+  Accident,
+  AuthResponse,
+  Employee,
+  PPE,
+  Site,
+  WorkingHours,
+} from "./model";
 import { DateTime } from "../utils/dateTime";
 
 const getSiteListEpic = (action$: ActionsObservable<Action<any>>) =>
@@ -164,6 +173,31 @@ const signUpEpic = (action$: ActionsObservable<Action<any>>) =>
     )
   );
 
+const getAccidentsEpic = (action$: ActionsObservable<Action<any>>) =>
+  action$.pipe(
+    ofType(ActionType.GETACCIDENTSASYNC),
+    mergeMap((action) =>
+      from(getAccidents((action as any).data)).pipe(
+        tap((response) => {
+          const list: Accident[] = Array.from(response).map(
+            (x) => x as Accident
+          );
+          list.forEach((x) => (x.time = new Date(x.time)));
+          return (action as any).data.onResponseCallback(list);
+        }),
+        ignoreElements()
+      )
+    )
+  );
+
+const updateAccidentEpic = (action$: ActionsObservable<Action<any>>) =>
+  action$.pipe(
+    ofType(ActionType.UPDATEACCIDENTASYNC),
+    mergeMap((action) =>
+      from(updateAccident((action as any).data)).pipe(ignoreElements())
+    )
+  );
+  
 export const epic = combineEpics(
   getSiteListEpic,
   startWorkingHoursEpic,
@@ -175,5 +209,7 @@ export const epic = combineEpics(
   checkPPEEpic,
   authEpic,
   signOutEpic,
-  signUpEpic
+  signUpEpic,
+  getAccidentsEpic,
+  updateAccidentEpic
 );

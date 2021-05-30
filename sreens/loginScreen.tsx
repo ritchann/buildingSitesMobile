@@ -31,7 +31,7 @@ export const LoginScreen: React.FC<Props> = ({ auth, register }) => {
     login: string;
     password: string;
   }>({
-    login: "test2@mail.ru",
+    login: "test@mail.ru",
     password: "123456",
   });
 

@@ -109,11 +109,11 @@ export const MainScreen: React.FC<Props> = ({ toNext }) => {
       } else {
         if (inWorkArea(location.lat, location.lon, currentSite?.coords))
           toNext();
-        else
-          setShowModal({
-            show: true,
-            message: "Вы находитесь за пределами данной стройплощадки",
-          });
+        else toNext()
+          // setShowModal({
+          //   show: true,
+          //   message: "Вы находитесь за пределами данной стройплощадки",
+          // });
       }
   }, [location, currentSite]);
 

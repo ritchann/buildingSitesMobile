@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  StrictMode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import {
   View,
   StyleSheet,
@@ -15,7 +21,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { StoreType } from "../core/rootReducer";
 import {
   createAccidentAsync,
+  getAccidentsAsync,
   setStartWorkingHours,
+  updateAccidentAsync,
   updateWorkingHoursAsync,
 } from "../data/actions";
 import { THEME } from "../data/constants";
@@ -27,6 +35,7 @@ import { CustomButton, Map } from "../components";
 import { Status } from "../enums/statusEnum";
 import { useLocation } from "../hooks/useLocation";
 import { useInWorkArea } from "../hooks/useInWorkArea";
+import { AccidentType } from "../enums/accidentType";
 
 const SERVER = "https://building-test-123.herokuapp.com";
 
@@ -55,6 +64,7 @@ export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
   const getLocation = useLocation();
   const inWorkArea = useInWorkArea();
 
+  const [accidents, setAccidents] = useState<Accident[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [showModalWithMap, setShowModalWithMap] = useState<{
     accident?: Accident;
@@ -96,6 +106,46 @@ export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
   //   }
   // }, [startWorkingHours]);
 
+  const notifications = useCallback((data: Accident) => {
+    setShowModalWithMap({ accident: data, show: true });
+    Notifications.scheduleNotificationAsync({
+      content: {
+        title: "Сработал сигнал SOS 📣",
+        body:
+          data.type == AccidentType.Sos
+            ? `Сигнал поступил от работника: ${
+                data.workingHours.employee.surname
+              } ${data.workingHours.employee.name} ${
+                data.workingHours.employee.patronymic
+              }. Время сигнала: ${DateTime.format(data.time)}`
+            : "Проверьте работника: Иванов Иван Иванович",
+      },
+      trigger: {
+        seconds: 5,
+        channelId: "new-emails",
+      },
+    });
+    Vibration.vibrate([1000, 2000, 1000, 2000, 1000, 2000, 1000, 2000]);
+  }, []);
+
+  const getAccidents = useCallback(() => {
+    if (startWorkingHours?.id != undefined)
+      dispatch(
+        getAccidentsAsync({
+          workingHours: startWorkingHours,
+          onResponseCallback: (list: Accident[]) => {
+            console.log("accidents ", list.length, new Date());
+            setAccidents(list);
+            if (list.length > 0) notifications(list[0]);
+          },
+        })
+      );
+  }, [startWorkingHours, dispatch, notifications]);
+
+  useEffect(() => {
+    setTimeout(() => getAccidents(), 30000);
+  }, [accidents]);
+
   useEffect(() => {
     setTimeout(() => setTest(test + 1), 60000);
   }, [test]);
@@ -109,16 +159,19 @@ export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
   }, [location]);
 
   const createAccident = useCallback(() => {
-    dispatch(
-      createAccidentAsync({
-        time: new Date(),
-        workingHoursId: 92,
-        lon: location.lon,
-        lat: location.lat,
-      })
-    );
+    if (startWorkingHours?.id != undefined)
+      dispatch(
+        createAccidentAsync({
+          time: new Date(),
+          workingHoursId: startWorkingHours?.id,
+          lon: location.lon,
+          lat: location.lat,
+          reaction: false,
+          type: AccidentType.Sos,
+        })
+      );
     setShowModal(true);
-  }, [dispatch, location]);
+  }, [dispatch, location, startWorkingHours]);
 
   useMemo(() => {
     console.log(
@@ -193,20 +246,6 @@ export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
     return () => clearInterval(interval);
   }, [end]);
 
-  const notifications = useCallback(() => {
-    Notifications.scheduleNotificationAsync({
-      content: {
-        title: "Сработал сигнал SOS 📣",
-        body: "Проверьте работника: Иванов Иван Иванович",
-      },
-      trigger: {
-        seconds: 5,
-        channelId: "new-emails",
-      },
-    });
-    Vibration.vibrate([1000, 2000, 1000, 2000]);
-  }, []);
-
   // useEffect(() => {
   //   socket.on("connect", () => {
   //     console.log("connect to socket");
@@ -236,6 +275,14 @@ export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
     else return "минут";
   }, [test]);
 
+  const onReactAccident = useCallback(() => {
+    if (showModalWithMap.accident)
+      dispatch(
+        updateAccidentAsync({ ...showModalWithMap.accident, reaction: true })
+      );
+    setShowModalWithMap({ show: false, accident: undefined });
+  }, [showModalWithMap, dispatch]);
+
   return (
     <View style={styles.container}>
       <View
@@ -249,9 +296,6 @@ export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
           animationType="fade"
           transparent={true}
           visible={showModalWithMap.show}
-          onRequestClose={() => {
-            setShowModal(false);
-          }}
         >
           <View style={styles.centeredView}>
             <View style={styles.modalViewMap}>
@@ -304,9 +348,7 @@ export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
               >
                 <View style={{ width: 80, marginTop: 30 }}>
                   <CustomButton
-                    onPress={() =>
-                      setShowModalWithMap({ show: false, accident: undefined })
-                    }
+                    onPress={() => onReactAccident()}
                     title={"Ок"}
                   ></CustomButton>
                 </View>

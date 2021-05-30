@@ -21,6 +21,7 @@ export interface WorkingHours {
   status: number;
   site?: Site;
   time: number;
+  employee: Employee
 }
 
 export interface Employee {
@@ -44,6 +45,9 @@ export interface Accident {
   workingHoursId: number;
   lon: number;
   lat: number;
+  reaction: boolean;
+  type: number;
+  workingHours:WorkingHours;
 }
 
 export interface PPE {
