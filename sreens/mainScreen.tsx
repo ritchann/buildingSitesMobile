@@ -103,17 +103,17 @@ export const MainScreen: React.FC<Props> = ({ toNext }) => {
 
   const onNextButton = useCallback(() => {
     if (currentSite)
-      if (workingHoursIsExist) {
+      if (!workingHoursIsExist) { // workingHoursIsExist
         // setShowModal({ show: true, message: "Запись о смене уже существует" });
         toNext();
       } else {
         if (inWorkArea(location.lat, location.lon, currentSite?.coords))
           toNext();
-        else toNext()
-          // setShowModal({
-          //   show: true,
-          //   message: "Вы находитесь за пределами данной стройплощадки",
-          // });
+        else
+          setShowModal({
+            show: true,
+            message: "Вы находитесь за пределами данной стройплощадки",
+          });
       }
   }, [location, currentSite]);
 
