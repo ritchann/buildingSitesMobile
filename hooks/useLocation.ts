@@ -11,6 +11,7 @@ export const useLocation = () => {
       let { status } = await Location.requestPermissionsAsync();
       if (status == "granted") {
         let location = await Location.getCurrentPositionAsync({});
+        console.log('get location', new Date())
         dispatch(
           setLocation({
             lon: location.coords.longitude,

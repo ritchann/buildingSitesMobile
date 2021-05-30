@@ -143,11 +143,17 @@ export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
   }, [startWorkingHours, dispatch, notifications]);
 
   useEffect(() => {
-    setTimeout(() => getAccidents(), 30000);
-  }, [accidents]);
+    const interval = setInterval(() => getAccidents(), 20000);
+    return () => clearInterval(interval);
+  }, [getAccidents]);
+
+  // useEffect(() => {
+  //   setTimeout(() => setTest(test + 1), 60000);
+  // }, [test]);
 
   useEffect(() => {
-    setTimeout(() => setTest(test + 1), 60000);
+    const interval = setInterval(() => setTest(test + 1), 60000);
+    return () => clearInterval(interval);
   }, [test]);
 
   useMemo(() => {
@@ -155,8 +161,14 @@ export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
   }, [test]);
 
   useEffect(() => {
-    setTimeout(() => getLocation(), 60000);
-  }, [location]);
+    const interval = setInterval(() => setTest(test + 1), 60000);
+    return () => clearInterval(interval);
+  }, [test]);
+
+  useEffect(() => {
+    const interval = setInterval(() => getLocation(), 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   const createAccident = useCallback(() => {
     if (startWorkingHours?.id != undefined)
@@ -200,7 +212,7 @@ export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
   const data = useMemo(() => {
     return {
       labels: ["Hours"],
-      data: [test / 480],
+      data: [test > 480 ? 1 : test / 480],
     };
   }, [test]);
 
