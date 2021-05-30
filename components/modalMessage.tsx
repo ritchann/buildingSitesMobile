@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Modal, View, Text } from "react-native";
+import { StyleSheet, Modal, View, Text, Dimensions } from "react-native";
 import { CustomButton } from ".";
 
 interface Props {
@@ -12,25 +12,37 @@ export const ModalMessage: React.FC<Props> = ({
   visible,
   onClose,
   message,
-}) => (
-  <Modal
-    animationType="fade"
-    transparent={true}
-    visible={visible}
-    onRequestClose={onClose}
-  >
-    <View style={styles.centeredView}>
-      <View style={styles.modalView}>
-        <Text style={styles.textMessage}>{message}</Text>
-        <View style={styles.viewButton}>
-          <View style={{ width: 90 }}>
-            <CustomButton onPress={onClose} title="Ок"></CustomButton>
+}) => {
+  let deviceHeight = Dimensions.get("window").height;
+
+  return (
+    <Modal
+      animationType="fade"
+      transparent={true}
+      visible={visible}
+      onRequestClose={onClose}
+    >
+      <View style={styles.centeredView}>
+        <View
+          style={[
+            styles.modalView,
+            {
+              width: deviceHeight > 700 ? 300 : 280,
+              height: deviceHeight > 700 ? 220 : 200,
+            },
+          ]}
+        >
+          <Text style={styles.textMessage}>{message}</Text>
+          <View style={styles.viewButton}>
+            <View style={{ width: 90 }}>
+              <CustomButton onPress={onClose} title="Ок"></CustomButton>
+            </View>
           </View>
         </View>
       </View>
-    </View>
-  </Modal>
-);
+    </Modal>
+  );
+};
 
 const styles = StyleSheet.create({
   centeredView: {
@@ -53,8 +65,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 100,
-    width: 300,
-    height: 220,
   },
   textMessage: {
     fontSize: 17,

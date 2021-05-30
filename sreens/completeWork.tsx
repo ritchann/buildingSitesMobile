@@ -298,7 +298,15 @@ export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
           visible={showModalWithMap.show}
         >
           <View style={styles.centeredView}>
-            <View style={styles.modalViewMap}>
+            <View
+              style={[
+                styles.modalViewMap,
+                {
+                  width: deviceHeight > 700 ? 360 : 320,
+                  height: deviceHeight > 700 ? 550 : 535,
+                },
+              ]}
+            >
               <View
                 style={{
                   width: "95%",
@@ -457,7 +465,7 @@ export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
           style={{
             flexDirection: "column",
             alignItems: "center",
-            marginTop: deviceHeight / 6,
+            marginTop: deviceHeight > 700 ? 150 : 80,
           }}
         >
           <Text style={styles.sosText}>Удерживайте кнопку SOS</Text>
@@ -563,7 +571,5 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    width: 360,
-    height: 550,
   },
 });

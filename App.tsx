@@ -109,7 +109,7 @@ export default function App() {
           toNext={() => {
             setStartWork(ActionStartWork.Check);
             setStepStart(1);
-            props.navigation.jumpTo("Главная")
+            props.navigation.jumpTo("Главная");
           }}
         />
       </View>
@@ -141,7 +141,7 @@ export default function App() {
       <View
         style={{
           flexDirection: "column",
-          height: `${deviceHeight > 700 ? 10 : 12}%`,
+          height: deviceHeight > 700 ? 85 : 65,
         }}
       >
         <View
@@ -296,7 +296,7 @@ export default function App() {
                 }}
               />
             </TouchableOpacity>
-            <Greeting/>
+            <Greeting />
             <DrawerItemList
               inactiveTintColor={THEME.GREY}
               activeTintColor={THEME.BLACK}
@@ -308,11 +308,9 @@ export default function App() {
           </View>
           <TouchableOpacity
             style={{
-              marginTop: `${
-                deviceHeight > 700 ? 130 : 80
-              }%`,
+              marginTop: `${deviceHeight > 700 ? 130 : 80}%`,
             }}
-            onPress={() => (setAuth(Action.None), dispatch(signOutAsync()))}
+            onPress={() => setAuth(Action.None)}
           >
             <Text style={styles.exit}>ВЫЙТИ</Text>
           </TouchableOpacity>

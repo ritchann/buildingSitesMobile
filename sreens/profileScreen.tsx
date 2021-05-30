@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { View, StyleSheet, Text, Dimensions } from "react-native";
+import { View, StyleSheet, Text, Dimensions, LogBox } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useDispatch, useSelector } from "react-redux";
 import { DateField, TextField, CustomButton, SelectField } from "../components";
@@ -26,6 +26,8 @@ export const ProfileScreen = () => {
     Specialty.all.map((x) => [x.id, x.name])
   );
 
+  LogBox.ignoreAllLogs();
+  
   const onSave = useCallback(() => {
     setLoad(true);
     dispatch(

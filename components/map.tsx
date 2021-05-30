@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet } from "react-native";
+import { Dimensions, StyleSheet } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { THEME } from "../data/constants";
 import { Accident } from "../data/model";
@@ -10,6 +10,8 @@ interface Props {
 }
 
 export const Map: React.FC<Props> = ({ location, accident }) => {
+  let deviceHeight = Dimensions.get("window").height;
+  
   return (
     <MapView
       minZoomLevel={10}
@@ -19,7 +21,7 @@ export const Map: React.FC<Props> = ({ location, accident }) => {
         latitudeDelta: 0.001,
         longitudeDelta: 0.001,
       }}
-      style={{ width: 300, height: 380 }}
+      style={{ width:deviceHeight > 700?   300: 290, height:deviceHeight > 700? 380 : 370 }}
     >
       <Marker
         title={"Сигнал SOS"}

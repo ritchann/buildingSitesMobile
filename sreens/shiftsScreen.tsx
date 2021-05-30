@@ -82,7 +82,7 @@ export const ShiftsScreen: React.FC<Props> = ({ toNext }) => {
   }, [dispatch, user]);
 
   const onClickYes = useCallback(() => {
-    console.log('set start working housr ',showModal.data);
+    console.log("set start working housr ", showModal.data);
     if (showModal.data != undefined)
       dispatch(
         setStartWorkingHours({
@@ -162,7 +162,15 @@ export const ShiftsScreen: React.FC<Props> = ({ toNext }) => {
         visible={showModal.show && showModal.data != undefined}
       >
         <View style={styles.centeredView}>
-          <View style={styles.modalView}>
+          <View
+            style={[
+              styles.modalView,
+              {
+                width: deviceHeight > 700 ? 295 : 275,
+                height: deviceHeight > 700 ? 240 : 220,
+              },
+            ]}
+          >
             <View style={{ flexDirection: "column" }}>
               <Icon
                 color={THEME.GREY}
@@ -278,8 +286,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 100,
-    width: 295,
-    height: 250,
   },
   tab: {
     flexDirection: "row",

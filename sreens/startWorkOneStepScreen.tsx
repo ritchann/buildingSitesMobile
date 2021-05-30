@@ -20,10 +20,17 @@ export const StartWorkOneScreen: React.FC<Props> = ({ toNext }) => {
     () => (startWorkingHours ? startWorkingHours.site : currentSite),
     [startWorkingHours, currentSite]
   );
-  
+
   return (
     <View style={styles.container}>
-      <Image style={styles.image} source={require("../image/startWork.png")} />
+      <Image
+        style={{
+          height: deviceHeight > 700 ? 400 : 300,
+          width: "100%",
+          resizeMode: "stretch",
+        }}
+        source={require("../image/startWork.png")}
+      />
       <View style={styles.containerInfo}>
         <View
           style={{
@@ -68,10 +75,5 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "normal",
     color: THEME.GREY,
-  },
-  image: {
-    height: "55%",
-    width: "100%",
-    resizeMode: "stretch",
   },
 });

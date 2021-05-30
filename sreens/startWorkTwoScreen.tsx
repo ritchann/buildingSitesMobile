@@ -14,6 +14,7 @@ import {
   Image,
   Platform,
   TouchableOpacity,
+  Dimensions,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { CustomButton } from "../components";
@@ -46,6 +47,7 @@ enum Result {
 
 export const StartWorkTwoScreen: React.FC<Props> = ({ toNext }) => {
   const dispatch = useDispatch();
+  let deviceHeight = Dimensions.get("window").height;
 
   const { currentSite, startWorkingHours, user } = useSelector(
     (state: StoreType) => state.data
@@ -233,7 +235,8 @@ export const StartWorkTwoScreen: React.FC<Props> = ({ toNext }) => {
         visible={showModal}
       >
         <View style={styles.centeredView}>
-          <View style={styles.modalView}>
+          <View style={[styles.modalView,{    width: deviceHeight > 700? 300:290,
+    height: deviceHeight > 700? 300:290,}]}>
             <Text style={styles.modalText}>{textModal}</Text>
             <Image
               style={{
@@ -253,8 +256,8 @@ export const StartWorkTwoScreen: React.FC<Props> = ({ toNext }) => {
           // resizeMode="stretch"
           source={{ uri: capturedImage && capturedImage.uri }}
           style={{
-            width: 370,
-            height: 490,
+            width: deviceHeight > 700 ? 370 : 320,
+            height: deviceHeight > 700 ? 490 : 375,
             marginTop: 20,
           }}
         />
@@ -267,11 +270,18 @@ export const StartWorkTwoScreen: React.FC<Props> = ({ toNext }) => {
         ></Camera>
       )}
       {testMode && (
-        <TouchableOpacity onPress={pickImage} style={styles.next}>
+        <TouchableOpacity onPress={pickImage} style={[styles.next,{ marginLeft: deviceHeight > 700? 250: 240,}]}>
           <Icon size={20} type="ionicon" name="images-outline" />
         </TouchableOpacity>
       )}
-      <View style={styles.bottomContainer}>
+      <View
+        style={{
+          marginTop: deviceHeight > 700 ? 50 : 30,
+          alignItems: "flex-start",
+          marginBottom: "25%",
+          width: "80%",
+        }}
+      >
         <CustomButton
           title={capturedImage ? "Повторить" : "Сделать фото"}
           onPress={() =>
@@ -302,14 +312,9 @@ const styles = StyleSheet.create({
   },
   containerInfo: {
     width: "80%",
-    marginTop: "5%",
+    marginTop: "3%",
   },
-  bottomContainer: {
-    marginTop: "15%",
-    alignItems: "flex-start",
-    marginBottom: "25%",
-    width: "80%",
-  },
+  bottomContainer: {},
   question: {
     fontSize: 24,
     fontWeight: "700",
@@ -326,8 +331,6 @@ const styles = StyleSheet.create({
     marginTop: 22,
   },
   modalView: {
-    width: 300,
-    height: 300,
     margin: 20,
     backgroundColor: "white",
     borderRadius: 20,
@@ -360,7 +363,7 @@ const styles = StyleSheet.create({
     width: 60,
     borderRadius: 100,
     marginTop: -80,
-    marginLeft: 250,
+
     justifyContent: "center",
   },
 });
