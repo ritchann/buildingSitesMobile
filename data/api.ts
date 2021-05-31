@@ -5,7 +5,9 @@ const url = "https://building-test-123.herokuapp.com/";
 
 //const url = "http://192.168.43.232:5000/";
 
-export const getSiteList = () =>
+export const getSiteList = (data:{
+  onResponseCallback: () => void;
+}) =>
   axios.get(url + "site").then((res) => res.data);
 
 export const startWorkingHours = (data: WorkingHours) =>
@@ -17,8 +19,10 @@ export const updateWorkingHours = (data: WorkingHours) =>
 export const createUser = (data: Employee) =>
   axios.post(url + "employee", data).then((res) => res.data);
 
-export const getWorkingHoursList = (data: number) =>
-  axios.get(url + `workingHours/${data}`).then((res) => res.data);
+export const getWorkingHoursList = (data: {
+  id: number;
+  onResponseCallback: () => void;
+}) => axios.get(url + `workingHours/${data.id}`).then((res) => res.data);
 
 export const updateUser = (data: {
   employee: Employee;

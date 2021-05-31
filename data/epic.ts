@@ -37,8 +37,9 @@ import { DateTime } from "../utils/dateTime";
 const getSiteListEpic = (action$: ActionsObservable<Action<any>>) =>
   action$.pipe(
     ofType(ActionType.GETSITELISTASYNC),
-    mergeMap(() =>
-      from(getSiteList()).pipe(
+    mergeMap((action) =>
+      from(getSiteList((action as any).data)).pipe(
+        tap(() => (action as any).data.onResponseCallback()),
         map((response) => {
           const list: Site[] = Array.from(response).map((x) => x as Site);
           return setSiteList(list);
@@ -52,6 +53,7 @@ const getWorkingHoursListEpic = (action$: ActionsObservable<Action<any>>) =>
     ofType(ActionType.GETWORKINGHOURSLISTASYNC),
     mergeMap((action) =>
       from(getWorkingHoursList((action as any).data)).pipe(
+        tap((response) => (action as any).data.onResponseCallback()),
         map((response) => {
           const list: WorkingHours[] = Array.from(response).map(
             (x) => x as WorkingHours
@@ -86,7 +88,10 @@ const createUserEpic = (action$: ActionsObservable<Action<any>>) =>
     ofType(ActionType.CREATEUSERASYNC),
     mergeMap((action) =>
       from(createUser((action as any).data)).pipe(
-        map((response) => setUser(response))
+        map((response) => {
+          console.log(response);
+          return setUser(response);
+        })
       )
     )
   );
@@ -165,6 +170,7 @@ const signUpEpic = (action$: ActionsObservable<Action<any>>) =>
     mergeMap((action) =>
       from(signUp((action as any).data)).pipe(
         tap((response) => {
+          console.log(response)
           const result = response as AuthResponse;
           return (action as any).data.onResponseCallback(result);
         }),
@@ -197,7 +203,7 @@ const updateAccidentEpic = (action$: ActionsObservable<Action<any>>) =>
       from(updateAccident((action as any).data)).pipe(ignoreElements())
     )
   );
-  
+
 export const epic = combineEpics(
   getSiteListEpic,
   startWorkingHoursEpic,

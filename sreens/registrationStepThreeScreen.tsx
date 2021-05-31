@@ -79,7 +79,7 @@ export const RegistrationStepThreeScreen: React.FC<Props> = ({ toNext }) => {
               width: "80%",
               marginTop: deviceHeight > 700 ? 105 : 85,
       }}>
-        <TextField
+        <TextField 
           regexp={regexpEmail}
           value={user.email}
           label="EMAIL"

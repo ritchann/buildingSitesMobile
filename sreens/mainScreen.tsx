@@ -41,6 +41,7 @@ export const MainScreen: React.FC<Props> = ({ toNext }) => {
     show: boolean;
     message: string;
   }>({ show: false, message: "" });
+  const [load, setLoad] = useState(false);
 
   const getLocation = useLocation();
   let deviceHeight = Dimensions.get("window").height;
@@ -50,11 +51,15 @@ export const MainScreen: React.FC<Props> = ({ toNext }) => {
     useSelector((state: StoreType) => state.data);
 
   useEffect(() => {
-    dispatch(getSiteListAsync());
+    setLoad(true);
+    dispatch(getSiteListAsync({ onResponseCallback: () => setLoad(false) }));
   }, [dispatch]);
 
   useEffect(() => {
-    if (user.id != undefined) dispatch(getWorkingHoursListAsync(user.id));
+    if (user.id != undefined)
+      dispatch(
+        getWorkingHoursListAsync({ id: user.id, onResponseCallback: () => {} })
+      );
   }, [dispatch, user]);
 
   const workingHoursIsExist = useMemo(() => {
@@ -91,22 +96,18 @@ export const MainScreen: React.FC<Props> = ({ toNext }) => {
     return result;
   }, [siteList, location]);
 
-  const data = useMemo(
-    () =>
-      tab == Tab.All
-        ? siteList.flatMap((x) =>
-            x.name.toLowerCase().includes(search.toLowerCase()) ? [x] : []
-          )
-        : nearList,
-    [search, siteList, tab, nearList]
-  );
+  const data = useMemo(() => {
+    const list = tab == Tab.All ? siteList : nearList;
+    return list.flatMap((x) =>
+      x.name.toLowerCase().includes(search.toLowerCase()) ? [x] : []
+    );
+  }, [search, siteList, tab, nearList]);
 
   const onNextButton = useCallback(() => {
     if (currentSite)
-      if (!workingHoursIsExist) { // workingHoursIsExist
-        // setShowModal({ show: true, message: "Запись о смене уже существует" });
-        toNext();
-      } else {
+      if (workingHoursIsExist)
+        setShowModal({ show: true, message: "Запись о смене уже существует" });
+      else {
         if (inWorkArea(location.lat, location.lon, currentSite?.coords))
           toNext();
         else
@@ -117,7 +118,7 @@ export const MainScreen: React.FC<Props> = ({ toNext }) => {
       }
   }, [location, currentSite]);
 
-  return siteList.length == 0 ? (
+  return load ? (
     <View
       style={{
         width: "100%",

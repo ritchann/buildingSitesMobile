@@ -18,6 +18,7 @@ import {
   getWorkingHoursListAsync,
   setStartWorkingHours,
 } from "../data/actions";
+import { startWorkingHours } from "../data/api";
 import { THEME } from "../data/constants";
 import { WorkingHours } from "../data/model";
 import { Status } from "../enums/statusEnum";
@@ -35,6 +36,7 @@ interface Props {
 export const ShiftsScreen: React.FC<Props> = ({ toNext }) => {
   const dispatch = useDispatch();
 
+  const [load, setLoad] = useState(false);
   const [selectedItem, setSelectedItem] = useState<WorkingHours>();
   const [tab, setTab] = useState(Tab.All);
   const [showMessage, setShowMessage] = useState<{
@@ -49,7 +51,7 @@ export const ShiftsScreen: React.FC<Props> = ({ toNext }) => {
   let deviceWidth = Dimensions.get("window").width;
   let deviceHeight = Dimensions.get("window").height;
 
-  const { user, workingHoursList } = useSelector(
+  const { user, workingHoursList, startWorkingHours } = useSelector(
     (state: StoreType) => state.data
   );
   const list = useMemo(() => {
@@ -78,7 +80,15 @@ export const ShiftsScreen: React.FC<Props> = ({ toNext }) => {
   }, [list]);
 
   useEffect(() => {
-    if (user.id != undefined) dispatch(getWorkingHoursListAsync(user.id));
+    if (user.id != undefined) {
+      setLoad(true);
+      dispatch(
+        getWorkingHoursListAsync({
+          id: user.id,
+          onResponseCallback: () => setLoad(false),
+        })
+      );
+    }
   }, [dispatch, user]);
 
   const onClickYes = useCallback(() => {
@@ -99,13 +109,20 @@ export const ShiftsScreen: React.FC<Props> = ({ toNext }) => {
     const dateItem = DateTime.format(item.start, "isodate");
     const currentDate = DateTime.format(new Date(), "isodate");
     if (currentDate == dateItem) {
-      if (item.status == Status.Paused)
-        setShowModal({ show: true, data: item });
+      if (
+        startWorkingHours != undefined &&
+        startWorkingHours.status == Status.Process
+      )
+        setShowMessage({ show: true, message: "Смена сейчас в процессе" });
       else {
-        let status = "";
-        if (item.status == Status.End) status = "завершена";
-        if (item.status == Status.Process) status = "в процессе";
-        setShowMessage({ show: true, message: "Смена " + status });
+        if (item.status == Status.Paused)
+          setShowModal({ show: true, data: item });
+        else {
+          let status = "";
+          if (item.status == Status.End) status = "завершена";
+          if (item.status == Status.Process) status = "в процессе";
+          setShowMessage({ show: true, message: "Смена " + status });
+        }
       }
     } else
       setShowMessage({
@@ -114,7 +131,7 @@ export const ShiftsScreen: React.FC<Props> = ({ toNext }) => {
       });
   }, []);
 
-  return workingHoursList.length == 0 ? (
+  return load ? (
     <View
       style={{
         width: "100%",

@@ -37,6 +37,11 @@ enum Type {
   Check = 1,
 }
 
+enum CameraType {
+  Back = "back",
+  Front = "front",
+}
+
 enum Result {
   None,
   WithoutRequiredEquipment,
@@ -53,6 +58,7 @@ export const StartWorkTwoScreen: React.FC<Props> = ({ toNext }) => {
     (state: StoreType) => state.data
   );
 
+  const [cameraType, setCameraType] = useState(CameraType.Back);
   const [hasPermission, setHasPermission] = useState<boolean>();
   const [capturedImage, setCapturedImage] = useState<CameraCapturedPicture>();
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -87,7 +93,7 @@ export const StartWorkTwoScreen: React.FC<Props> = ({ toNext }) => {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [3, 4],
-      quality: 1,
+      // quality: 1,
     });
     if (!result.cancelled) {
       console.log(result.base64?.length);
@@ -235,8 +241,15 @@ export const StartWorkTwoScreen: React.FC<Props> = ({ toNext }) => {
         visible={showModal}
       >
         <View style={styles.centeredView}>
-          <View style={[styles.modalView,{    width: deviceHeight > 700? 300:290,
-    height: deviceHeight > 700? 300:290,}]}>
+          <View
+            style={[
+              styles.modalView,
+              {
+                width: deviceHeight > 700 ? 300 : 290,
+                height: deviceHeight > 700 ? 300 : 290,
+              },
+            ]}
+          >
             <Text style={styles.modalText}>{textModal}</Text>
             <Image
               style={{
@@ -266,12 +279,19 @@ export const StartWorkTwoScreen: React.FC<Props> = ({ toNext }) => {
           pictureSize="3264x1836"
           ref={(r) => (camera = r)}
           style={{ width: "90%", height: "65%", marginTop: 20 }}
-          type={Camera.Constants.Type.back}
+          type={cameraType}
         ></Camera>
       )}
       {testMode && (
-        <TouchableOpacity onPress={pickImage} style={[styles.next,{ marginLeft: deviceHeight > 700? 250: 240,}]}>
-          <Icon size={20} type="ionicon" name="images-outline" />
+        <TouchableOpacity
+          onPress={() =>
+            setCameraType(
+              cameraType == CameraType.Back ? CameraType.Front : CameraType.Back
+            )
+          }
+          style={[styles.next, { marginLeft: deviceHeight > 700 ? 250 : 240 }]}
+        >
+          <Icon size={20} type="ionicon" name="sync-outline" />
         </TouchableOpacity>
       )}
       <View
@@ -291,9 +311,8 @@ export const StartWorkTwoScreen: React.FC<Props> = ({ toNext }) => {
         <View style={styles.nextButton}>
           <CustomButton
             // disabled={!capturedImage}
-            title="Далее"
-            // onPress={() => checkPPE([])}
-            onPress={() => next()}
+            title="Галерея"
+            onPress={pickImage}
           />
         </View>
       </View>
@@ -363,7 +382,6 @@ const styles = StyleSheet.create({
     width: 60,
     borderRadius: 100,
     marginTop: -80,
-
     justifyContent: "center",
   },
 });

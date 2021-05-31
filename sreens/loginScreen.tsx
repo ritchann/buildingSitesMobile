@@ -31,8 +31,8 @@ export const LoginScreen: React.FC<Props> = ({ auth, register }) => {
     login: string;
     password: string;
   }>({
-    login: "test2@mail.ru",
-    password: "123456",
+    login: "",
+    password: "",
   });
 
   const _subscribe = () => {
@@ -120,6 +120,7 @@ export const LoginScreen: React.FC<Props> = ({ auth, register }) => {
   }, []);
 
   const authAction = useCallback(() => {
+    console.log("auth");
     setLoad(true);
     dispatch(
       authAsync({

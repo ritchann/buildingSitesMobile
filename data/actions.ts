@@ -1,8 +1,8 @@
 import { ActionType } from "./actionType";
 import { Action } from "./model";
 
-export const getSiteListAsync: () => Action = () => {
-  return { type: ActionType.GETSITELISTASYNC };
+export const getSiteListAsync: (data: any) => Action = (data) => {
+  return { type: ActionType.GETSITELISTASYNC, data };
 };
 
 export const setSiteList: (data: any) => Action = (data) => {

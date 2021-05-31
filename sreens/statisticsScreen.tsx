@@ -33,6 +33,8 @@ export const StatisticsScreen = () => {
   let deviceWidth = Dimensions.get("window").width;
   let deviceHeight = Dimensions.get("window").height;
 
+  const [load, setLoad] = useState(false);
+
   const { user, workingHoursList } = useSelector(
     (state: StoreType) => state.data
   );
@@ -113,7 +115,6 @@ export const StatisticsScreen = () => {
     res.forEach((x) => {
       if (!labels.includes(x.start.getDate().toString())) {
         labels.push(x.start.getDate().toString());
-        //data.push(getDifference(x) / 60);
         data.push(x.time / 60);
       }
     });
@@ -128,10 +129,18 @@ export const StatisticsScreen = () => {
   }, [workingHoursList]);
 
   useEffect(() => {
-    if (user.id != undefined) dispatch(getWorkingHoursListAsync(user.id));
-  }, [dispatch]);
+    if (user.id != undefined) {
+      setLoad(true);
+      dispatch(
+        getWorkingHoursListAsync({
+          id: user.id,
+          onResponseCallback: () => setLoad(false),
+        })
+      );
+    }
+  }, [dispatch, user]);
 
-  return workingHoursList.length == 0 ? (
+  return load ? (
     <View
       style={{
         width: "100%",
