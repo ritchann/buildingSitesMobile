@@ -358,7 +358,7 @@ export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
                   <Text>{"Местоположение сигнала"}</Text>
                 </View>
               </View>
-              {/* <Map accident={showModalWithMap.accident} location={location} /> */}
+              <Map accident={showModalWithMap.accident} location={location} />
               <View
                 style={{
                   width: "100%",
