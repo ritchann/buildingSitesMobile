@@ -45,13 +45,13 @@ const chartConfig = {
   color: (opacity = 1) => `rgba(249, 200, 74, ${opacity})`,
 };
 
-// Notifications.setNotificationHandler({
-//   handleNotification: async () => ({
-//     shouldShowAlert: true,
-//     shouldPlaySound: false,
-//     shouldSetBadge: false,
-//   }),
-// });
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 
 interface Props {
   endShift: () => void;
@@ -108,23 +108,23 @@ export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
 
   const notifications = useCallback((data: Accident) => {
     setShowModalWithMap({ accident: data, show: true });
-    // Notifications.scheduleNotificationAsync({
-    //   content: {
-    //     title: "Сработал сигнал SOS 📣",
-    //     body:
-    //       data.type == AccidentType.Sos
-    //         ? `Сигнал поступил от работника: ${
-    //             data.workingHours.employee.surname
-    //           } ${data.workingHours.employee.name} ${
-    //             data.workingHours.employee.patronymic
-    //           }. Время сигнала: ${DateTime.format(data.time)}`
-    //         : "Проверьте работника: Иванов Иван Иванович",
-    //   },
-    //   trigger: {
-    //     seconds: 5,
-    //     channelId: "new-emails",
-    //   },
-    // });
+    Notifications.scheduleNotificationAsync({
+      content: {
+        title: "Сработал сигнал SOS 📣",
+        body:
+          data.type == AccidentType.Sos
+            ? `Сигнал поступил от работника: ${
+                data.workingHours.employee.surname
+              } ${data.workingHours.employee.name} ${
+                data.workingHours.employee.patronymic
+              }. Время сигнала: ${DateTime.format(data.time)}`
+            : "Проверьте работника: Иванов Иван Иванович",
+      },
+      trigger: {
+        seconds: 5,
+        channelId: "new-emails",
+      },
+    });
     Vibration.vibrate([1000, 2000, 1000, 2000, 1000, 2000, 1000, 2000]);
   }, []);
 
