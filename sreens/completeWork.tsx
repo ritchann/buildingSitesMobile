@@ -358,7 +358,7 @@ export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
                   <Text>{"Местоположение сигнала"}</Text>
                 </View>
               </View>
-              <Map accident={showModalWithMap.accident} location={location} />
+              {/* <Map accident={showModalWithMap.accident} location={location} /> */}
               <View
                 style={{
                   width: "100%",
@@ -385,7 +385,15 @@ export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
           }}
         >
           <View style={styles.centeredView}>
-            <View style={styles.modalView}>
+            <View
+              style={[
+                styles.modalView,
+                {
+                  width: deviceHeight > 700 ? 320 : 300,
+                  height: deviceHeight > 700 ? 150 : 130,
+                },
+              ]}
+            >
               <View
                 style={{
                   justifyContent: "flex-end",
@@ -566,8 +574,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    width: 320,
-    height: 150,
   },
   modalViewMap: {
     margin: 15,
