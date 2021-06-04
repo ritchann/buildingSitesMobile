@@ -235,7 +235,6 @@ export const StartWorkTwoScreen: React.FC<Props> = ({ toNext }) => {
         <Text style={styles.question}>Пожалуйста, проверьте экипировку</Text>
       </View>
       <Modal
-        style={{ backgroundColor: "red" }}
         animationType="slide"
         transparent={true}
         visible={showModal}
@@ -253,9 +252,9 @@ export const StartWorkTwoScreen: React.FC<Props> = ({ toNext }) => {
             <Text style={styles.modalText}>{textModal}</Text>
             <Image
               style={{
-                marginTop: 30,
-                height: 140,
-                width: 140,
+                marginTop: 10,
+                height: 190,
+                width: 190,
                 resizeMode: "contain",
                 backgroundColor: "white",
               }}
@@ -269,7 +268,7 @@ export const StartWorkTwoScreen: React.FC<Props> = ({ toNext }) => {
           // resizeMode="stretch"
           source={{ uri: capturedImage && capturedImage.uri }}
           style={{
-            width: deviceHeight > 700 ? 370 : 320,
+            width: deviceHeight > 700 ? 370 : 290,
             height: deviceHeight > 700 ? 490 : 375,
             marginTop: 20,
           }}
@@ -278,7 +277,7 @@ export const StartWorkTwoScreen: React.FC<Props> = ({ toNext }) => {
         <Camera
           pictureSize="3264x1836"
           ref={(r) => (camera = r)}
-          style={{ width: "90%", height: "65%", marginTop: 20 }}
+          style={{ width: deviceHeight >700? "90%":"80%", height: "65%", marginTop: 20 }}
           type={cameraType}
         ></Camera>
       )}
@@ -289,7 +288,7 @@ export const StartWorkTwoScreen: React.FC<Props> = ({ toNext }) => {
               cameraType == CameraType.Back ? CameraType.Front : CameraType.Back
             )
           }
-          style={[styles.next, { marginLeft: deviceHeight > 700 ? 250 : 240 }]}
+          style={[styles.next, { marginLeft: deviceHeight > 700 ? 250 : 210 }]}
         >
           <Icon size={20} type="ionicon" name="sync-outline" />
         </TouchableOpacity>
@@ -368,7 +367,7 @@ const styles = StyleSheet.create({
     alignContent: "center",
   },
   modalText: {
-    marginTop: -20,
+    // marginTop: 10,
     alignContent: "center",
     fontSize: 16,
     fontWeight: "normal",

@@ -79,6 +79,16 @@ export const ShiftsScreen: React.FC<Props> = ({ toNext }) => {
     );
   }, [list]);
 
+  const getWorkingHoursList = useCallback(()=>{
+    console.log('getList')
+    dispatch(
+      getWorkingHoursListAsync({
+        id: user.id,
+        onResponseCallback: () => setLoad(false),
+      })
+    );
+  },[dispatch])
+
   useEffect(() => {
     if (user.id != undefined) {
       setLoad(true);
@@ -90,6 +100,12 @@ export const ShiftsScreen: React.FC<Props> = ({ toNext }) => {
       );
     }
   }, [dispatch, user]);
+
+  
+  useEffect(() => {
+    const interval = setInterval(() => getWorkingHoursList(), 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   const onClickYes = useCallback(() => {
     console.log("set start working housr ", showModal.data);

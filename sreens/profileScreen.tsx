@@ -4,7 +4,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import { useDispatch, useSelector } from "react-redux";
 import { DateField, TextField, CustomButton, SelectField } from "../components";
 import { StoreType } from "../core/rootReducer";
-import { updateUserAsync } from "../data/actions";
+import { updateUserAsync, setUser as setStoreUser } from "../data/actions";
 import { THEME } from "../data/constants";
 import { Employee } from "../data/model";
 import { Specialty } from "../enums/specialtyEnum";
@@ -27,13 +27,16 @@ export const ProfileScreen = () => {
   );
 
   LogBox.ignoreAllLogs();
-  
+
   const onSave = useCallback(() => {
     setLoad(true);
     dispatch(
       updateUserAsync({
         employee: user,
-        onResponseCallback: () => setLoad(false),
+        onResponseCallback: () => {
+          setLoad(false);
+          dispatch(setStoreUser(user));
+        },
       })
     );
   }, [dispatch, user]);

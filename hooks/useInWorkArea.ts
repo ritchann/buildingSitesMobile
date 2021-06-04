@@ -1,13 +1,9 @@
 import { useCallback } from "react";
-import { useDispatch } from "react-redux";
 
 export const useInWorkArea = () => {
-  const dispatch = useDispatch();
-
   return useCallback((x: number, y: number, coords: number[][]) => {
-    console.log(x, y)
-    let xp = coords.map(x=>x[0])
-    let yp = coords.map(x=>x[1])
+    let xp = coords.map((x) => x[0]);
+    let yp = coords.map((x) => x[1]);
     const npol = xp.length;
     let j = npol - 1;
     let c = false;
@@ -20,7 +16,7 @@ export const useInWorkArea = () => {
       }
       j = i;
     }
-    console.log("in work area", c);
+    console.log("in work area", c, j);
     return c;
   }, []);
 };

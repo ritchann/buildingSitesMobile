@@ -89,7 +89,6 @@ const createUserEpic = (action$: ActionsObservable<Action<any>>) =>
     mergeMap((action) =>
       from(createUser((action as any).data)).pipe(
         map((response) => {
-          console.log(response);
           return setUser(response);
         })
       )
@@ -170,7 +169,6 @@ const signUpEpic = (action$: ActionsObservable<Action<any>>) =>
     mergeMap((action) =>
       from(signUp((action as any).data)).pipe(
         tap((response) => {
-          console.log(response)
           const result = response as AuthResponse;
           return (action as any).data.onResponseCallback(result);
         }),

@@ -9,8 +9,11 @@ export const useLocation = () => {
   return useCallback(() => {
     (async () => {
       let { status } = await Location.requestPermissionsAsync();
+      console.log(status)
       if (status == "granted") {
+        try{
         let location = await Location.getCurrentPositionAsync({});
+        console.log(location);
         console.log('get location', new Date())
         dispatch(
           setLocation({
@@ -18,6 +21,9 @@ export const useLocation = () => {
             lat: location.coords.latitude,
           })
         );
+        }catch(e){
+          console.log('Error')
+        }
       }
     })();
   }, [dispatch]);

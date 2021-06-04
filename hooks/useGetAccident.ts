@@ -1,13 +1,9 @@
 import { useCallback } from "react";
-import { useDispatch } from "react-redux";
 
 export const useGetAccident = () => {
-  const dispatch = useDispatch();
-
   return useCallback((x: number, y: number, coords: number[][]) => {
-    console.log(x, y)
-    let xp = coords.map(x=>x[0])
-    let yp = coords.map(x=>x[1])
+    let xp = coords.map((x) => x[0]);
+    let yp = coords.map((x) => x[1]);
     const npol = xp.length;
     let j = npol - 1;
     let c = false;

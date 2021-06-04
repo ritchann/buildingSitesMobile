@@ -38,6 +38,7 @@ import { useInWorkArea } from "../hooks/useInWorkArea";
 import { AccidentType } from "../enums/accidentType";
 
 const SERVER = "https://building-test-123.herokuapp.com";
+import { Accelerometer } from "expo-sensors";
 
 const chartConfig = {
   backgroundGradientFrom: "white",
@@ -110,15 +111,15 @@ export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
     setShowModalWithMap({ accident: data, show: true });
     Notifications.scheduleNotificationAsync({
       content: {
-        title: "Сработал сигнал SOS 📣",
-        body:
+        title:
           data.type == AccidentType.Sos
-            ? `Сигнал поступил от работника: ${
-                data.workingHours.employee.surname
-              } ${data.workingHours.employee.name} ${
-                data.workingHours.employee.patronymic
-              }. Время сигнала: ${DateTime.format(data.time)}`
-            : "Проверьте работника: Иванов Иван Иванович",
+            ? "Сработал сигнал SOS 📣"
+            : "Поступил сигнал о падении 📣",
+        body: `Сигнал поступил от работника: ${
+          data.workingHours.employee.surname
+        } ${data.workingHours.employee.name} ${
+          data.workingHours.employee.patronymic
+        }. Время сигнала: ${DateTime.format(data.time)}`,
       },
       trigger: {
         seconds: 5,
@@ -170,20 +171,23 @@ export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
     return () => clearInterval(interval);
   }, []);
 
-  const createAccident = useCallback(() => {
-    if (startWorkingHours?.id != undefined)
-      dispatch(
-        createAccidentAsync({
-          time: new Date(),
-          workingHoursId: startWorkingHours?.id,
-          lon: location.lon,
-          lat: location.lat,
-          reaction: false,
-          type: AccidentType.Sos,
-        })
-      );
-    setShowModal(true);
-  }, [dispatch, location, startWorkingHours]);
+  const createAccident = useCallback(
+    (type: number) => {
+      if (startWorkingHours?.id != undefined)
+        dispatch(
+          createAccidentAsync({
+            time: new Date(),
+            workingHoursId: startWorkingHours?.id,
+            lon: location.lon,
+            lat: location.lat,
+            reaction: false,
+            type,
+          })
+        );
+      setShowModal(true);
+    },
+    [dispatch, location, startWorkingHours]
+  );
 
   useMemo(() => {
     console.log(
@@ -294,6 +298,102 @@ export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
       );
     setShowModalWithMap({ show: false, accident: undefined });
   }, [showModalWithMap, dispatch]);
+
+  const fall = useCallback(() => {
+    console.log("----------fal------conole");
+    createAccident(AccidentType.Fall);
+  }, [createAccident]);
+
+  const _subscribe = () => {
+    let i = 0;
+    let checkFirstMas: { index: number; data: number }[] = [];
+    let checkSecondMas: { index: number; data: number; count: number }[] = [];
+    let checkThreeMas: { index: number; count: number }[] = [];
+    const minRes = 0.2;
+    const maxRes = 2.5;
+    const minHeight = 7;
+    const maxHeight = 60;
+    const checkSpeed = 600;
+    const minIndex = (Math.sqrt((2 * minHeight) / 9.8) * 1000) / checkSpeed;
+    const maxIndex = (Math.sqrt((2 * maxHeight) / 9.8) * 1000) / checkSpeed;
+    const min3Step = 0.9;
+    const max3Step = 1.1;
+    const secondDownMin = (8 * 1000) / checkSpeed;
+    const secondDownMax = (10 * 1000) / checkSpeed;
+    console.log(minIndex, maxIndex);
+    Accelerometer.addListener((accelerometerData) => {
+      const x = accelerometerData.x;
+      const y = accelerometerData.y;
+      const z = accelerometerData.z;
+      i++;
+      const res = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
+      console.log("result : ", res, " index: ", i);
+      if (res <= minRes) {
+        checkFirstMas.push({ data: res, index: i });
+      }
+      const deleteIndexFirst: number[] = [];
+      checkFirstMas.forEach((x) => {
+        if (i - x.index >= minIndex) {
+          if (i - x.index > maxIndex) {
+            deleteIndexFirst.push(x.index);
+          } else {
+            if (res >= maxRes) {
+              deleteIndexFirst.push(x.index);
+              checkSecondMas.push({ data: res, index: i, count: 0 });
+            }
+          }
+        }
+      });
+      checkFirstMas = checkFirstMas.filter(
+        (item) => !deleteIndexFirst.includes(item.index)
+      );
+
+      checkSecondMas = checkSecondMas.flatMap((x) => {
+        if (res >= min3Step && res <= max3Step) {
+          if (i - x.index < secondDownMax) {
+            return [{ ...x, count: x.count + 1 }];
+          } else {
+            if (x.count >= secondDownMin) {
+              console.log("-----------fall-----------------");
+              fall();
+            }
+            return [];
+          }
+        } else {
+          if (i - x.index < secondDownMax) {
+            return [x];
+          } else {
+            if (x.count >= secondDownMin) {
+              console.log("-----------fall-----------------");
+              fall();
+            }
+            return [];
+          }
+        }
+      });
+
+      if (checkFirstMas.length > 0)
+        console.log("checkFirstMas ", checkFirstMas);
+      if (checkSecondMas.length > 0)
+        console.log("checkSecondMas", checkSecondMas);
+      // console.log(
+      //   "x: " + x + ",  y:  " + y + ",  z:  " + z + ",   res:  " + res
+      // );
+    });
+  };
+
+  const unsubscribe = () => {
+    Accelerometer.removeAllListeners();
+  };
+
+  const subscribe = useCallback(() => {
+    Accelerometer.setUpdateInterval(600);
+    unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    subscribe();
+  }, [subscribe]);
 
   return (
     <View style={styles.container}>
@@ -462,7 +562,7 @@ export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
           }}
         >
           <Text style={styles.countHours}>
-            {(test / 60).toFixed(0)} {labelHours}
+            {Math.floor(test / 60)} {labelHours}
           </Text>
           <Text style={styles.countHours}>
             {(test % 60).toFixed(0)} {labelMinute}
@@ -494,7 +594,7 @@ export const CompleteScreen: React.FC<Props> = ({ endShift }) => {
         </View>
         <TouchableOpacity
           activeOpacity={0.6}
-          onLongPress={createAccident}
+          onLongPress={() => createAccident(AccidentType.Sos)}
           delayLongPress={3000}
           style={{
             backgroundColor: "#F95F4A",

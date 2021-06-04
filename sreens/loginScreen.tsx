@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -14,7 +14,8 @@ import { THEME } from "../data/constants";
 
 import { AuthResponse } from "../data/model";
 import { getError } from "../core/getError";
-import { Accelerometer } from "expo-sensors";
+import * as SecureStore from "expo-secure-store";
+import * as Network from "expo-network";
 
 interface Props {
   auth: () => void;
@@ -31,93 +32,29 @@ export const LoginScreen: React.FC<Props> = ({ auth, register }) => {
     login: string;
     password: string;
   }>({
-    login: "test2@mail.ru",
-    password: "12345678",
+    login: "",
+    password: "",
   });
 
-  const _subscribe = () => {
-    let i = 0;
-    let checkFirstMas: { index: number; data: number }[] = [];
-    let checkSecondMas: { index: number; data: number; count: number }[] = [];
-    let checkThreeMas: { index: number; count: number }[] = [];
-    const minRes = 0.8; //0.5
-    const maxRes = 1.2; //2
-    const minHeight = 3; //7
-    const maxHeight = 60;
-    const checkSpeed = 400;
-    const minIndex = (Math.sqrt((2 * minHeight) / 9.8) * 1000) / checkSpeed;
-    const maxIndex = (Math.sqrt((2 * maxHeight) / 9.8) * 1000) / checkSpeed;
-    const min3Step = 0.9;
-    const max3Step = 1.1;
-    const secondDownMin = (3 * 1000) / checkSpeed;
-    const secondDownMax = (5 * 1000) / checkSpeed;
-    console.log(minIndex, maxIndex);
-    Accelerometer.addListener((accelerometerData) => {
-      const x = accelerometerData.x;
-      const y = accelerometerData.y;
-      const z = accelerometerData.z;
-      i++;
-      const res = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
-      console.log("result : ", res, " index: ", i);
-      if (res <= minRes) {
-        checkFirstMas.push({ data: res, index: i });
-      }
-      const deleteIndexFirst: number[] = [];
-      checkFirstMas.forEach((x) => {
-        if (i - x.index >= minIndex) {
-          if (i - x.index > maxIndex) {
-            deleteIndexFirst.push(x.index);
-          } else {
-            if (res >= maxRes) {
-              deleteIndexFirst.push(x.index);
-              checkSecondMas.push({ data: res, index: i, count: 0 });
-            }
-          }
-        }
-      });
-      checkFirstMas = checkFirstMas.filter(
-        (item) => !deleteIndexFirst.includes(item.index)
-      );
+  const setItemSecureStore = useCallback(
+    (data: { login: string; password: string }) => {
+      (async () => {
+        await SecureStore.setItemAsync("login", data.login);
+        await SecureStore.setItemAsync("password", data.password);
+      })();
+    },
+    []
+  );
 
-      checkSecondMas = checkSecondMas.flatMap((x) => {
-        if (res >= min3Step && res <= max3Step) {
-          if (i - x.index < secondDownMax) {
-            return [{ ...x, count: x.count + 1 }];
-          } else {
-            if (x.count >= secondDownMin) {
-              console.log("-----------fall-----------------");
-            }
-            return [];
-          }
-        } else {
-          if (i - x.index < secondDownMax) {
-            return [x];
-          } else {
-            if (x.count >= secondDownMin) {
-              console.log("-----------fall-----------------");
-            }
-            return [];
-          }
-        }
-      });
+  useEffect(() => {
+    (async () => {
+      const login = await SecureStore.getItemAsync("login");
+      const password = await SecureStore.getItemAsync("password");
+      if (login != null && password != null) setLogin({ login, password });
+      console.log(login, password);
+    })();
+  }, [dispatch]);
 
-      console.log("checkFirstMas ", checkFirstMas);
-      console.log("checkSecondMas", checkSecondMas);
-      // console.log(
-      //   "x: " + x + ",  y:  " + y + ",  z:  " + z + ",   res:  " + res
-      // );
-    });
-  };
-
-  const unsubscribe = () => {
-    Accelerometer.removeAllListeners();
-  };
-
-  const subscribe = useCallback(() => {
-    console.log("fall ------------------------------------------------------");
-    Accelerometer.setUpdateInterval(400);
-    _subscribe();
-  }, []);
 
   const authAction = useCallback(() => {
     console.log("auth");
@@ -132,6 +69,7 @@ export const LoginScreen: React.FC<Props> = ({ auth, register }) => {
             dispatch(setUser(res.employee));
             setError("");
             auth();
+            setItemSecureStore(login);
           } else if (res.employee != "") setError(getError(res.error));
         },
       })

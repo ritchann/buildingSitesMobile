@@ -26,7 +26,7 @@ export const ListItemShift: React.FC<Props> = ({ onPress, data, selectedItem }) 
       case Status.End:
         return "Завершена"
     }
-  },[])
+  },[data])
 
   return (
     <TouchableOpacity

@@ -16,6 +16,7 @@ import {
   getSiteListAsync,
   getWorkingHoursListAsync,
   setCurrentSite,
+  updateWorkingHoursAsync,
 } from "../data/actions";
 import { Site } from "../data/model";
 import { THEME } from "../data/constants";
@@ -23,6 +24,7 @@ import { useLocation } from "../hooks/useLocation";
 import { useInWorkArea } from "../hooks/useInWorkArea";
 import { ModalMessage } from "../components/modalMessage";
 import { DateTime } from "../utils/dateTime";
+import { Status } from "../enums/statusEnum";
 
 enum Tab {
   All,
@@ -56,6 +58,26 @@ export const MainScreen: React.FC<Props> = ({ toNext }) => {
   }, [dispatch]);
 
   useEffect(() => {
+    const item = workingHoursList.find(
+      (x) =>
+        x.status == Status.Process &&
+        DateTime.format(new Date(), "isodate") ==
+          DateTime.format(x.start, "isodate")
+    );
+    console.log("set item", item!=undefined);
+    if (item) {
+      dispatch(
+        updateWorkingHoursAsync({
+          ...item,
+          start: DateTime.addHours(item.start, 3),
+          end: DateTime.addHours(item.end, 3),
+          status: Status.Paused,
+        })
+      );
+    }
+  }, [workingHoursList, dispatch]);
+
+  useEffect(() => {
     if (user.id != undefined)
       dispatch(
         getWorkingHoursListAsync({ id: user.id, onResponseCallback: () => {} })
@@ -71,7 +93,7 @@ export const MainScreen: React.FC<Props> = ({ toNext }) => {
 
   useEffect(() => {
     getLocation();
-  }, []);
+  }, [getLocation]);
 
   const getDistance = useCallback(
     (pointA: number[], pointB: number[]) =>
@@ -113,7 +135,10 @@ export const MainScreen: React.FC<Props> = ({ toNext }) => {
         else
           setShowModal({
             show: true,
-            message: "Вы находитесь за пределами данной стройплощадки",
+            message:
+              location.lat == 0
+                ? "Пожалуйста включите локацию"
+                : "Вы находитесь за пределами данной стройплощадки",
           });
       }
   }, [location, currentSite]);

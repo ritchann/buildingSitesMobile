@@ -3,6 +3,7 @@ import { Dimensions, StyleSheet } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { THEME } from "../data/constants";
 import { Accident } from "../data/model";
+import { AccidentType } from "../enums/accidentType";
 
 interface Props {
   location: { lon: number; lat: number };
@@ -24,7 +25,7 @@ export const Map: React.FC<Props> = ({ location, accident }) => {
       style={{ width:deviceHeight > 700?   300: 290, height:deviceHeight > 700? 380 : 370 }}
     >
       <Marker
-        title={"Сигнал SOS"}
+        title={accident?.type == AccidentType.Sos ? "Сигнал SOS" : "Сигнал падения"}
         coordinate={{
           latitude: accident?.lat ? accident.lat - 0.00023 : 0,
           longitude: accident?.lon ?? 0,
