@@ -16,7 +16,7 @@ export const useInWorkArea = () => {
       }
       j = i;
     }
-    console.log("in work area", c, j);
+    console.log("in work area", c);
     return c;
   }, []);
 };

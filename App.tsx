@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Provider, useDispatch } from "react-redux";
 import { store } from "./core/store";
 
@@ -32,7 +32,14 @@ import {
 } from "react-native";
 import { Icon } from "react-native-elements";
 import { THEME } from "./data/constants";
-import { signOutAsync } from "./data/actions";
+import {
+  setCurrentSite,
+  setSiteList,
+  setStartWorkingHours,
+  setUser,
+  setWorkingHoursList,
+} from "./data/actions";
+import { emptyUser } from "./core/objectConst";
 
 const MenuBar = (props: any) => {
   let deviceHeight = Dimensions.get("window").height;
@@ -271,6 +278,14 @@ export default function App() {
   function CustomDrawerContent(props: any) {
     let deviceHeight = Dimensions.get("window").height;
     const dispatch = useDispatch();
+
+    const empty = useCallback(() => {
+      dispatch(setUser(emptyUser));
+      dispatch(setSiteList([]));
+      dispatch(setCurrentSite(undefined));
+      dispatch(setStartWorkingHours(undefined));
+      dispatch(setWorkingHoursList([]));
+    }, [dispatch]);
     return (
       <DrawerContentScrollView
         style={{ flex: 1, height: "100%", width: "100%" }}
@@ -310,7 +325,7 @@ export default function App() {
             style={{
               marginTop: `${deviceHeight > 700 ? 130 : 80}%`,
             }}
-            onPress={() => setAuth(Action.None)}
+            onPress={() => (empty(), setAuth(Action.None))}
           >
             <Text style={styles.exit}>ВЫЙТИ</Text>
           </TouchableOpacity>
